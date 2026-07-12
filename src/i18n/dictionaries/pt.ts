@@ -1,40 +1,314 @@
 import type { DeepPartial } from "../types";
 import type { Dictionary } from "./en";
 
-/** Portuguese — starter translations; remaining keys fall back to English. */
+/** Portuguese — complete translation. */
 const pt: DeepPartial<Dictionary> = {
   meta: {
     title: "Dar Tahara — Cuidado premium do lar e concierge de imóveis",
     description:
-      "Dar Tahara é um serviço premium de cuidado do lar e concierge de imóveis em Marrocos. Limpeza profissional, inspeções e manutenção.",
+      "A Dar Tahara é um serviço premium de cuidado do lar e concierge de imóveis em Marrocos. Limpeza profissional, inspeções e manutenção para chegar sempre a um lar de conforto.",
+    ogAlt: "Dar Tahara — Casa da Pureza",
   },
-  brand: { meaning: "Casa da Pureza", tagline: "Chegue sempre a um lar de conforto." },
+  brand: {
+    name: "Dar Tahara",
+    meaning: "Casa da Pureza",
+    tagline: "Chegue sempre a um lar de conforto.",
+  },
   nav: {
-    why: "Porquê Dar Tahara",
+    why: "Porquê a Dar Tahara",
     services: "Serviços",
     plans: "Planos",
+    pricing: "Preços",
     how: "Como funciona",
     gallery: "Galeria",
     faq: "Perguntas frequentes",
     book: "Reservar limpeza",
     quote: "Pedir orçamento",
+    menu: "Menu",
+    close: "Fechar",
     language: "Idioma",
     theme: "Tema",
   },
   hero: {
-    eyebrow: "Cuidado do lar e concierge",
+    eyebrow: "Cuidado do lar e concierge de imóveis",
     title: "A sua casa merece mais do que limpeza — merece um cuidado excecional.",
     subtitle:
-      "Para proprietários, expatriados e donos de casas de férias em Marrocos. Limpamos, inspecionamos e mantemos o seu imóvel com precisão discreta.",
+      "Para proprietários, expatriados e donos de casas de férias em todo Marrocos. Limpamos, inspecionamos e mantemos o seu imóvel com precisão discreta — para que regresse ao conforto, nunca à preocupação.",
     ctaPrimary: "Reservar limpeza",
     ctaSecondary: "Pedir orçamento",
     ctaTertiary: "Saber mais",
+    stat1Value: "500+",
+    stat1Label: "Casas cuidadas",
+    stat2Value: "12 anos",
+    stat2Label: "Antiguidade média dos clientes",
+    stat3Value: "24 h",
+    stat3Label: "Tempo de resposta",
+    imageAlt: "Uma sala serena e cheia de luz, preparada na perfeição",
+  },
+  why: {
+    eyebrow: "Porquê a Dar Tahara",
+    title: "Tranquilidade, entregue à sua porta.",
+    subtitle:
+      "Dar Tahara significa Casa da Pureza. Não somos uma empresa de limpeza — somos os guardiões de confiança da sua casa na sua ausência e a razão pela qual tudo parece simples quando regressa.",
+    pillars: [
+      {
+        title: "Confiança absoluta",
+        body: "Profissionais verificados, formados e segurados. Guarda discreta de chaves e total responsabilidade em cada visita.",
+      },
+      {
+        title: "Qualidade sem compromissos",
+        body: "Um padrão meticuloso aplicado a cada superfície, cada detalhe — inspecionado, fotografado e validado.",
+      },
+      {
+        title: "Sem esforço para si",
+        body: "Um único ponto de contacto, atualizações proativas e uma casa que, simplesmente e com serenidade, está pronta antes de chegar.",
+      },
+      {
+        title: "Discrição total",
+        body: "A sua casa, a sua agenda e a sua privacidade são tratadas com a confidencialidade de um concierge privado.",
+      },
+    ],
+  },
+  services: {
+    eyebrow: "O que fazemos",
+    title: "Cuidado completo para cada canto da sua casa.",
+    subtitle:
+      "De uma única limpeza impecável à gestão completa da sua casa de férias — escolha exatamente o que o seu imóvel precisa.",
+    items: [
+      { title: "Limpeza premium", body: "Uma limpeza requintada de cima a baixo, adaptada a casas e acabamentos de excelência." },
+      { title: "Limpeza periódica", body: "Manutenção semanal ou quinzenal que mantém a sua casa sempre impecável." },
+      { title: "Entrada / saída de imóvel", body: "Uma entrega impecável, seja a chegar, a sair ou entre inquilinos." },
+      { title: "Inspeções ao imóvel", body: "Visitas programadas com relatórios fotográficos sobre o estado da sua casa." },
+      { title: "Verificações de manutenção", body: "Verificações proativas de canalização, eletrodomésticos e segurança antes que surjam problemas." },
+      { title: "Guarda de chaves", body: "Guarda segura e segurada das suas chaves, com acesso registado a pedido." },
+      { title: "Preparação de casa de férias", body: "Casas prontas à chegada: roupa de cama fresca, essenciais repostos, temperatura perfeita." },
+      { title: "Lavandaria e roupa de casa", body: "Lavandaria ao nível de hotel, engomadoria e roupa de cama impecável preparada a pedido." },
+      { title: "Limpeza profunda", body: "Uma limpeza intensiva e restauradora para renovações sazonais e ocasiões especiais." },
+      { title: "Limpeza pós-obras", body: "Pó, resíduos e detritos removidos para revelar o seu espaço terminado." },
+      { title: "Limpeza de emergência", body: "Resposta rápida para hóspedes de última hora, eventos ou imprevistos." },
+      { title: "Gestão de casa de férias", body: "Cuidado integral da sua segunda casa, gerida como se fosse nossa." },
+    ],
+  },
+  plans: {
+    eyebrow: "Planos de subscrição",
+    title: "Cuidado a um ritmo que se adapta à sua vida.",
+    subtitle:
+      "Planos simples e transparentes — pause, ajuste ou cancele quando precisar. Cada plano inclui relatórios de inspeção e apoio prioritário.",
+    perMonthNote: "Preço personalizado consoante a área e as necessidades do imóvel.",
+    mostPopular: "Mais popular",
+    cta: "Escolher plano",
+    items: [
+      {
+        name: "Semanal",
+        tagline: "Para casas sempre em uso",
+        features: ["Limpeza premium semanal", "Mudança de roupa de cama e lavandaria", "Relatório de inspeção em cada visita", "Agendamento prioritário"],
+      },
+      {
+        name: "Quinzenal",
+        tagline: "O equilíbrio ponderado",
+        features: ["Limpeza a cada duas semanas", "Verificações pontuais de manutenção", "Relatório de inspeção com fotos", "Reagendamento flexível"],
+      },
+      {
+        name: "Mensal",
+        tagline: "Para uma manutenção ligeira",
+        features: ["Limpeza profunda mensal", "Inspeção completa do imóvel", "Revisão de manutenção sazonal", "Coordenador dedicado"],
+      },
+      {
+        name: "Personalizado",
+        tagline: "Totalmente construído em torno de si",
+        features: ["Frequência de visita à medida", "Concierge completo e guarda de chaves", "Gestão de casa de férias", "Um único ponto de contacto"],
+      },
+    ],
+  },
+  how: {
+    eyebrow: "Como funciona",
+    title: "Seis passos serenos rumo a uma casa que cuida de si mesma.",
+    steps: [
+      { title: "Reservar", body: "Conte-nos sobre a sua casa e o seu ritmo num pedido de dois minutos." },
+      { title: "Visitamos", body: "Um coordenador visita-o para compreender o seu espaço e as suas preferências." },
+      { title: "Limpamos", body: "A nossa equipa formada entrega o nosso padrão distintivo, sempre." },
+      { title: "Inspecionamos", body: "Cada visita termina com uma inspeção documentada e fotografada." },
+      { title: "Chega", body: "Regresse a roupa de cama fresca, um ambiente sereno e tudo no seu lugar." },
+      { title: "Desfrute", body: "Descontraia, reconecte-se e simplesmente desfrute do conforto de casa." },
+    ],
+  },
+  audiences: {
+    eyebrow: "De quem cuidamos",
+    title: "A confiança de quem valoriza o seu tempo e a sua casa.",
+    items: [
+      { title: "Pessoas que vivem no estrangeiro", body: "A sua casa marroquina, impecável e pronta entre visitas." },
+      { title: "Profissionais ocupados", body: "Recupere os seus serões e fins de semana — nós tratamos do resto." },
+      { title: "Famílias", body: "Uma casa saudável e impecável para se focar no que importa." },
+      { title: "Donos de casas de férias", body: "Chegue a uma casa onde as férias parecem ter começado mais cedo." },
+      { title: "Anfitriões de Airbnb", body: "Rotações de cinco estrelas, reposição e apresentação pronta para hóspedes." },
+      { title: "Investidores imobiliários", body: "Ativos protegidos, inspecionados e mantidos para preservar o seu valor." },
+    ],
+  },
+  testimonials: {
+    eyebrow: "Por palavras deles",
+    title: "A confiança serena de uma casa bem cuidada.",
+    items: [
+      {
+        quote:
+          "Vivo em Bruxelas e só visito Tânger algumas vezes por ano. Agora chego a uma casa que se sente estimada. Nunca mais me preocupo com ela.",
+        name: "Yasmine B.",
+        role: "Proprietária, Tânger",
+      },
+      {
+        quote:
+          "Os relatórios de inspeção são extraordinários. Fotos, notas, tudo documentado. É como ter um gestor de imóveis e uma governanta num só.",
+        name: "Thomas R.",
+        role: "Investidor, Marraquexe",
+      },
+      {
+        quote:
+          "As nossas avaliações no Airbnb mencionam agora a limpeza em quase todos os comentários. A Dar Tahara elevou simplesmente o nosso padrão.",
+        name: "Karim e Sofia",
+        role: "Anfitriões, Casablanca",
+      },
+    ],
+  },
+  gallery: {
+    eyebrow: "Antes e depois",
+    title: "A diferença está nos detalhes.",
+    subtitle: "Um vislumbre do padrão que levamos a cada casa.",
+    before: "Antes",
+    after: "Depois",
+    items: [
+      { label: "Restauro da sala" },
+      { label: "Limpeza profunda da cozinha" },
+      { label: "Renovação da suíte principal" },
+    ],
+  },
+  faq: {
+    eyebrow: "Bom saber",
+    title: "Perguntas frequentes",
+    items: [
+      {
+        q: "O vosso pessoal é verificado e segurado?",
+        a: "Cada membro da nossa equipa passa por verificação de antecedentes, é formado segundo o nosso padrão e totalmente segurado. Para clientes com guarda de chaves, mantemos uma cadeia de custódia registada para total responsabilidade.",
+      },
+      {
+        q: "Como funciona a guarda de chaves?",
+        a: "Guardamos as suas chaves em segurança e acedemos à sua casa apenas para visitas agendadas ou aprovadas. Cada entrada e saída é registada, e recebe um relatório após cada visita.",
+      },
+      {
+        q: "Podem preparar a minha casa antes de eu chegar?",
+        a: "Sim. Partilhe os detalhes da sua chegada e garantiremos roupa de cama fresca, uma casa impecável, uma temperatura agradável e quaisquer essenciais que solicite — prontos no momento em que entrar.",
+      },
+      {
+        q: "Que cidades servem?",
+        a: "Servimos atualmente as principais cidades de Marrocos, incluindo Tânger, Casablanca, Rabat e Marraquexe, com uma cobertura em expansão contínua. Contacte-nos para confirmar a sua zona.",
+      },
+      {
+        q: "Posso pausar ou alterar o meu plano?",
+        a: "Sempre. Os planos são flexíveis — pause enquanto viaja, aumente a frequência para a estação ou ajuste os serviços a qualquer momento com uma única mensagem.",
+      },
+      {
+        q: "Que produtos utilizam?",
+        a: "Utilizamos produtos profissionais, eficazes e criteriosamente escolhidos, com opções ecológicas e seguras para as superfícies, para acabamentos delicados e lares sensíveis mediante pedido.",
+      },
+    ],
   },
   cta: {
+    eyebrow: "Prontos quando estiver",
     title: "Chegue sempre a um lar de conforto.",
+    subtitle:
+      "Deixe-nos cuidar da sua casa, para que nunca tenha de pensar nela. Reserve uma primeira visita ou peça hoje um orçamento à medida.",
     ctaPrimary: "Reservar limpeza",
     ctaSecondary: "Pedir orçamento",
-    whatsapp: "Conversar no WhatsApp",
+    whatsapp: "Falar no WhatsApp",
+  },
+  calculator: {
+    eyebrow: "Preços transparentes",
+    title: "Estime o seu cuidado mensal.",
+    subtitle:
+      "Desloque o cursor e escolha um ritmo. A sua estimativa atualiza-se instantaneamente — sem registo, sem surpresas.",
+    sizeLabel: "Área do imóvel",
+    sizeUnit: "m²",
+    sizeHelp: "Introduza ou deslize entre 20 e 250 m².",
+    frequencyLabel: "Frequência de limpeza",
+    visitsSuffix: "por mês",
+    recommended: "Mais popular",
+    noDiscount: "Sem desconto",
+    discountLabel: "de desconto",
+    freq: {
+      monthly: { name: "Uma vez por mês", visits: "1 visita por mês", note: "Uma renovação mensal completa." },
+      biweekly: { name: "Quinzenal", visits: "2 visitas por mês", note: "O equilíbrio ponderado entre cuidado e valor." },
+      weekly: { name: "Semanal", visits: "4 visitas por mês", note: "Sempre impecável, sempre pronto." },
+    },
+    result: {
+      heading: "A sua estimativa",
+      propertySize: "Área do imóvel",
+      pricePerCleaning: "Preço por limpeza",
+      frequency: "Frequência",
+      visits: "Visitas de limpeza",
+      visitsValue: "{n} por mês",
+      subtotal: "Subtotal antes do desconto",
+      discount: "Desconto por frequência",
+      youSave: "Poupa",
+      monthlyTotal: "Total mensal estimado",
+      perMonth: "/ mês",
+      effective: "Preço efetivo por visita",
+    },
+    custom: {
+      title: "Uma casa de distinção merece um orçamento à medida.",
+      body: "Imóveis com mais de 125 m² requerem um orçamento personalizado.",
+      cta: "Pedir um orçamento à medida",
+    },
+    cta: {
+      book: "Reserve a sua limpeza",
+      quote: "Pedir um orçamento personalizado",
+    },
+    disclaimer:
+      "Este é um preço estimado com base na área do imóvel e na frequência de limpeza selecionada. O preço final pode variar consoante o estado do imóvel, a acessibilidade, os serviços adicionais e os requisitos de limpeza específicos.",
+    optionalNote:
+      "Serviços opcionais como limpeza profunda, limpeza de vidros, lavandaria, mudança de roupa de cama, limpeza de terraços e limpeza pós-construção podem ser cobrados à parte.",
+  },
+  enquiry: {
+    title: "Reserve a sua limpeza",
+    quoteTitle: "Pedir um orçamento personalizado",
+    subtitle: "Partilhe alguns dados e confirmaremos a sua primeira visita no prazo de 24 horas.",
+    summary: "A sua seleção",
+    fields: {
+      name: "Nome completo",
+      email: "Endereço de e-mail",
+      phone: "Telefone ou WhatsApp",
+      location: "Localização do imóvel",
+      size: "Área do imóvel (m²)",
+      frequency: "Frequência de limpeza",
+      startDate: "Data de início preferida",
+      message: "Mensagem (opcional)",
+      messagePlaceholder: "Há algo que devamos saber sobre a sua casa?",
+    },
+    required: "Obrigatório",
+    invalidEmail: "Introduza um endereço de e-mail válido.",
+    submitWhatsApp: "Enviar via WhatsApp",
+    submitEmail: "Enviar por e-mail",
+    cancel: "Cancelar",
+    close: "Fechar",
+    successTitle: "Obrigado.",
+    successBody: "Os seus dados estão prontos a enviar. Escolha WhatsApp ou e-mail para concluir o seu pedido.",
+    monthlyEstimate: "Total mensal estimado",
+    customSelected: "Orçamento à medida (mais de 125 m²)",
+  },
+  footer: {
+    tagline: "Cuidado premium do lar e concierge de imóveis em todo Marrocos.",
+    quickLinks: "Explorar",
+    services: "Serviços",
+    contact: "Contacto",
+    email: "Envie-nos um e-mail",
+    whatsapp: "WhatsApp",
+    call: "Ligue-nos",
+    followUs: "Siga-nos",
+    rights: "Todos os direitos reservados.",
+    terms: "Termos",
+    privacy: "Privacidade",
+    madeWith: "Feito com cuidado em Marrocos.",
+    newsletterTitle: "Chegue a mais do que uma casa limpa.",
+    newsletterBody: "Conselhos ocasionais para cuidar da sua casa. Sem ruído.",
+    newsletterPlaceholder: "O seu e-mail",
+    newsletterCta: "Subscrever",
   },
 };
 
