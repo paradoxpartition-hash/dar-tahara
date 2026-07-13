@@ -64,7 +64,7 @@ export function EnquiryModal({ open, onClose, payload, dict: _dict, locale }: { 
     if (!payload || !validCurrent()) { setError(c.required); return; }
     setLoading(true); setError("");
     try {
-      const res = await fetch("/api/assessment/checkout", { method:"POST", headers:{ "Content-Type":"application/json" }, body:JSON.stringify({ ...form, sizeM2:Number(form.sizeM2), overMax:payload.overMax, frequency:payload.frequencyKey, locale, addressLine2:form.addressLine2 || null, postalCode:form.postalCode || null, alternateDate:form.alternateDate || null, petDetails:form.petDetails || null, accessNotes:form.accessNotes || null }) });
+      const res = await fetch("/api/assessment/start-payment", { method:"POST", headers:{ "Content-Type":"application/json" }, cache:"no-store", body:JSON.stringify({ ...form, sizeM2:Number(form.sizeM2), overMax:payload.overMax, frequency:payload.frequencyKey, locale, addressLine2:form.addressLine2 || null, postalCode:form.postalCode || null, alternateDate:form.alternateDate || null, petDetails:form.petDetails || null, accessNotes:form.accessNotes || null }) });
       const data = await res.json() as { checkoutUrl?: string; error?: string };
       if (!res.ok || !data.checkoutUrl) {
         setError(res.status < 500 && data.error !== "checkout_not_configured" ? c.required : c.failed);

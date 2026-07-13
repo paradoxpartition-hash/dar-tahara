@@ -11,8 +11,22 @@ export async function POST(req: NextRequest) {
   if (!isServiceRoleConfigured() || !process.env.STRIPE_SECRET_KEY) {
     return NextResponse.json({ error: "checkout_not_configured" }, { status: 503 });
   }
-  const parsed = validateAssessmentBooking(await req.json().catch(() => null));
-  if (!parsed.ok) return NextResponse.json({ error: parsed.error }, { status: 400 });
+  const body = await req.json().catch(() => null);
+  const parsed = validateAssessmentBooking(body);
+  if (!parsed.ok) {
+    const details = body && typeof body === "object" ? body as Record<string, unknown> : {};
+    console.warn("[assessment-checkout-validation]", {
+      error: parsed.error,
+      locale: typeof details.locale === "string" ? details.locale : null,
+      frequency: typeof details.frequency === "string" ? details.frequency : null,
+      preferredDate: typeof details.preferredDate === "string" ? details.preferredDate : null,
+      sizeM2: typeof details.sizeM2 === "number" || typeof details.sizeM2 === "string" ? details.sizeM2 : null,
+      hasCustomer: Boolean(details.fullName && details.email && details.phone),
+      hasAddress: Boolean(details.addressLine1 && details.city && details.countryCode),
+      legalAccepted: details.propertyAccuracyAccepted === true && details.termsAccepted === true,
+    });
+    return NextResponse.json({ error: parsed.error }, { status: 400 });
+  }
   const { value, quote } = parsed;
   try {
     const [customer] = await serviceUpsert<IdRow[]>("customers", {
