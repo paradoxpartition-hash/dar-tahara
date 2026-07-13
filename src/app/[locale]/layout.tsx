@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import type { ReactNode } from "react";
 import { notFound } from "next/navigation";
+import { Analytics } from "@vercel/analytics/next";
 import { fontSans, fontSerif } from "../fonts";
 import { locales, isLocale, getDir, localeMeta, type Locale } from "@/i18n/config";
 import { getDictionary } from "@/i18n/dictionaries";
@@ -116,6 +117,7 @@ export default async function LocaleLayout({
           <Footer locale={typedLocale} dict={dict} />
           <LaunchPopup locale={typedLocale} dict={dict.mailing} />
         </ThemeProvider>
+        <Analytics />
       </body>
     </html>
   );
