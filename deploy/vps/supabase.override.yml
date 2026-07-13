@@ -1,0 +1,37 @@
+name: dar-tahara-supabase
+
+services:
+  db:
+    container_name: dar-tahara-supabase-db
+    networks: [default]
+  kong:
+    container_name: dar-tahara-supabase-kong
+    networks: [default, public]
+  auth:
+    container_name: dar-tahara-supabase-auth
+  rest:
+    container_name: dar-tahara-supabase-rest
+  realtime:
+    container_name: dar-tahara-supabase-realtime
+  storage:
+    container_name: dar-tahara-supabase-storage
+  imgproxy:
+    container_name: dar-tahara-supabase-imgproxy
+  meta:
+    container_name: dar-tahara-supabase-meta
+  studio:
+    container_name: dar-tahara-supabase-studio
+  functions:
+    container_name: dar-tahara-supabase-functions
+  supavisor:
+    container_name: dar-tahara-supabase-pooler
+    ports: !override
+      - "127.0.0.1:56323:5432"
+      - "127.0.0.1:56324:6543"
+
+networks:
+  default:
+    name: dar-tahara-supabase
+  public:
+    external: true
+    name: public-net

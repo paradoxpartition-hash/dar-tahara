@@ -1,0 +1,2 @@
+# Daily 02:15 UTC PostgreSQL custom-format backup with 14-day retention.
+15 2 * * * claude-admin /srv/dartahara/backup-supabase.sh

@@ -1,0 +1,22 @@
+# Temporary staging hostname. Replace with supabase.dartahara.com after DNS is set.
+supabase-dartahara.85-215-221-142.sslip.io {
+    encode zstd gzip
+
+    @supabase_api path /auth/v1/* /rest/v1/* /realtime/v1/* /storage/v1/* /functions/v1/* /.well-known/*
+    handle @supabase_api {
+        reverse_proxy dar-tahara-supabase-kong:8000
+    }
+
+    # Supabase Studio and Kong's root route are intentionally not public.
+    handle {
+        respond 404
+    }
+
+    header {
+        Strict-Transport-Security "max-age=31536000; includeSubDomains"
+        X-Content-Type-Options nosniff
+        X-Frame-Options DENY
+        Referrer-Policy strict-origin-when-cross-origin
+        -Server
+    }
+}
