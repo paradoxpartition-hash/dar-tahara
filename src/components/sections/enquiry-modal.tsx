@@ -51,7 +51,7 @@ export function EnquiryModal({ open, onClose, payload, dict: _dict, locale }: { 
 
   function update<K extends keyof FormState>(key: K, value: FormState[K]) { setForm((old) => ({ ...old, [key]: value })); setError(""); }
   function validCurrent() {
-    if (step === 0 && !form.preferredDate) return false;
+    if (step === 0 && (!form.preferredDate || form.preferredDate < minDate || (form.alternateDate && form.alternateDate < minDate))) return false;
     if (step === 1 && (!form.addressLine1.trim() || !form.city.trim() || Number(form.sizeM2) < 20 || !form.countryCode.trim() || (form.pets && !form.petDetails.trim()))) return false;
     if (step === 2 && (!form.fullName.trim() || !/^\S+@\S+\.\S+$/.test(form.email) || !form.phone.trim())) return false;
     if (step === 3 && (!form.propertyAccuracyAccepted || !form.termsAccepted)) return false;
@@ -65,8 +65,12 @@ export function EnquiryModal({ open, onClose, payload, dict: _dict, locale }: { 
     setLoading(true); setError("");
     try {
       const res = await fetch("/api/assessment/checkout", { method:"POST", headers:{ "Content-Type":"application/json" }, body:JSON.stringify({ ...form, sizeM2:Number(form.sizeM2), overMax:payload.overMax, frequency:payload.frequencyKey, locale, addressLine2:form.addressLine2 || null, postalCode:form.postalCode || null, alternateDate:form.alternateDate || null, petDetails:form.petDetails || null, accessNotes:form.accessNotes || null }) });
-      const data = await res.json() as { checkoutUrl?: string };
-      if (!res.ok || !data.checkoutUrl) throw new Error("checkout");
+      const data = await res.json() as { checkoutUrl?: string; error?: string };
+      if (!res.ok || !data.checkoutUrl) {
+        setError(res.status < 500 && data.error !== "checkout_not_configured" ? c.required : c.failed);
+        setLoading(false);
+        return;
+      }
       window.location.assign(data.checkoutUrl);
     } catch { setError(c.failed); setLoading(false); }
   }
