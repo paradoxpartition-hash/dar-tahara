@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { TERMS_VERSION, validateAssessmentBooking } from "@/lib/assessment";
 import { createAssessmentCheckoutSession } from "@/lib/stripe";
 import { isServiceRoleConfigured, serviceInsert, serviceUpdate, serviceUpsert } from "@/lib/supabase-rpc";
+import { rateLimit, clientIpFromHeaders } from "@/lib/mailing-list";
 
 export const runtime = "nodejs";
 
@@ -17,6 +18,9 @@ export async function createAssessmentCheckout(
   if (!isServiceRoleConfigured() || !process.env.STRIPE_SECRET_KEY) {
     return { ok: false, error: "checkout_not_configured", status: 503 };
   }
+  // Rate-limit checkout-session creation per IP (curbs abuse & rapid double-clicks).
+  const rl = rateLimit(`assessment-checkout:${clientIpFromHeaders(req.headers)}`);
+  if (!rl.allowed) return { ok: false, error: "rate_limited", status: 429 };
   const parsed = validateAssessmentBooking(body);
   if (!parsed.ok) {
     const details = body && typeof body === "object" ? body as Record<string, unknown> : {};

@@ -43,12 +43,28 @@ function baseUrl(requestOrigin?: string): string {
   return configured.replace(/\/$/, "");
 }
 
-async function stripePost<T>(path: string, params: URLSearchParams): Promise<T> {
+/** Settlement/checkout currency, centralised in configuration (default EUR). */
+export function defaultCurrency(): string {
+  return (process.env.STRIPE_DEFAULT_CURRENCY || "eur").toLowerCase();
+}
+
+/** Whether to enable Stripe Tax automatic calculation (opt-in via env). */
+function taxEnabled(): boolean {
+  return process.env.STRIPE_TAX_ENABLED === "true";
+}
+
+async function stripePost<T>(
+  path: string,
+  params: URLSearchParams,
+  idempotencyKey?: string,
+): Promise<T> {
   const res = await fetch(`${STRIPE_API}/${path}`, {
     method: "POST",
     headers: {
       Authorization: `Bearer ${secretKey()}`,
       "Content-Type": "application/x-www-form-urlencoded",
+      // Idempotency prevents duplicate resources from retries / double clicks.
+      ...(idempotencyKey ? { "Idempotency-Key": idempotencyKey } : {}),
     },
     body: params,
     cache: "no-store",
@@ -75,6 +91,7 @@ export async function createAssessmentCheckoutSession(input: {
   const root = baseUrl(input.requestOrigin);
   const p = new URLSearchParams();
   p.set("mode", "payment");
+  p.set("locale", input.locale); // Stripe-hosted Checkout matches the site language
   p.set("client_reference_id", input.assessmentId);
   p.set("customer_email", input.customerEmail);
   p.set("customer_creation", "always");
@@ -82,7 +99,13 @@ export async function createAssessmentCheckoutSession(input: {
   p.set("phone_number_collection[enabled]", "true");
   p.set("invoice_creation[enabled]", "true");
   p.set("payment_intent_data[setup_future_usage]", "off_session");
-  p.set("line_items[0][price_data][currency]", "eur");
+  const descriptor = process.env.STRIPE_STATEMENT_DESCRIPTOR;
+  if (descriptor) p.set("payment_intent_data[statement_descriptor_suffix]", descriptor.slice(0, 22));
+  if (taxEnabled()) {
+    p.set("automatic_tax[enabled]", "true");
+    p.set("customer_update[address]", "auto");
+  }
+  p.set("line_items[0][price_data][currency]", defaultCurrency());
   p.set("line_items[0][price_data][unit_amount]", String(input.amountCents));
   p.set("line_items[0][price_data][product_data][name]", "Dar Tahara Initial Home Assessment");
   p.set(
@@ -100,7 +123,7 @@ export async function createAssessmentCheckoutSession(input: {
     "custom_text[submit][message]",
     "Payment confirms your Initial Home Assessment. Your ongoing subscription begins only after the assessment outcome is approved.",
   );
-  return stripePost<StripeCheckoutSession>("checkout/sessions", p);
+  return stripePost<StripeCheckoutSession>("checkout/sessions", p, `assessment_checkout_${input.assessmentId}`);
 }
 
 export async function createSubscriptionCheckoutSession(input: {
@@ -116,10 +139,15 @@ export async function createSubscriptionCheckoutSession(input: {
   const root = baseUrl(input.requestOrigin);
   const p = new URLSearchParams();
   p.set("mode", "subscription");
+  p.set("locale", input.locale);
   p.set("customer", input.customerId);
   p.set("client_reference_id", input.subscriptionId);
   p.set("billing_address_collection", "auto");
-  p.set("line_items[0][price_data][currency]", "eur");
+  if (taxEnabled()) {
+    p.set("automatic_tax[enabled]", "true");
+    p.set("customer_update[address]", "auto");
+  }
+  p.set("line_items[0][price_data][currency]", defaultCurrency());
   p.set("line_items[0][price_data][unit_amount]", String(input.amountCents));
   p.set("line_items[0][price_data][recurring][interval]", input.billingInterval === "annual" ? "year" : "month");
   p.set("line_items[0][price_data][product_data][name]", `Dar Tahara ${input.frequencyLabel} home-care subscription`);
@@ -131,7 +159,68 @@ export async function createSubscriptionCheckoutSession(input: {
   p.set("subscription_data[metadata][subscription_id]", input.subscriptionId);
   p.set("success_url", `${root}/${input.locale}/assessment/confirmation?subscription=activated`);
   p.set("cancel_url", `${root}/${input.locale}/assessment/confirmation?subscription=pending`);
-  return stripePost<StripeCheckoutSession>("checkout/sessions", p);
+  return stripePost<StripeCheckoutSession>("checkout/sessions", p, `subscription_checkout_${input.subscriptionId}`);
+}
+
+export type StripePortalSession = { id: string; url: string };
+
+/**
+ * Stripe Customer Portal session for a verified customer. The caller MUST have
+ * already confirmed ownership of `customerId`. Lets the customer update their
+ * payment method, view invoices and manage/cancel their subscription.
+ */
+export async function createBillingPortalSession(input: {
+  customerId: string;
+  locale: Locale;
+  returnUrl: string;
+}): Promise<StripePortalSession> {
+  const p = new URLSearchParams();
+  p.set("customer", input.customerId);
+  p.set("return_url", input.returnUrl);
+  p.set("locale", input.locale);
+  const configuration = process.env.STRIPE_CUSTOMER_PORTAL_CONFIGURATION_ID;
+  if (configuration) p.set("configuration", configuration);
+  return stripePost<StripePortalSession>("billing_portal/sessions", p);
+}
+
+export type StripeRefund = {
+  id: string;
+  object: "refund";
+  amount: number;
+  currency: string;
+  status: string;
+  charge: string | null;
+  payment_intent: string | null;
+};
+
+/**
+ * Refund a payment (full or partial). `amountCents` omitted = full refund.
+ * An idempotency key prevents accidental double refunds on retry.
+ */
+export async function createRefund(input: {
+  paymentIntentId: string;
+  amountCents?: number;
+  reason?: "duplicate" | "fraudulent" | "requested_by_customer";
+  idempotencyKey: string;
+  internalReason?: string;
+}): Promise<StripeRefund> {
+  const p = new URLSearchParams();
+  p.set("payment_intent", input.paymentIntentId);
+  if (typeof input.amountCents === "number") p.set("amount", String(input.amountCents));
+  if (input.reason) p.set("reason", input.reason);
+  if (input.internalReason) p.set("metadata[internal_reason]", input.internalReason.slice(0, 200));
+  return stripePost<StripeRefund>("refunds", p, input.idempotencyKey);
+}
+
+/** Retrieve a Checkout Session server-side (authoritative success verification). */
+export async function retrieveCheckoutSession(sessionId: string): Promise<StripeCheckoutSession> {
+  const res = await fetch(`${STRIPE_API}/checkout/sessions/${encodeURIComponent(sessionId)}`, {
+    headers: { Authorization: `Bearer ${secretKey()}` },
+    cache: "no-store",
+  });
+  const data = (await res.json().catch(() => ({}))) as Record<string, unknown>;
+  if (!res.ok) throw new Error(`stripe_http_${res.status}`);
+  return data as unknown as StripeCheckoutSession;
 }
 
 export function verifyStripeSignature(
