@@ -4,8 +4,8 @@
  */
 export const site = {
   name: "Dar Tahara",
-  domain: "dartahara.com",
-  url: "https://dartahara.com",
+  domain: "www.dartahara.com",
+  url: "https://www.dartahara.com",
   email: "hello@dartahara.com",
   phoneDisplay: "+212 6 00 00 00 00",
   phoneE164: "+212600000000",
