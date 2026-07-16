@@ -23,7 +23,8 @@ const de: DeepPartial<Dictionary> = {
     gallery: "Galerie",
     faq: "FAQ",
     book: "Ersteinschätzung buchen",
-    quote: "Angebot anfordern",
+    login: "Anmelden",
+    myAccount: "Mein Konto",
     menu: "Menü",
     close: "Schließen",
     language: "Sprache",
@@ -35,7 +36,6 @@ const de: DeepPartial<Dictionary> = {
     subtitle:
       "Für Eigentümer, Expats und Ferienhausbesitzer in ganz Marokko. Wir reinigen, prüfen und pflegen Ihre Immobilie mit stiller Präzision — damit Sie zum Komfort zurückkehren, nie zur Sorge.",
     ctaPrimary: "Ersteinschätzung buchen",
-    ctaSecondary: "Angebot anfordern",
     ctaTertiary: "Mehr erfahren",
     stat1Value: "500+",
     stat1Label: "Betreute Zuhause",
@@ -216,7 +216,6 @@ const de: DeepPartial<Dictionary> = {
     subtitle:
       "Überlassen Sie uns die Pflege Ihres Zuhauses, damit Sie nie daran denken müssen. Buchen Sie einen ersten Besuch oder fordern Sie noch heute ein maßgeschneidertes Angebot an.",
     ctaPrimary: "Ersteinschätzung buchen",
-    ctaSecondary: "Angebot anfordern",
     whatsapp: "Auf WhatsApp chatten",
     whatsappInfo: "Chatten Sie mit dem Dar Tahara-Assistenten auf WhatsApp über Leistungen, Preise, Abonnements, Objektzugang und Buchungen. Komplexe Anliegen können an unseren E-Mail-Support übergeben werden.",
     whatsappPrivacy: "Dies ist ein automatisierter Assistent. Senden Sie keine Zahlungsdaten, Passwörter oder vollständigen Zugangscodes.",
@@ -263,13 +262,12 @@ const de: DeepPartial<Dictionary> = {
       effective: "Effektiver Preis pro Besuch",
     },
     custom: {
-      title: "Ein außergewöhnliches Zuhause verdient ein maßgeschneidertes Angebot.",
-      body: "Immobilien über 250 m² erfordern ein individuelles Angebot.",
-      cta: "Individuelles Angebot anfordern",
+      title: "Ein außergewöhnliches Zuhause verdient eine individuelle Bewertung.",
+      body: "Immobilien über 250 m² werden vor einem Servicevorschlag individuell geprüft.",
+      cta: "Bewertung beantragen",
     },
     cta: {
       book: "Ersteinschätzung buchen",
-      quote: "Persönliches Angebot anfordern",
     },
     disclaimer:
       "Dies ist ein geschätzter Preis auf Basis der Wohnfläche und der gewählten Reinigungsfrequenz. Der endgültige Preis kann je nach Zustand der Immobilie, Zugänglichkeit, Zusatzleistungen und spezifischen Reinigungsanforderungen variieren.",
@@ -280,7 +278,6 @@ const de: DeepPartial<Dictionary> = {
   },
   enquiry: {
     title: "Buchen Sie Ihre Reinigung",
-    quoteTitle: "Persönliches Angebot anfordern",
     subtitle: "Teilen Sie uns ein paar Angaben mit, und wir bestätigen Ihren ersten Besuch innerhalb von 24 Stunden.",
     summary: "Ihre Auswahl",
     fields: {
@@ -310,7 +307,7 @@ const de: DeepPartial<Dictionary> = {
     subtitle:
       "Ihr erster Besuch ermöglicht uns, Ihr Zuhause professionell zu bewerten, bei Bedarf eine erste Grundreinigung durchzuführen und Ihren persönlichen Reinigungsplan zu erstellen.",
     close: "Schließen",
-    pay: "Bezahlen & Bewertung buchen",
+    pay: "Bewertungsantrag senden",
     paySecure:
       "Sichere Zahlung über Stripe. Ihr Abonnement beginnt erst, nachdem Ihre erste Wohnungsbewertung abgeschlossen und freigegeben wurde.",
     summary: {
@@ -391,8 +388,8 @@ const de: DeepPartial<Dictionary> = {
       doorlock_internet_required: "Bitte bestätigen Sie, dass das Haus über Internet für das smarte Türschloss verfügt.",
       legal_acceptance_required: "Bitte bestätigen Sie die Angaben und akzeptieren Sie die Bedingungen.",
       rate_limited: "Zu viele Versuche. Bitte versuchen Sie es in einer Minute erneut.",
-      checkout_not_configured: "Online-Buchung ist derzeit nicht verfügbar — bitte kontaktieren Sie uns.",
-      checkout_failed: "Die sichere Zahlung konnte nicht gestartet werden. Bitte erneut versuchen.",
+      checkout_not_configured: "Anträge sind derzeit nicht verfügbar — melden Sie sich für Early Access an.",
+      checkout_failed: "Ihr Antrag konnte nicht gesendet werden. Bitte erneut versuchen.",
       network: "Netzwerkfehler. Bitte prüfen Sie Ihre Verbindung und versuchen Sie es erneut.",
     },
   },

@@ -10,6 +10,7 @@ import { verifyTurnstile } from "@/lib/turnstile";
 import { isServiceRoleConfigured } from "@/lib/supabase-rpc";
 import { isLocale, defaultLocale, type Locale } from "@/i18n/config";
 import { hashIp } from "@/lib/early-access/request-meta";
+import { featureEnabled } from "@/lib/feature-flags";
 
 export const runtime = "nodejs";
 
@@ -19,6 +20,7 @@ export const runtime = "nodejs";
  * A Mautic outage or email hiccup must never lose a valid lead or fail the form.
  */
 export async function POST(req: NextRequest) {
+  if (!await featureEnabled("early_access_enabled")) return NextResponse.json({ok:false,error:"feature_disabled"},{status:403});
   const ip = clientIpFromHeaders(req.headers);
 
   const rl = rateLimit(`early-access:${ip}`);

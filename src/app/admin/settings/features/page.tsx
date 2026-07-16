@@ -1,0 +1,1 @@
+import{FeatureSettings}from"@/components/admin/feature-settings";import{getFeatureFlags}from"@/lib/feature-flags";import{requireRole}from"@/lib/portal-auth";export default async function FeaturesPage(){await requireRole(['administrator']);return <FeatureSettings initial={await getFeatureFlags()}/>}

@@ -5,7 +5,7 @@ import { loadAssistantAdminRows, updateAssistantConversation, updateWhatsAppSupp
 export const runtime = "nodejs";
 
 export async function GET(req: NextRequest) {
-  if (!isAdminAuthorized(req)) return NextResponse.json({ error: "unauthorized" }, { status: 401 });
+  if (!(await isAdminAuthorized())) return NextResponse.json({ error: "unauthorized" }, { status: 401 });
   try {
     return NextResponse.json(await loadAssistantAdminRows());
   } catch {
@@ -14,7 +14,7 @@ export async function GET(req: NextRequest) {
 }
 
 export async function POST(req: NextRequest) {
-  if (!isAdminAuthorized(req)) return NextResponse.json({ error: "unauthorized" }, { status: 401 });
+  if (!(await isAdminAuthorized())) return NextResponse.json({ error: "unauthorized" }, { status: 401 });
   const body = (await req.json().catch(() => null)) as {
     id?: string;
     action?: string;

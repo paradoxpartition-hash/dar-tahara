@@ -6,13 +6,13 @@ import { secureTokenEqual } from "@/lib/whatsapp/security";
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
-function authorized(req: NextRequest): boolean {
+async function authorized(req: NextRequest): Promise<boolean> {
   const bearer = req.headers.get("authorization")?.replace(/^Bearer\s+/i, "") || null;
-  return isAdminAuthorized(req) || secureTokenEqual(bearer, process.env.WHATSAPP_JOB_SECRET);
+  return await isAdminAuthorized() || secureTokenEqual(bearer, process.env.WHATSAPP_JOB_SECRET);
 }
 
 export async function POST(req: NextRequest) {
-  if (!authorized(req)) return NextResponse.json({ error: "unauthorized" }, { status: 401 });
+  if (!(await authorized(req))) return NextResponse.json({ error: "unauthorized" }, { status: 401 });
   const body = (await req.json().catch(() => ({}))) as { action?: unknown; maxJobs?: unknown };
   if (body.action === "retention") {
     return NextResponse.json({ ok: true, deleted: await runWhatsAppRetention() });

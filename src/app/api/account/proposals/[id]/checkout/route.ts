@@ -1,0 +1,19 @@
+import {NextRequest,NextResponse} from "next/server";import {authorizeApi} from "@/lib/portal-auth";import {featureEnabled} from "@/lib/feature-flags";import {serviceInsert,serviceSelect,serviceUpdate,serviceUpsert} from "@/lib/supabase-rpc";import {createStripeCustomer,createSubscriptionCheckoutSession} from "@/lib/stripe";import {isSameOrigin} from "@/lib/request-security";import type {Locale} from "@/i18n/config";
+type Proposal={id:string;assessment_id:string;customer_id:string;property_id:string;status:string;billing_interval:"monthly"|"annual";frequency:string;recurring_amount_cents:number;initial_amount_cents:number;additional_fees_cents:number;discount_basis_points:number;currency:string;expires_at:string|null;customers:{stripe_customer_id:string|null;preferred_language:Locale;email:string;full_name:string}};
+export async function POST(req:NextRequest,{params}:{params:Promise<{id:string}>}){
+  if(!isSameOrigin(req))return NextResponse.json({error:"invalid_request"},{status:403});
+  const auth=await authorizeApi(["applicant","customer"]);if(!auth.ok)return NextResponse.json({error:auth.error},{status:auth.status});
+  if(!await featureEnabled("subscription_checkout_enabled"))return NextResponse.json({error:"checkout_disabled"},{status:403});
+  const{id}=await params;if(!/^[0-9a-f-]{36}$/i.test(id)||!auth.context.customerId)return NextResponse.json({error:"not_found"},{status:404});
+  const rows=await serviceSelect<Proposal[]>(`subscription_proposals?id=eq.${id}&customer_id=eq.${auth.context.customerId}&select=*,customers(stripe_customer_id,preferred_language,email,full_name)&limit=1`);const p=rows[0];
+  if(!p||p.status!=="ready"||(p.expires_at&&Date.parse(p.expires_at)<=Date.now()))return NextResponse.json({error:"proposal_not_available"},{status:409});
+  if(!await featureEnabled(p.billing_interval==="annual"?"annual_subscription_enabled":"monthly_subscription_enabled"))return NextResponse.json({error:"billing_interval_disabled"},{status:403});
+  let stripeCustomerId=p.customers.stripe_customer_id;
+  if(!stripeCustomerId){const customer=await createStripeCustomer({customerId:p.customer_id,email:p.customers.email,name:p.customers.full_name});stripeCustomerId=customer.id;await serviceUpdate("customers",`id=eq.${p.customer_id}`,{stripe_customer_id:stripeCustomerId});}
+  const annualMultiplier=12*(1-p.discount_basis_points/10000);const monthlyPrice=p.billing_interval==="annual"?Math.round(p.recurring_amount_cents/annualMultiplier):p.recurring_amount_cents;
+  const [subscription]=await serviceUpsert<{id:string}[]>("subscriptions",{customer_id:p.customer_id,property_id:p.property_id,assessment_id:p.assessment_id,status:"pending_payment",frequency:p.frequency,billing_interval:p.billing_interval,monthly_price_cents:monthlyPrice,billed_price_cents:p.recurring_amount_cents,currency:p.currency,stripe_customer_id:stripeCustomerId},"assessment_id");
+  const session=await createSubscriptionCheckoutSession({subscriptionId:subscription.id,assessmentId:p.assessment_id,customerId:stripeCustomerId,locale:p.customers.preferred_language,frequencyLabel:p.frequency,billingInterval:p.billing_interval,amountCents:p.recurring_amount_cents,initialAmountCents:p.initial_amount_cents+p.additional_fees_cents,requestOrigin:req.nextUrl.origin});
+  if(!session.url)return NextResponse.json({error:"checkout_failed"},{status:502});
+  await Promise.all([serviceUpdate("subscriptions",`id=eq.${subscription.id}`,{stripe_checkout_session_id:session.id}),serviceUpdate("subscription_proposals",`id=eq.${p.id}`,{status:"accepted",accepted_at:new Date().toISOString()}),serviceInsert("audit_logs",{actor_user_id:auth.context.user.id,action:"subscription_proposal_accepted",resource_type:"subscription_proposal",resource_id:p.id,new_value:{status:"accepted",checkout_session_id:session.id}})]);
+  return NextResponse.json({checkoutUrl:session.url});
+}

@@ -110,7 +110,7 @@ Templates to create and localize in Meta:
 - payment confirmation
 - appointment reminder
 - assessment completed
-- revised quote
+- updated subscription proposal
 - subscription activation
 - failed payment
 - human follow-up
@@ -173,7 +173,7 @@ Capabilities implemented:
 - add internal notes
 - close conversations
 
-The route uses the existing admin auth checks. Staff role granularity can be expanded after staff-account auth is formalized.
+The route uses Supabase Auth and the database-backed `staff` / `administrator` roles.
 
 ## Security controls
 
@@ -219,7 +219,7 @@ Before production use:
 4. Create and approve WhatsApp templates in all supported languages.
 5. Decide whether to configure an AI provider or run deterministic grounded answers only.
 6. Review the initial knowledge articles with Dar Tahara’s legal/operations owner.
-7. Add staff role permissions once staff identity is formalized beyond the private admin token.
+7. Verify assistant operations with separate staff and administrator test accounts.
 
 ## Known limitations
 

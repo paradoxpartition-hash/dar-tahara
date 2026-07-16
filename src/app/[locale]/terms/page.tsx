@@ -22,7 +22,7 @@ export default function TermsPage() {
     <h2>6. Liability</h2>
     <p>Nothing excludes liability that cannot lawfully be excluded. Subject to that rule, our aggregate liability arising from a service is limited to the amount paid for the affected service or, for a subscription claim, the fees paid during the preceding three months. We are not liable for indirect business losses.</p>
     <h2>7. Communications and acceptable use</h2>
-    <p>We may send operational email and WhatsApp messages about bookings, payments, assessments, quotes and renewals. You must not misuse our website, staff, messaging assistant or payment systems. Automated answers are general service information; a specialist confirms exceptional arrangements.</p>
+    <p>We may send operational email and WhatsApp messages about applications, payments, assessments, proposals and renewals. You must not misuse our website, staff, messaging assistant or payment systems. Automated answers are general service information; a specialist confirms exceptional arrangements.</p>
     <h2>8. Privacy, changes and law</h2>
     <p>Our Privacy Policy explains personal-data processing. We may update these Terms prospectively; the version accepted at checkout is recorded with your booking. These Terms are governed by Moroccan law, and disputes are subject to the competent Moroccan courts unless mandatory consumer law provides otherwise.</p>
     <h2>9. Contact</h2><p>Questions or formal notices may be sent to <a href={`mailto:${site.email}`}>{site.email}</a>.</p>

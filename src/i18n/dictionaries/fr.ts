@@ -23,7 +23,8 @@ const fr: DeepPartial<Dictionary> = {
     gallery: "Galerie",
     faq: "FAQ",
     book: "Réserver l’Évaluation Initiale",
-    quote: "Demander un devis",
+    login: "Connexion",
+    myAccount: "Mon compte",
     menu: "Menu",
     close: "Fermer",
     language: "Langue",
@@ -35,7 +36,6 @@ const fr: DeepPartial<Dictionary> = {
     subtitle:
       "Pour les propriétaires, expatriés et propriétaires de résidences secondaires partout au Maroc. Nous nettoyons, inspectons et entretenons votre bien avec une précision discrète — pour que vous retrouviez le confort, jamais les soucis.",
     ctaPrimary: "Réserver l’Évaluation Initiale",
-    ctaSecondary: "Demander un devis",
     ctaTertiary: "En savoir plus",
     stat1Value: "500+",
     stat1Label: "Foyers entretenus",
@@ -216,7 +216,6 @@ const fr: DeepPartial<Dictionary> = {
     subtitle:
       "Laissez-nous prendre soin de votre maison, pour ne plus jamais y penser. Réservez une première visite ou demandez un devis sur mesure dès aujourd’hui.",
     ctaPrimary: "Réserver l’Évaluation Initiale",
-    ctaSecondary: "Demander un devis",
     whatsapp: "Discuter sur WhatsApp",
     whatsappInfo: "Discutez avec l’assistant Dar Tahara sur WhatsApp au sujet des services, tarifs, abonnements, accès au logement et réservations. Les demandes complexes peuvent être transférées à notre support par e-mail.",
     whatsappPrivacy: "Il s’agit d’un assistant automatisé. N’envoyez pas de données de paiement, mots de passe ou codes d’accès complets.",
@@ -263,13 +262,12 @@ const fr: DeepPartial<Dictionary> = {
       effective: "Prix effectif par visite",
     },
     custom: {
-      title: "Une demeure d’exception mérite un devis sur mesure.",
-      body: "Les biens de plus de 250 m² nécessitent un devis personnalisé.",
-      cta: "Demander un devis sur mesure",
+      title: "Une demeure d’exception mérite une évaluation individuelle.",
+      body: "Les biens de plus de 250 m² sont étudiés individuellement avant la préparation d’une proposition.",
+      cta: "Demander une évaluation",
     },
     cta: {
       book: "Réservez l’Évaluation Initiale",
-      quote: "Demander un devis personnalisé",
     },
     disclaimer:
       "Ceci est un prix estimé basé sur la surface du bien et la fréquence de ménage sélectionnée. Le prix final peut varier selon l’état du bien, l’accessibilité, les services complémentaires et les exigences de nettoyage spécifiques.",
@@ -280,7 +278,6 @@ const fr: DeepPartial<Dictionary> = {
   },
   enquiry: {
     title: "Réservez votre ménage",
-    quoteTitle: "Demander un devis personnalisé",
     subtitle: "Communiquez-nous quelques détails et nous confirmerons votre première visite sous 24 heures.",
     summary: "Votre sélection",
     fields: {
@@ -310,7 +307,7 @@ const fr: DeepPartial<Dictionary> = {
     subtitle:
       "Votre première visite nous permet d'évaluer professionnellement votre logement, d'effectuer un premier nettoyage en profondeur si nécessaire et de préparer votre plan de ménage personnalisé.",
     close: "Fermer",
-    pay: "Payer & réserver l'évaluation",
+    pay: "Envoyer la demande d’évaluation",
     paySecure:
       "Paiement sécurisé via Stripe. Votre abonnement ne commence qu'après la réalisation et l'approbation de votre Évaluation initiale du logement.",
     summary: {
@@ -391,8 +388,8 @@ const fr: DeepPartial<Dictionary> = {
       doorlock_internet_required: "Veuillez confirmer que le logement dispose d’une connexion internet pour la serrure connectée.",
       legal_acceptance_required: "Veuillez confirmer les informations et accepter les conditions pour continuer.",
       rate_limited: "Trop de tentatives. Réessayez dans une minute.",
-      checkout_not_configured: "La réservation en ligne n'est pas disponible pour le moment — contactez-nous.",
-      checkout_failed: "Impossible de démarrer le paiement sécurisé. Veuillez réessayer.",
+      checkout_not_configured: "Les demandes ne sont pas disponibles actuellement — rejoignez l’accès anticipé.",
+      checkout_failed: "Impossible d’envoyer votre demande. Veuillez réessayer.",
       network: "Erreur réseau. Vérifiez votre connexion et réessayez.",
     },
   },

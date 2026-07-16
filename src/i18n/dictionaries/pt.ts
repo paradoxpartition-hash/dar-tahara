@@ -23,7 +23,8 @@ const pt: DeepPartial<Dictionary> = {
     gallery: "Galeria",
     faq: "Perguntas frequentes",
     book: "Reservar Avaliação Inicial",
-    quote: "Pedir orçamento",
+    login: "Iniciar sessão",
+    myAccount: "A minha conta",
     menu: "Menu",
     close: "Fechar",
     language: "Idioma",
@@ -35,7 +36,6 @@ const pt: DeepPartial<Dictionary> = {
     subtitle:
       "Para proprietários, expatriados e donos de casas de férias em todo Marrocos. Limpamos, inspecionamos e mantemos o seu imóvel com precisão discreta — para que regresse ao conforto, nunca à preocupação.",
     ctaPrimary: "Reservar Avaliação Inicial",
-    ctaSecondary: "Pedir orçamento",
     ctaTertiary: "Saber mais",
     stat1Value: "500+",
     stat1Label: "Casas cuidadas",
@@ -216,7 +216,6 @@ const pt: DeepPartial<Dictionary> = {
     subtitle:
       "Deixe-nos cuidar da sua casa, para que nunca tenha de pensar nela. Reserve uma primeira visita ou peça hoje um orçamento à medida.",
     ctaPrimary: "Reservar Avaliação Inicial",
-    ctaSecondary: "Pedir orçamento",
     whatsapp: "Falar no WhatsApp",
     whatsappInfo: "Fale com o assistente Dar Tahara no WhatsApp sobre serviços, preços, subscrições, acesso à propriedade e reservas. Os casos complexos podem ser transferidos para o suporte por e-mail.",
     whatsappPrivacy: "Este é um assistente automatizado. Não envie dados de pagamento, palavras-passe ou códigos de acesso completos.",
@@ -263,13 +262,12 @@ const pt: DeepPartial<Dictionary> = {
       effective: "Preço efetivo por visita",
     },
     custom: {
-      title: "Uma casa de distinção merece um orçamento à medida.",
-      body: "Imóveis com mais de 250 m² requerem um orçamento personalizado.",
-      cta: "Pedir um orçamento à medida",
+      title: "Uma casa de distinção merece uma avaliação individual.",
+      body: "Imóveis com mais de 250 m² são analisados individualmente antes da proposta de serviço.",
+      cta: "Pedir uma avaliação",
     },
     cta: {
       book: "Reserve a Avaliação Inicial",
-      quote: "Pedir um orçamento personalizado",
     },
     disclaimer:
       "Este é um preço estimado com base na área do imóvel e na frequência de limpeza selecionada. O preço final pode variar consoante o estado do imóvel, a acessibilidade, os serviços adicionais e os requisitos de limpeza específicos.",
@@ -280,7 +278,6 @@ const pt: DeepPartial<Dictionary> = {
   },
   enquiry: {
     title: "Reserve a sua limpeza",
-    quoteTitle: "Pedir um orçamento personalizado",
     subtitle: "Partilhe alguns dados e confirmaremos a sua primeira visita no prazo de 24 horas.",
     summary: "A sua seleção",
     fields: {
@@ -310,7 +307,7 @@ const pt: DeepPartial<Dictionary> = {
     subtitle:
       "A sua primeira visita permite-nos avaliar profissionalmente a sua casa, realizar uma primeira limpeza profunda se necessário e preparar o seu plano de limpeza personalizado.",
     close: "Fechar",
-    pay: "Pagar e reservar avaliação",
+    pay: "Enviar pedido de avaliação",
     paySecure:
       "Pagamento seguro via Stripe. A sua subscrição começa apenas depois de a sua Avaliação inicial da casa ser concluída e aprovada.",
     summary: {
@@ -391,8 +388,8 @@ const pt: DeepPartial<Dictionary> = {
       doorlock_internet_required: "Confirme que a casa tem ligação à internet para a fechadura inteligente.",
       legal_acceptance_required: "Confirme os dados e aceite os termos para continuar.",
       rate_limited: "Demasiadas tentativas. Tente novamente dentro de um minuto.",
-      checkout_not_configured: "A reserva online não está disponível de momento — contacte-nos.",
-      checkout_failed: "Não foi possível iniciar o pagamento seguro. Tente novamente.",
+      checkout_not_configured: "Os pedidos não estão disponíveis — junte-se ao acesso antecipado.",
+      checkout_failed: "Não foi possível enviar o pedido. Tente novamente.",
       network: "Erro de rede. Verifique a sua ligação e tente novamente.",
     },
   },

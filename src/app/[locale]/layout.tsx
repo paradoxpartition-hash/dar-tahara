@@ -15,10 +15,10 @@ import { MauticTracking } from "@/components/analytics/mautic-tracking";
 import { ConsentBanner } from "@/components/analytics/consent-banner";
 import { WebsiteChat } from "@/components/assistant/website-chat";
 import { cn } from "@/lib/utils";
+import { featureEnabled } from "@/lib/feature-flags";
 
-export function generateStaticParams() {
-  return locales.map((locale) => ({ locale }));
-}
+// Feature visibility is database-controlled and must not be frozen into a build.
+export const dynamic = "force-dynamic";
 
 export const viewport: Viewport = {
   themeColor: [
@@ -98,6 +98,7 @@ export default async function LocaleLayout({
   const typedLocale = locale as Locale;
   const dict = await getDictionary(typedLocale);
   const dir = getDir(typedLocale);
+  const newsletterEnabled = await featureEnabled("newsletter_signup_enabled");
 
   return (
     <html
@@ -121,7 +122,7 @@ export default async function LocaleLayout({
           <Navbar locale={typedLocale} dict={dict.nav} whatsappHref={whatsappLink()} />
           <main id="main">{children}</main>
           <Footer locale={typedLocale} dict={dict} />
-          <LaunchPopup locale={typedLocale} dict={dict.mailing} />
+          {newsletterEnabled ? <LaunchPopup locale={typedLocale} dict={dict.mailing} /> : null}
           <WebsiteChat locale={typedLocale} copy={dict.assistant.chat} />
         </ThemeProvider>
       </body>

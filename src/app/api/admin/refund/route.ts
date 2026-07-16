@@ -17,7 +17,7 @@ type AssessmentRow = {
 
 /** Admin-only refund (full or partial) with audit logging. */
 export async function POST(req: NextRequest) {
-  if (!isAdminAuthorized(req)) return NextResponse.json({ error: "unauthorized" }, { status: 401 });
+  if (!(await isAdminAuthorized())) return NextResponse.json({ error: "unauthorized" }, { status: 401 });
   if (!isServiceRoleConfigured() || !process.env.STRIPE_SECRET_KEY) {
     return NextResponse.json({ error: "not_configured" }, { status: 503 });
   }

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
-import { timingSafeEqual } from "node:crypto";
 import { serviceSelect, isServiceRoleConfigured } from "@/lib/supabase-rpc";
+import { isAdminAuthorized } from "@/lib/admin-auth";
 
 export const runtime = "nodejs";
 
@@ -16,16 +16,6 @@ type Row = {
   created_at: string;
 };
 
-function authorized(req: NextRequest): boolean {
-  const expected = process.env.ADMIN_API_TOKEN;
-  if (!expected) return false;
-  const header = req.headers.get("authorization") || "";
-  const provided = header.startsWith("Bearer ") ? header.slice(7) : "";
-  const a = Buffer.from(provided);
-  const b = Buffer.from(expected);
-  return a.length === b.length && timingSafeEqual(a, b);
-}
-
 function csvEscape(v: string | boolean | null): string {
   const s = v === null ? "" : String(v);
   // Prevent spreadsheet formula execution when an exported user-controlled
@@ -36,14 +26,14 @@ function csvEscape(v: string | boolean | null): string {
 
 /**
  * Admin-only subscriber view / CSV export.
- * Requires ADMIN_API_TOKEN (bearer) and the service-role key. Excludes
+ * Requires an authenticated administrator role and the service-role key. Excludes
  * unsubscribed users. Query: ?format=csv|json&language=&country=&status=confirmed|unconfirmed
  */
 export async function GET(req: NextRequest) {
-  if (!process.env.ADMIN_API_TOKEN || !isServiceRoleConfigured()) {
+  if (!isServiceRoleConfigured()) {
     return NextResponse.json({ error: "not_configured" }, { status: 501 });
   }
-  if (!authorized(req)) {
+  if (!(await isAdminAuthorized())) {
     return NextResponse.json({ error: "unauthorized" }, { status: 401 });
   }
 

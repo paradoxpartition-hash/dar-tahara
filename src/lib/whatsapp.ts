@@ -28,7 +28,7 @@ const ANSWERS: Record<Locale, Record<Intent | "fallback", string>> = {
     presence: "You do not always need to be home, but we need confirmed, secure access. For the first visit, being available is recommended if the property has special requirements.",
     reschedule: "Yes. Please request a new date as early as possible. Rescheduling conditions are set out in the Terms.",
     payment: "Stripe Checkout securely offers cards, debit cards, Apple Pay, Google Pay and eligible local methods such as SEPA depending on your device, bank and location.",
-    products: "Yes. Basic professional cleaning materials, supplies and toilet paper are included. Surface-specific or specialist products may be quoted separately.",
+    products: "Yes. Basic professional cleaning materials, supplies and toilet paper are included. Surface-specific or specialist products are priced separately in the approved proposal.",
     cities: "We currently focus on Tangier, Casablanca, Rabat and Marrakech and are expanding across Morocco. Send your city and we will confirm coverage.",
     duration: "The time depends on size and condition. The Initial Home Assessment determines the reliable duration for future visits.",
     annual: "Yes. Annual billing is paid once per year, renews automatically unless cancelled, and includes a 5% discount.",

@@ -16,6 +16,8 @@ export type StripeCheckoutSession = {
   customer: string | null;
   payment_intent: string | null;
   subscription: string | null;
+  amount_total?: number | null;
+  currency?: string | null;
   client_reference_id: string | null;
   customer_details?: { email?: string | null; name?: string | null } | null;
   metadata: Record<string, string>;
@@ -46,6 +48,20 @@ function baseUrl(requestOrigin?: string): string {
 /** Settlement/checkout currency, centralised in configuration (default EUR). */
 export function defaultCurrency(): string {
   return (process.env.STRIPE_DEFAULT_CURRENCY || "eur").toLowerCase();
+}
+
+export type StripeCustomer = { id: string; email: string | null; name: string | null };
+
+export async function createStripeCustomer(input: {
+  customerId: string;
+  email: string;
+  name: string;
+}): Promise<StripeCustomer> {
+  const p = new URLSearchParams();
+  p.set("email", input.email);
+  p.set("name", input.name);
+  p.set("metadata[dar_tahara_customer_id]", input.customerId);
+  return stripePost<StripeCustomer>("customers", p, `customer_${input.customerId}`);
 }
 
 /** Whether to enable Stripe Tax automatic calculation (opt-in via env). */
@@ -146,6 +162,7 @@ export async function createSubscriptionCheckoutSession(input: {
   frequencyLabel: string;
   billingInterval: BillingInterval;
   amountCents: number;
+  initialAmountCents?: number;
   requestOrigin?: string;
 }): Promise<StripeCheckoutSession> {
   const root = baseUrl(input.requestOrigin);
@@ -164,6 +181,12 @@ export async function createSubscriptionCheckoutSession(input: {
   p.set("line_items[0][price_data][recurring][interval]", input.billingInterval === "annual" ? "year" : "month");
   p.set("line_items[0][price_data][product_data][name]", `Dar Tahara ${input.frequencyLabel} home-care subscription`);
   p.set("line_items[0][quantity]", "1");
+  if (input.initialAmountCents && input.initialAmountCents > 0) {
+    p.set("line_items[1][price_data][currency]", defaultCurrency());
+    p.set("line_items[1][price_data][unit_amount]", String(input.initialAmountCents));
+    p.set("line_items[1][price_data][product_data][name]", "Dar Tahara onboarding and approved one-time services");
+    p.set("line_items[1][quantity]", "1");
+  }
   p.set("metadata[kind]", "subscription");
   p.set("metadata[assessment_id]", input.assessmentId);
   p.set("metadata[subscription_id]", input.subscriptionId);

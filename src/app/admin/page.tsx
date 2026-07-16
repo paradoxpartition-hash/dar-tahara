@@ -1,3 +1,1 @@
-import { AdminClient } from "./admin-client";
-export const metadata={title:"Operations · Dar Tahara",robots:{index:false,follow:false}};
-export default function AdminPage(){return <AdminClient/>}
+import {redirect}from"next/navigation";export default function AdminPage(){redirect('/admin/assessments')}

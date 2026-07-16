@@ -20,6 +20,8 @@ import { Section, Container, SectionHeading } from "@/components/ui/section";
 import { Reveal } from "@/components/motion/reveal";
 import { buttonVariants } from "@/components/ui/button";
 import { AssessmentBookingModal } from "@/components/assessment/booking-modal";
+import Link from "next/link";
+import type { PublicFeatureState } from "@/lib/feature-flags";
 
 function clampSize(n: number): number {
   return Math.min(Math.max(n, SIZE_LIMITS.min), SIZE_LIMITS.max);
@@ -28,9 +30,11 @@ function clampSize(n: number): number {
 export function PricingCalculator({
   locale,
   dict,
+  features,
 }: {
   locale: Locale;
   dict: Dictionary;
+  features: PublicFeatureState;
 }) {
   const c = dict.calculator;
 
@@ -78,6 +82,7 @@ export function PricingCalculator({
   }
 
   function openBooking() {
+    if (!features.assessmentBookingEnabled) return;
     setModalOpen(true);
   }
 
@@ -241,7 +246,7 @@ export function PricingCalculator({
                 isCustom={isCustom}
                 frequencyLabel={frequencyLabel(frequency)}
                 onBook={openBooking}
-                onQuote={openBooking}
+                features={features}
               />
             </div>
           </div>
@@ -261,7 +266,7 @@ export function PricingCalculator({
         </Reveal>
       </Container>
 
-      <AssessmentBookingModal
+      {features.assessmentBookingEnabled ? <AssessmentBookingModal
         open={modalOpen}
         onClose={() => setModalOpen(false)}
         locale={locale}
@@ -269,7 +274,9 @@ export function PricingCalculator({
         sizeM2={size}
         frequency={frequency}
         overMax={isCustom}
-      />
+        monthlyEnabled={features.monthlySubscriptionEnabled}
+        annualEnabled={features.annualSubscriptionEnabled}
+      /> : null}
     </Section>
   );
 }
@@ -280,14 +287,14 @@ function ResultPanel({
   isCustom,
   frequencyLabel,
   onBook,
-  onQuote,
+  features,
 }: {
   dict: Dictionary;
   result: ReturnType<typeof calculatePrice>;
   isCustom: boolean;
   frequencyLabel: string;
   onBook: () => void;
-  onQuote: () => void;
+  features: PublicFeatureState;
 }) {
   const c = dict.calculator;
 
@@ -297,14 +304,13 @@ function ResultPanel({
         <p className="text-xs font-semibold uppercase tracking-widest text-accent">{c.result.heading}</p>
         <h3 className="mt-4 font-serif text-2xl text-foreground">{c.custom.title}</h3>
         <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{c.custom.body}</p>
-        <button
-          type="button"
-          onClick={onQuote}
+        <Link
+          href={features.assessmentBookingEnabled ? "#calculator" : features.fallbackUrl}
           className={cn(buttonVariants({ variant: "primary", size: "lg" }), "mt-8 w-full")}
         >
-          {c.custom.cta}
+          {features.assessmentBookingEnabled ? c.cta.book : features.fallbackLabel}
           <ArrowRight className="h-4 w-4" />
-        </button>
+        </Link>
       </div>
     );
   }
@@ -402,14 +408,13 @@ function ResultPanel({
       </div>
 
       <div className="mt-7">
-        <button
-          type="button"
-          onClick={onBook}
+        {features.assessmentBookingEnabled ? <button
+          type="button" onClick={onBook}
           className={cn(buttonVariants({ variant: "primary", size: "lg" }), "w-full")}
         >
           {c.cta.book}
           <ArrowRight className="h-4 w-4" />
-        </button>
+        </button> : <><p className="mb-4 text-sm leading-relaxed text-muted-foreground">{features.disabledMessage}</p><Link href={features.fallbackUrl} className={cn(buttonVariants({variant:"primary",size:"lg"}),"w-full")}>{features.fallbackLabel}<ArrowRight className="h-4 w-4" /></Link></>}
       </div>
     </div>
   );

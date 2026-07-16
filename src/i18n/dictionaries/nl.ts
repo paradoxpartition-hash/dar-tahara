@@ -23,7 +23,8 @@ const nl: DeepPartial<Dictionary> = {
     gallery: "Galerij",
     faq: "FAQ",
     book: "Eerste woningbeoordeling boeken",
-    quote: "Offerte aanvragen",
+    login: "Inloggen",
+    myAccount: "Mijn account",
     menu: "Menu",
     close: "Sluiten",
     language: "Taal",
@@ -35,7 +36,6 @@ const nl: DeepPartial<Dictionary> = {
     subtitle:
       "Voor huiseigenaren, expats en eigenaren van vakantiewoningen in heel Marokko. Wij reinigen, inspecteren en onderhouden uw woning met stille precisie—zodat u terugkeert naar comfort, nooit naar zorgen.",
     ctaPrimary: "Eerste woningbeoordeling boeken",
-    ctaSecondary: "Offerte aanvragen",
     ctaTertiary: "Meer weten",
     stat1Value: "500+",
     stat1Label: "Verzorgde woningen",
@@ -216,7 +216,6 @@ const nl: DeepPartial<Dictionary> = {
     subtitle:
       "Laat ons voor uw huis zorgen, zodat u er nooit aan hoeft te denken. Boek een eerste bezoek of vraag vandaag nog een offerte op maat aan.",
     ctaPrimary: "Eerste woningbeoordeling boeken",
-    ctaSecondary: "Offerte aanvragen",
     whatsapp: "Chat via WhatsApp",
     whatsappInfo: "Chat met de Dar Tahara-assistent op WhatsApp over diensten, prijzen, abonnementen, toegang tot de woning en boekingen. Complexe vragen kunnen worden overgedragen aan onze supportdesk per e-mail.",
     whatsappPrivacy: "Dit is een geautomatiseerde assistent. Stuur geen betaalgegevens, wachtwoorden of volledige toegangscodes.",
@@ -263,13 +262,12 @@ const nl: DeepPartial<Dictionary> = {
       effective: "Effectieve prijs per bezoek",
     },
     custom: {
-      title: "Een woning van niveau verdient een offerte op maat.",
-      body: "Woningen groter dan 250 m² vereisen een gepersonaliseerde offerte.",
-      cta: "Vraag een offerte op maat aan",
+      title: "Een woning van niveau verdient een individuele beoordeling.",
+      body: "Woningen groter dan 250 m² worden individueel beoordeeld voordat een servicevoorstel wordt opgesteld.",
+      cta: "Vraag een beoordeling aan",
     },
     cta: {
       book: "Boek uw eerste woningbeoordeling",
-      quote: "Vraag een persoonlijke offerte aan",
     },
     disclaimer:
       "Dit is een geschatte prijs op basis van de woninggrootte en de gekozen schoonmaakfrequentie. De uiteindelijke prijs kan variëren afhankelijk van de staat van de woning, de toegankelijkheid, aanvullende diensten en specifieke schoonmaakwensen.",
@@ -280,7 +278,6 @@ const nl: DeepPartial<Dictionary> = {
   },
   enquiry: {
     title: "Boek uw schoonmaak",
-    quoteTitle: "Vraag een persoonlijke offerte aan",
     subtitle: "Deel enkele gegevens en wij bevestigen uw eerste bezoek binnen 24 uur.",
     summary: "Uw selectie",
     fields: {
@@ -310,7 +307,7 @@ const nl: DeepPartial<Dictionary> = {
     subtitle:
       "Uw eerste bezoek stelt ons in staat uw woning professioneel te beoordelen, waar nodig een eerste dieptereiniging uit te voeren en uw persoonlijke schoonmaakplan op te stellen.",
     close: "Sluiten",
-    pay: "Betaal & boek beoordeling",
+    pay: "Beoordelingsaanvraag indienen",
     paySecure:
       "Veilige betaling via Stripe. Uw abonnement begint pas nadat uw eerste Woningbeoordeling is voltooid en goedgekeurd.",
     summary: {
@@ -391,8 +388,8 @@ const nl: DeepPartial<Dictionary> = {
       doorlock_internet_required: "Bevestig dat de woning een internetverbinding heeft voor het slimme deurslot.",
       legal_acceptance_required: "Bevestig de gegevens en accepteer de voorwaarden om door te gaan.",
       rate_limited: "Te veel pogingen. Probeer het over een minuut opnieuw.",
-      checkout_not_configured: "Online boeken is momenteel niet beschikbaar — neem contact met ons op.",
-      checkout_failed: "We konden de beveiligde betaling niet starten. Probeer het opnieuw.",
+      checkout_not_configured: "Aanvragen zijn momenteel niet beschikbaar — meld u aan voor vroege toegang.",
+      checkout_failed: "Uw aanvraag kon niet worden ingediend. Probeer het opnieuw.",
       network: "Netwerkfout. Controleer uw verbinding en probeer het opnieuw.",
     },
   },
