@@ -200,11 +200,14 @@ export function resolveConversationLanguage(input: {
 
   const detection = detectLanguage(input.message);
   if (input.currentLanguage) {
+    const latestMessageLanguage = detection.locale && detection.confidence > LANGUAGE_CONFIDENCE_THRESHOLD
+      ? detection.locale
+      : null;
     return {
-      locale: input.currentLanguage,
+      locale: latestMessageLanguage || input.currentLanguage,
       detectedLocale: detection.locale,
       confidence: detection.confidence,
-      languageChanged: false,
+      languageChanged: Boolean(latestMessageLanguage && latestMessageLanguage !== input.currentLanguage),
       explicitChange: false,
       needsClarification: false,
     };

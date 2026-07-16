@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { Bot, MessageCircle, Send, UserRound, X } from "lucide-react";
+import { Bot, MessageCircle, Send, ThumbsDown, ThumbsUp, UserRound, X } from "lucide-react";
 import { isLocale, type Locale } from "@/i18n/config";
 import { buttonVariants } from "@/components/ui/button";
 import {
@@ -26,6 +26,16 @@ type Message = { id: string; role: "assistant" | "customer"; body: string; autom
 type Suggestion = { id: string; label: string; value: string; intent: string };
 type Escalation = { required: boolean; reason: string | null; nextAction: string };
 
+const FEEDBACK_LABELS: Record<Locale, { helpful: string; unhelpful: string; thanks: string }> = {
+  en: { helpful: "Helpful", unhelpful: "Not helpful", thanks: "Thank you for your feedback" },
+  nl: { helpful: "Nuttig", unhelpful: "Niet nuttig", thanks: "Bedankt voor uw feedback" },
+  fr: { helpful: "Utile", unhelpful: "Pas utile", thanks: "Merci pour votre avis" },
+  es: { helpful: "Útil", unhelpful: "No útil", thanks: "Gracias por su opinión" },
+  de: { helpful: "Hilfreich", unhelpful: "Nicht hilfreich", thanks: "Danke für Ihr Feedback" },
+  pt: { helpful: "Útil", unhelpful: "Não útil", thanks: "Obrigado pelo seu comentário" },
+  ar: { helpful: "مفيد", unhelpful: "غير مفيد", thanks: "شكراً لملاحظاتك" },
+};
+
 function getSessionId() {
   const key = "dar-tahara-assistant-session";
   const existing = window.localStorage.getItem(key);
@@ -46,6 +56,7 @@ export function WebsiteChat({ locale, copy }: { locale: Locale; copy: ChatCopy }
   const [suggestions, setSuggestions] = React.useState<Suggestion[]>([]);
   const [escalation, setEscalation] = React.useState<Escalation | null>(null);
   const [unread, setUnread] = React.useState(false);
+  const [feedbackByMessage, setFeedbackByMessage] = React.useState<Record<string, "helpful" | "unhelpful">>({});
   const [messages, setMessages] = React.useState<Message[]>(() => [
     { id: "welcome", role: "assistant", automated: true, body: copy.subtitle },
   ]);
@@ -130,6 +141,21 @@ export function WebsiteChat({ locale, copy }: { locale: Locale; copy: ChatCopy }
     }
   }
 
+  async function sendFeedback(messageId: string, rating: "helpful" | "unhelpful") {
+    if (!conversationId || feedbackByMessage[messageId]) return;
+    setFeedbackByMessage((current) => ({ ...current, [messageId]: rating }));
+    const response = await fetch("/api/assistant/feedback", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ conversationId, sessionId: getSessionId(), rating }),
+    }).catch(() => null);
+    if (!response?.ok) setFeedbackByMessage((current) => {
+      const next = { ...current };
+      delete next[messageId];
+      return next;
+    });
+  }
+
   const activeLanguage = sessionLanguage || selectedLanguage || locale;
   const direction = activeLanguage === "ar" ? "rtl" : "ltr";
 
@@ -172,6 +198,14 @@ export function WebsiteChat({ locale, copy }: { locale: Locale; copy: ChatCopy }
                 >
                   {message.body}
                   {message.automated ? <p className="mt-2 text-[11px] opacity-70">{copy.automated}</p> : null}
+                  {message.role === "assistant" && message.id !== "welcome" && conversationId ? (
+                    <div className="mt-2 flex items-center gap-1 border-t border-border/60 pt-2">
+                      {feedbackByMessage[message.id] ? <span className="text-[11px] text-muted-foreground">{FEEDBACK_LABELS[activeLanguage].thanks}</span> : <>
+                        <button type="button" onClick={() => sendFeedback(message.id, "helpful")} className="rounded p-1 text-muted-foreground hover:bg-secondary hover:text-foreground" aria-label={FEEDBACK_LABELS[activeLanguage].helpful} title={FEEDBACK_LABELS[activeLanguage].helpful}><ThumbsUp className="h-3.5 w-3.5" /></button>
+                        <button type="button" onClick={() => sendFeedback(message.id, "unhelpful")} className="rounded p-1 text-muted-foreground hover:bg-secondary hover:text-foreground" aria-label={FEEDBACK_LABELS[activeLanguage].unhelpful} title={FEEDBACK_LABELS[activeLanguage].unhelpful}><ThumbsDown className="h-3.5 w-3.5" /></button>
+                      </>}
+                    </div>
+                  ) : null}
                 </div>
                 {message.role === "customer" ? <UserRound className="mt-1 h-5 w-5 shrink-0 text-muted-foreground" /> : null}
               </article>

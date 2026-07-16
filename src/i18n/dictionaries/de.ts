@@ -442,7 +442,7 @@ const de: DeepPartial<Dictionary> = {
       send: "Senden",
       automated: "Automatischer Assistent",
       human: "Dar Tahara-Spezialist",
-      error: "Entschuldigung, ich konnte das nicht sicher verarbeiten. Ich kann Sie mit einem Dar Tahara-Spezialisten verbinden.",
+      error: "Entschuldigung, die Anfrage konnte nicht abgeschlossen werden. Versuchen Sie es erneut; das Gespräch wurde gespeichert.",
       quickActions: [
         "Wie funktioniert der erste Besuch?",
         "Preis berechnen",

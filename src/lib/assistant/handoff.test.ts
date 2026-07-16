@@ -31,6 +31,33 @@ test("ordinary questions containing the word support do not trigger human handof
   assert.equal(result.nextAction, "answer");
 });
 
+test("hypothetical incident and policy questions do not trigger handoff", () => {
+  for (const [message, intent] of [
+    ["What is your damage policy?", "complaint"],
+    ["What happens if a physical key is lost?", "service_explanation"],
+    ["How do you handle an unsafe condition?", "service_explanation"],
+  ] as const) {
+    const result = evaluateHumanHandoff({ ...base, message, intent });
+    assert.equal(result.required, false, message);
+  }
+});
+
+test("real operational booking, access, damage, injury and contract cases trigger handoff", () => {
+  const cases = [
+    ["Please change my confirmed booking to Friday.", "booking_guidance", "account_access_required"],
+    ["I lost the physical key during today's service.", "service_explanation", "service_failure"],
+    ["The digital lock is not working and the team cannot enter.", "service_explanation", "service_failure"],
+    ["Your team damaged my table.", "complaint", "damage_claim"],
+    ["I was injured during the visit.", "complaint", "security_issue"],
+    ["I want to terminate my existing contract.", "cancellation", "account_access_required"],
+  ] as const;
+  for (const [message, intent, reason] of cases) {
+    const result = evaluateHumanHandoff({ ...base, message, intent });
+    assert.equal(result.required, true, message);
+    assert.equal(result.reason, reason, message);
+  }
+});
+
 test("technical bugs get troubleshooting before handoff", () => {
   const first = evaluateHumanHandoff({ ...base, message: "The booking page crashes after payment.", intent: "booking_guidance" });
   assert.equal(first.required, false);

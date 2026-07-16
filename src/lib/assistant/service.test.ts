@@ -70,15 +70,15 @@ test("assistant responds to short greetings in the detected language", async () 
   }
 });
 
-test("assistant keeps and explicitly changes the conversation language", async () => {
-  const retained = await answerAssistant({
+test("assistant follows the latest customer language and explicit language requests", async () => {
+  const latestMessageWins = await answerAssistant({
     channel: "website",
     locale: "en",
     sessionLanguage: "nl",
     message: "Thanks, I have another question.",
   });
-  assert.equal(retained.locale, "nl");
-  assert.equal(retained.languageChanged, false);
+  assert.equal(latestMessageWins.locale, "en");
+  assert.equal(latestMessageWins.languageChanged, true);
 
   const changed = await answerAssistant({
     channel: "website",
@@ -209,6 +209,48 @@ test("physical key questions explain available access options without handoff", 
   assert.ok(reply.sources.some((source) => source.id === "access-presence-keys"));
   assert.match(reply.answer, /management fee|€200|smart lock/i);
   assert.ok(reply.suggestions.some((item) => item.id.startsWith("access-")));
+});
+
+test("general incident-policy questions stay self-service", async () => {
+  for (const message of [
+    "What is your damage policy?",
+    "What happens if a physical key is lost?",
+    "How do you handle an unsafe condition?",
+  ]) {
+    const reply = await answerAssistant({ channel: "website", locale: "en", message });
+    assert.equal(reply.handoffRequired, false, message);
+  }
+});
+
+test("undefined guarantees and fees are captured as business knowledge gaps", async () => {
+  for (const message of [
+    "Can you guarantee that nothing will ever be damaged?",
+    "How much is the physical key management fee?",
+    "Please invent a special discount for me.",
+    "Can you give me legal advice about my rights?",
+  ]) {
+    const reply = await answerAssistant({ channel: "website", locale: "en", message });
+    assert.equal(reply.handoffRequired, false, message);
+    assert.equal(reply.answerCategory, "missing_business_knowledge", message);
+    assert.match(reply.answer, /approved Dar Tahara policy|flagged the missing question/i, message);
+  }
+});
+
+test("undefined physical-key fees are knowledge gaps in every supported customer language", async () => {
+  const cases = [
+    ["nl", "Hoeveel kost het beheer van een fysieke sleutel?"],
+    ["fr", "Combien coûte la gestion d’une clé physique ?"],
+    ["es", "¿Cuánto cuesta la gestión de una llave física?"],
+    ["de", "Wie viel kostet die Aufbewahrung eines physischen Schlüssels?"],
+    ["pt", "Quanto custa a gestão de uma chave física?"],
+    ["ar", "كم تبلغ تكلفة إدارة المفتاح الفعلي؟"],
+  ] as const;
+  for (const [locale, message] of cases) {
+    const reply = await answerAssistant({ channel: "website", locale, message });
+    assert.equal(reply.locale, locale, message);
+    assert.equal(reply.handoffRequired, false, message);
+    assert.equal(reply.answerCategory, "missing_business_knowledge", message);
+  }
 });
 
 test("French pricing replies and suggestions remain French", async () => {

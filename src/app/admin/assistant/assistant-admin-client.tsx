@@ -1,8 +1,9 @@
 "use client";
 
 import * as React from "react";
-import { MessageSquare, RefreshCw, ShieldCheck } from "lucide-react";
+import { BookOpenCheck, MessageSquare, RefreshCw, ShieldCheck } from "lucide-react";
 import { buttonVariants } from "@/components/ui/button";
+import { KnowledgeBuilderClient } from "./knowledge-builder-client";
 
 type AssistantMessage = { id: number; role: string; body: string; created_at: string; confidence?: number | null; intent?: string | null };
 type Conversation = {
@@ -28,6 +29,7 @@ export function AssistantAdminClient() {
   const [busy, setBusy] = React.useState(false);
   const [query, setQuery] = React.useState("");
   const [status, setStatus] = React.useState("all");
+  const [knowledgeMode, setKnowledgeMode] = React.useState(false);
 
   async function load() {
     setBusy(true);
@@ -65,6 +67,15 @@ export function AssistantAdminClient() {
     return haystack.includes(query.toLowerCase()) && (status === "all" || row.status === status || row.escalation?.status === status);
   });
 
+  if (knowledgeMode) return (
+    <main className="min-h-screen bg-secondary/30 p-4 sm:p-8">
+      <div className="mx-auto max-w-6xl">
+        <button onClick={() => setKnowledgeMode(false)} className={buttonVariants({ variant: "outline", size: "sm" })}>← Conversation queue</button>
+        <div className="mt-6"><KnowledgeBuilderClient /></div>
+      </div>
+    </main>
+  );
+
   return (
     <main className="min-h-screen bg-secondary/30 p-4 sm:p-8">
       <div className="mx-auto max-w-6xl">
@@ -76,9 +87,10 @@ export function AssistantAdminClient() {
             <h1 className="mt-2 font-serif text-4xl">Assistant conversations</h1>
             <p className="mt-1 text-sm text-muted-foreground">Website chat and WhatsApp conversations share one queue.</p>
           </div>
-          <button onClick={load} disabled={busy} className={buttonVariants({ variant: "outline", size: "md" })}>
-            <RefreshCw className="h-4 w-4" /> Refresh
-          </button>
+          <div className="flex flex-wrap gap-2">
+            <button onClick={() => setKnowledgeMode(true)} className={buttonVariants({ variant: "primary", size: "md" })}><BookOpenCheck className="h-4 w-4" /> Knowledge Builder</button>
+            <button onClick={load} disabled={busy} className={buttonVariants({ variant: "outline", size: "md" })}><RefreshCw className="h-4 w-4" /> Refresh</button>
+          </div>
         </header>
         {error ? <p className="mt-5 rounded-xl bg-red-500/10 p-3 text-sm text-red-700">{error}</p> : null}
         <div className="mt-5 flex flex-wrap gap-3">

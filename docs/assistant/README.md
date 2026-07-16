@@ -1,256 +1,168 @@
-# Dar Tahara shared assistant platform
+# Dar Tahara Automated Assistant
 
-For the production WhatsApp webhook, queue, Supabase, Groq, FreeScout, retention, deployment and rollback runbook, see [`docs/WHATSAPP_SUPPORT.md`](../WHATSAPP_SUPPORT.md).
+The website chat and WhatsApp integration use the same server-side engine in `src/lib/assistant`. Future mobile and hospitality channels should call `answerAssistant` rather than implementing their own detection, retrieval, or escalation rules.
 
-This implementation creates one shared customer-service assistant for both:
+For the production WhatsApp webhook, queue, FreeScout and deployment runbook, see `docs/WHATSAPP_SUPPORT.md`.
 
-- the Dar Tahara website chat
-- the WhatsApp Business webhook
+## Root cause of the old fallback
 
-Both channels call the same server-side assistant engine in `src/lib/assistant/*`.
-The website and WhatsApp must not drift into separate bots.
+The previous assistant used a shallow exact-token retrieval pass. When no entry scored highly enough, deterministic composition selected a generic specialist fallback. The static handoff article also explicitly treated missing knowledge and low confidence as reasons to escalate, reinforcing the behavior for model-generated answers. Foreign-language wording, spelling mistakes and follow-up questions therefore missed English source terms more often. The problem was retrieval and decision policy, not a token/context limit.
 
-## Conversation language
+## Answering workflow
 
-The first customer text is detected with the pinned `franc` language detector, supplemented by deterministic short-greeting, Arabic-script and Moroccan Darija signals. A result must exceed 80% confidence; otherwise the assistant asks the customer to select a language instead of guessing.
+Each turn now performs the following shared flow:
 
-The confirmed language is stored on the existing conversation record (`assistant_conversations.language` for website chat and `whatsapp_conversations.detected_language` for WhatsApp). It remains fixed for the session. Ordinary foreign or mixed-language messages do not change it; only an explicit request such as “Can we continue in English?” updates it.
+1. Resolve language using an explicit UI selection first, then the latest confidently detected customer message, then stored conversation/browser language.
+2. Classify the current intent with recent history for short follow-ups.
+3. Normalize common spelling mistakes and create synonym/semantic retrieval rewrites.
+4. Search published Supabase knowledge and version-controlled approved knowledge across those rewrites.
+5. Filter out non-public, unapproved and obsolete versions, rank the results, and retain source IDs.
+6. Use deterministic tools for authoritative calculations such as pricing.
+7. Answer directly from one approved source (`confirmed`) or compatible sources (`derived`).
+8. Ask one concise question when customer-specific information is missing (`needs_customer_clarification`).
+9. Record an internal gap when Dar Tahara has not approved a policy (`missing_business_knowledge`).
+10. Create a human handoff only for a real staff operation (`requires_human_action`).
 
-On the website, choosing a locale from the site language switcher is also an explicit language change. The selected locale overrides older browser and database conversation state, and the next assistant response uses and persists that language.
+The configured model receives original, untranslated history and a separate `Current conversation language` instruction. It may translate approved facts into that language, but cannot add prices, policies, cities, availability, guarantees, discounts, legal conclusions or service inclusions.
 
-The provider receives a separate system directive naming the current conversation language. Original history is sent as chronological user/assistant messages without translation or rewriting. Customer names, addresses, IDs, URLs, emails and phone numbers are preserved verbatim.
+## Language behavior
 
-## Architecture
+Supported languages are English, Dutch, French, Spanish, German, Portuguese and Arabic, including deterministic Moroccan Darija signals. Short greetings are handled before statistical detection. The threshold is greater than 80%; a low-confidence first message produces a multilingual language-choice question.
 
-Main pieces:
+Language priority is:
 
-- `src/lib/assistant/knowledge.ts` — version-controlled approved knowledge.
-- `src/lib/assistant/retrieval.ts` — language-aware keyword/semantic-style retrieval and intent classification.
-- `src/lib/assistant/language.ts` — shared detection, confidence, session retention and explicit language switching for every channel.
-- `src/lib/assistant/suggestions.ts` — shared, localized next-step suggestion generation and per-conversation suggestion state.
-- `src/lib/assistant/handoff.ts` — explicit escalation evaluation, guided self-service and structured handoff summaries.
-- `src/lib/assistant/service.ts` — shared assistant orchestration, pricing tool use, handoff rules and Supabase persistence.
-- `src/lib/assistant/provider.ts` — provider-neutral OpenAI-compatible model abstraction.
-- `src/app/api/assistant/chat/route.ts` — website chat API.
-- `src/app/api/whatsapp/webhook/route.ts` — WhatsApp Business webhook, now routed through the same assistant engine.
-- `src/components/assistant/website-chat.tsx` — accessible floating website chat.
-- `src/app/admin/assistant/*` — operations view for assistant conversations.
-- `supabase/migrations/20260714005102_dar_tahara_assistant_platform.sql` — assistant, knowledge, handoff, WhatsApp and audit data model.
+1. explicitly selected language;
+2. latest confidently detected customer message;
+3. stored conversation language;
+4. browser/account language;
+5. default locale.
 
-If no AI provider is configured, the assistant still answers from retrieved approved knowledge and deterministic tools. It does not invent policy or prices.
+This lets a customer switch naturally by writing in another supported language and also recognizes requests such as “Can we continue in English?”. Main answers, clarification, suggestions, errors, handoff copy and feedback controls use the active language. Names, addresses, booking/invoice IDs, URLs, email addresses, phone numbers, units, dates and prices are not translated.
 
-## Knowledge base
+## Retrieval and grounding
 
-The active production knowledge currently lives in version-controlled source:
+`src/lib/assistant/reasoning-provider.ts` provides deterministic query correction and synonym expansion, with optional Grok rewrites. `src/lib/assistant/service.ts` searches original and rewritten queries, related intent categories, localized static knowledge and published `knowledge_entries`. The migration adds a GIN-indexed full-text document. Approved English knowledge remains valid source material for a non-English response.
 
-- title
-- category
-- language
-- status
-- version
-- effective date
-- last reviewed date
-- source
-- visibility
-- keywords
-- related questions
-- summary
-- body
+The provider is never called as a business-truth source. If no approved facts or deterministic tool result exist, the assistant records a gap and gives a specific missing-policy response instead of invoking a model to guess.
 
-The migration also creates database-backed knowledge tables for future admin editing:
+## Escalation rules
 
-- `knowledge_sources`
-- `knowledge_articles`
-- `knowledge_article_versions`
-- `knowledge_translations`
-- `faq_items`
+Human support is triggered only for:
 
-Only approved/public knowledge should be used for customer answers. Draft or archived records must not be shown as current policy.
+- an explicit request for a person;
+- changing or cancelling a confirmed booking;
+- a possibly charged failed payment, duplicate charge, refund request or invoice dispute requiring records;
+- reported theft, missing property, damage, injury, serious safety/security conditions or staff misconduct;
+- an active property-access failure, lost physical key or active digital-lock malfunction;
+- staff no-show;
+- terminating an existing contract/subscription;
+- account-specific information requiring authentication or internal records;
+- an operational exception/approval;
+- a repeated unresolved technical failure;
+- an unresolved unknown request after multiple clarification attempts.
 
-## Website chat
+General questions containing words such as “damage”, “lost key”, “refund” or “unsafe” are not treated as incidents when they are clearly hypothetical or policy questions.
 
-The chat is mounted in the locale layout and appears on every localized page.
+## Knowledge Builder
 
-Features implemented:
+Administrators open `/admin/assistant` and select **Knowledge Builder**. It shows a manageable prioritized queue, unanswered-question frequency, handoffs, clarification/self-service counts, low-confidence answers, outdated entries and coverage by category.
 
-- responsive floating chat
-- accessible open/close controls
-- keyboard-submittable form
-- conversation persistence via server `conversationId`
-- local browser `sessionId`
-- translated UI copy
-- 3–4 contextual, localized reply suggestions that are replaced after every turn
-- suggestion selection and answered-topic tracking in conversation metadata
-- guided clarification and troubleshooting before human escalation
-- structured escalation state and handoff summaries
-- right-to-left rendering for Arabic conversations
-- automated-response labelling
-- server-side persistence when Supabase service role is configured
+Workflow states are `draft_question`, `awaiting_owner_answer`, `owner_answered`, `needs_clarification`, `pending_approval`, `approved`, `rejected`, `superseded` and `archived`.
 
-The chat API never receives service-role secrets in the browser.
+Saving an owner answer creates a pending-review draft only. **Approve and publish** calls the atomic `approve_knowledge_builder_question` database function, which creates/updates the article, appends a version, publishes one retrieval entry, resolves linked gaps and writes an audit event in one transaction. A partial failure rolls back the whole approval. Draft, rejected, superseded and archived content is never queried as customer-facing truth.
 
-## WhatsApp Business setup
+Unanswered customer text is privacy-redacted, fingerprinted, clustered, counted and linked to an owner question. Email, phone, booking reference, address, URL and access-code data are masked before optional reasoning calls.
 
-The project uses the official Meta WhatsApp Cloud API helper in `src/lib/whatsapp.ts`.
+## Optional Grok integration
 
-Required Meta configuration:
-
-1. Meta Business account
-2. WhatsApp Business Account
-3. verified phone number
-4. permanent access token or secure token rotation
-5. webhook URL:
-   - `https://www.dartahara.com/api/whatsapp/webhook`
-6. webhook verify token matching `WHATSAPP_VERIFY_TOKEN`
-7. app secret matching `WHATSAPP_APP_SECRET`
-8. subscribed webhook fields:
-   - `messages`
-   - `message_template_status_update`
-   - delivery/read status fields where available
-
-Required environment variables:
+Grok is disabled by default. Configure only server-side:
 
 ```env
-WHATSAPP_ACCESS_TOKEN=
-WHATSAPP_PHONE_NUMBER_ID=
-WHATSAPP_VERIFY_TOKEN=
-WHATSAPP_APP_SECRET=
-WHATSAPP_GRAPH_VERSION=v25.0
+GROK_ENABLED=false
+GROK_API_KEY=
+GROK_MODEL=
+GROK_TIMEOUT_MS=6000
+GROK_MAX_TOKENS=350
+GROK_RATE_LIMIT_PER_MINUTE=20
 ```
 
-Template variables are listed in `.env.example`.
+When enabled, Grok may rewrite retrieval queries, draft clarifications/suggestions and summarize supplied approved text. The provider has bounded tokens, timeouts, retries, per-minute limiting, a circuit breaker, privacy redaction and deterministic fallback. It may never define Dar Tahara business facts. Provider telemetry records operation, model, success, latency, token counts and failure code without prompts or customer content.
 
-Templates to create and localize in Meta:
+## Database and APIs
 
-- booking confirmation
-- payment confirmation
-- appointment reminder
-- assessment completed
-- updated subscription proposal
-- subscription activation
-- failed payment
-- human follow-up
-- annual renewal reminder
+Migration: `supabase/migrations/20260716151742_assistant_knowledge_builder.sql`.
 
-Do not use WhatsApp Web scraping, browser automation or personal-account automation.
+New/extended storage:
 
-## Assistant provider
+- `knowledge_builder_questions` — owner interview and approval queue;
+- `assistant_knowledge_gaps` — clustered unanswered questions;
+- `assistant_provider_events` — privacy-safe provider cost/failure telemetry;
+- `knowledge_articles` / `knowledge_article_versions` — canonical metadata and immutable versions;
+- `knowledge_entries` — published retrieval records with keywords, synonyms, scope and full-text search;
+- `assistant_feedback` — helpful/unhelpful customer feedback (existing table, new API/UI use).
 
-The provider layer is OpenAI-compatible but not vendor-locked.
+Routes:
 
-Optional env:
+- `POST /api/assistant/chat` — shared website assistant;
+- `POST /api/assistant/feedback` — session-bound answer feedback;
+- `GET|POST /api/admin/assistant/knowledge` — administrator Knowledge Builder;
+- `POST /api/jobs/assistant` — authenticated telemetry retention cleanup.
+
+All Knowledge Builder, gap and provider-event tables have RLS enabled and no anonymous/authenticated grants. The app accesses them with the server-only service role through protected routes.
+
+## Environment and retention
+
+Besides the standard assistant/provider variables in `.env.example`, configure:
 
 ```env
-ASSISTANT_PROVIDER=
-ASSISTANT_API_BASE_URL=
-ASSISTANT_API_KEY=
-ASSISTANT_MODEL=
-ASSISTANT_FALLBACK_MODEL=
-ASSISTANT_TIMEOUT_MS=8000
-ASSISTANT_MAX_TOKENS=450
-ASSISTANT_TEMPERATURE=0.2
-ASSISTANT_RETRIEVAL_LIMIT=4
-ASSISTANT_CONFIDENCE_THRESHOLD=0.62
+ASSISTANT_KNOWLEDGE_GAP_RETENTION_DAYS=365
+ASSISTANT_PROVIDER_EVENT_RETENTION_DAYS=90
+ASSISTANT_JOB_SECRET=
+CRON_SECRET=
 ```
 
-If these are unset, the deterministic grounded-answer path is used.
+`vercel.json` schedules `GET /api/jobs/assistant` daily. Vercel supplies `Authorization: Bearer $CRON_SECRET`; external schedulers may instead call `POST` with `ASSISTANT_JOB_SECRET`. The database validates positive retention periods and deletes expired gap samples and provider telemetry.
 
-The shared assistant language layer detects the first customer language, honors an explicit language switch or the website language selector, and keeps that choice for the conversation. Approved English knowledge is valid factual source material for every supported language; the provider translates its meaning into the selected language. The deterministic fallback also includes localized core knowledge for Dutch, French, Spanish, German, Portuguese and Arabic, so a provider outage does not turn a normal FAQ into a false specialist handoff.
+## Deployment
 
-Every chat API response includes `message`, `suggestions`, and an `escalation` object with `required`, `reason`, `confidence`, and `next_action`. Suggestions are sent back as ordinary customer messages when selected. Previously shown and selected suggestion IDs, answered topics, unresolved topics, and clarification counts are stored in conversation metadata.
+1. Back up the database.
+2. Apply `20260716151742_assistant_knowledge_builder.sql` in staging.
+3. Configure the Supabase service role and optional provider settings server-side.
+4. Run `npm run typecheck`, `npm test`, `npm run check:i18n` and `npm run build`.
+5. Test website and WhatsApp conversations in every supported language.
+6. Test one owner answer and approval in staging; confirm only the approved version is retrieved.
+7. Deploy the application and confirm the scheduled retention job is enabled.
 
-## Tool layer
+## Rollback
 
-Implemented tool behavior:
+The feature fails safely when Grok is disabled or unavailable. For an application-only rollback, deploy the previous revision; the additive tables/columns can remain without affecting old code.
 
-- `calculate_price` uses the existing shared pricing engine.
-- handoff creates `support_cases` when Supabase service role is configured.
-- booking-status/payment/subscription-specific answers require verified identity or human handoff.
+For a database rollback during a maintenance window:
 
-Future transactional tools should follow the same rules:
+1. stop Knowledge Builder writes and retain a database backup;
+2. archive newly approved owner entries instead of deleting them when an audit trail is required;
+3. drop `approve_knowledge_builder_question` and `cleanup_assistant_knowledge_retention`;
+4. drop the Knowledge Builder/search triggers and helper function;
+5. drop `assistant_provider_events`, `assistant_knowledge_gaps` and `knowledge_builder_questions` in that dependency order;
+6. optionally remove only the columns added by this migration from the three knowledge tables after confirming no newer application uses them;
+7. restore the previous application and run its smoke tests.
 
-- validate input
-- validate authorization
-- log the tool call
-- use idempotency for consequential actions
-- return structured results
-- never expose stack traces
-- require confirmation before changing bookings, subscriptions or payments
+Avoid destructive rollback in production unless the additive schema itself is causing a problem; leaving unused tables is safer and preserves owner answers and auditability.
 
-## Admin operations
-
-Admin view:
-
-- `/admin/assistant`
-
-Capabilities implemented:
-
-- view website and WhatsApp conversations in one queue
-- see channel, language, status, intent and handoff reason
-- inspect recent messages
-- take over a conversation
-- return it to automation
-- add internal notes
-- close conversations
-
-The route uses Supabase Auth and the database-backed `staff` / `administrator` roles.
-
-## Security controls
-
-Implemented:
-
-- server-only assistant/provider code
-- no service-role key in frontend
-- Meta webhook signature verification
-- WhatsApp event idempotency via `provider_event_id`
-- RLS enabled on all new public tables
-- no direct anon table grants
-- authenticated users can only read their own linked rows
-- personal booking/payment/subscription status requires verification or handoff
-- prompt-injection boundaries: customer messages are treated as untrusted and cannot override Dar Tahara policy
-- pricing is calculated by the shared engine, not by model memory
-- support cases are created for refund disputes, complaints, legal/safety issues and human requests
-
-## Testing
-
-Assistant tests cover:
-
-- knowledge retrieval
-- Initial Home Assessment answer grounding
-- pricing tool use
-- refund/dispute escalation
-- booking privacy boundary
-- contextual suggestion generation and replacement
-- vague complaint clarification without escalation
-- duplicate-payment and explicit-human handoff
-- guided technical troubleshooting before escalation
-- physical-key and digital-lock guidance
-- localized French suggestions and non-repetition
+## Verification
 
 Run:
 
 ```bash
 npm run typecheck
-npm run test
+npm test
+npm run check:i18n
 npm run build
+git diff --check
 ```
 
-## Deployment checklist
+The tests cover all supported languages, short greetings, natural/explicit language changes, spelling correction, rephrased retrieval, contextual suggestions, policy-versus-incident handoff, genuine operational escalation, unsupported guarantees/fees/legal advice, privacy redaction, knowledge-gap clustering, protected approval/versioning SQL and Grok-disabled behavior.
 
-Before production use:
+## First owner interview batch
 
-1. Apply the Supabase migration.
-2. Ensure `SUPABASE_SECRET_KEY` or `SUPABASE_SERVICE_ROLE_KEY` is configured server-side.
-3. Configure WhatsApp Cloud API webhook and app secret.
-4. Create and approve WhatsApp templates in all supported languages.
-5. Decide whether to configure an AI provider or run deterministic grounded answers only.
-6. Review the initial knowledge articles with Dar Tahara’s legal/operations owner.
-7. Verify assistant operations with separate staff and administrator test accounts.
-
-## Known limitations
-
-- Database-backed knowledge editing is modeled but the current answer source is still version-controlled knowledge.
-- Human takeover UI records status and notes but does not yet provide live two-way agent messaging from the admin page.
-- Personal booking status requires verified identity; no one-time verification link has been added yet.
-- Media handling records WhatsApp event metadata but does not process media attachments.
-- AI provider calls are optional and disabled unless provider env vars are configured.
+The migration seeds ten blocking questions in this order: pricing above 250 m²; window-cleaning inclusion; first paid cleaning scope; subscription pause rules; physical-key fee; digital-lock models and €200 scope; cancellation notice/fees; refund eligibility/timing; exact city boundaries; and human-support hours/SLA. Answer these in Admin → Automated Assistant → Knowledge Builder, then have each normalized answer reviewed and approved.

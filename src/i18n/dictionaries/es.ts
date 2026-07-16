@@ -442,7 +442,7 @@ const es: DeepPartial<Dictionary> = {
       send: "Enviar",
       automated: "Asistente automático",
       human: "Especialista Dar Tahara",
-      error: "Lo siento, no he podido procesarlo de forma segura. Puedo conectarle con un especialista de Dar Tahara.",
+      error: "Lo siento, no se pudo completar la solicitud. Inténtelo de nuevo; la conversación se ha conservado.",
       quickActions: [
         "¿Cómo funciona la primera visita?",
         "Calcular mi precio",

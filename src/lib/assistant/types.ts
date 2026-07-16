@@ -40,6 +40,13 @@ export type RetrievedKnowledge = {
   matchedKeywords: string[];
 };
 
+export type AssistantAnswerCategory =
+  | "confirmed"
+  | "derived"
+  | "needs_customer_clarification"
+  | "missing_business_knowledge"
+  | "requires_human_action";
+
 export type AssistantIntent =
   | "general_faq"
   | "service_explanation"
@@ -143,6 +150,7 @@ export type AssistantEscalation = {
   reason: AssistantEscalationReason | null;
   confidence: number;
   nextAction: AssistantNextAction;
+  topic?: string | null;
   summary?: AssistantHandoffSummary;
 };
 
@@ -153,10 +161,13 @@ export type AssistantReply = {
   languageChanged: boolean;
   languageConfirmed: boolean;
   intent: AssistantIntent;
+  answerCategory: AssistantAnswerCategory;
   answer: string;
   confidence: number;
   modelName?: string;
   tokenUsage?: { promptTokens?: number; completionTokens?: number; totalTokens?: number };
+  providerName?: string;
+  providerLatencyMs?: number;
   handoffRequired: boolean;
   handoffReason?: string;
   escalation: AssistantEscalation;
@@ -169,6 +180,8 @@ export type AssistantReply = {
     source: string;
     version: number;
   }>;
+  retrievalQueries: string[];
+  knowledgeGapId?: string;
   suggestedActions: Array<{
     label: string;
     action: "ask" | "open_calculator" | "open_booking" | "handoff";

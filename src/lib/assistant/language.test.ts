@@ -50,17 +50,17 @@ test("detects very short greetings without guessing through the statistical mode
   }
 });
 
-test("keeps the selected language for ordinary and mixed-language messages", () => {
+test("uses the latest confidently detected customer language and keeps mixed messages stable", () => {
   const ordinary = resolveConversationLanguage({ message: "Thanks, my booking is DTH-2607-10001.", currentLanguage: "nl" });
-  assert.equal(ordinary.locale, "nl");
-  assert.equal(ordinary.languageChanged, false);
+  assert.equal(ordinary.locale, "en");
+  assert.equal(ordinary.languageChanged, true);
 
   const mixed = resolveConversationLanguage({ message: "Hola, I have una question about my booking.", currentLanguage: "es" });
-  assert.equal(mixed.locale, "es");
-  assert.equal(mixed.languageChanged, false);
+  assert.equal(mixed.locale, "en");
+  assert.equal(mixed.languageChanged, true);
 });
 
-test("changes language only after an explicit customer request", () => {
+test("recognizes explicit customer language requests", () => {
   const english = resolveConversationLanguage({ message: "Can we continue in English?", currentLanguage: "fr" });
   assert.equal(english.locale, "en");
   assert.equal(english.explicitChange, true);

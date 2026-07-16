@@ -5,6 +5,8 @@ import { ANNUAL_DISCOUNT_PERCENT, formatMoneyFromCents } from "@/lib/assessment"
 import { calculatePrice, frequencyOrder, type FrequencyKey } from "@/lib/pricing";
 import { isServiceRoleConfigured, serviceInsert, serviceSelect, serviceUpdate, serviceUpsert } from "@/lib/supabase-rpc";
 import { generateWithConfiguredProvider } from "./provider";
+import { getReasoningProvider } from "./reasoning-provider";
+import { captureKnowledgeGap } from "./knowledge-builder";
 import {
   LANGUAGE_CLARIFICATION,
   LANGUAGE_NAMES,
@@ -24,6 +26,7 @@ import {
 } from "./suggestions";
 import type {
   AssistantInput,
+  AssistantAnswerCategory,
   AssistantIntent,
   AssistantReply,
   AssistantSuggestion,
@@ -34,7 +37,6 @@ import type {
 
 const RESPONSE_BY_LOCALE: Record<Locale, {
   fallback: string;
-  handoff: string;
   bookingPrivate: string;
   priceNeedSize: string;
   priceCustom: string;
@@ -48,8 +50,7 @@ const RESPONSE_BY_LOCALE: Record<Locale, {
   };
 }> = {
   en: {
-    fallback: "I don’t want to give you incorrect information. I can connect you with a Dar Tahara specialist who can review this for you.",
-    handoff: "I can connect you with a Dar Tahara specialist who can review this personally. I’ll include a concise summary so you do not need to repeat everything.",
+    fallback: "I do not yet have an approved Dar Tahara policy for that specific situation. I have flagged the missing question for review. If you share the part of the situation that matters most, I can still explain any related confirmed information.",
     bookingPrivate: "I can help with general booking questions here. For personal booking, payment or subscription details, please use a verified link or speak with a Dar Tahara specialist.",
     priceNeedSize: "I can estimate this for you. Please send the property size in m² and the preferred frequency: monthly, bi-weekly, weekly, or Airbnb & rentals.",
     priceCustom: "For this property size, Dar Tahara prepares a tailored quotation after reviewing the home details.",
@@ -57,8 +58,7 @@ const RESPONSE_BY_LOCALE: Record<Locale, {
     actions: { firstVisit: "How does the first visit work?", calculate: "Calculate my price", book: "Book an assessment", specialist: "Speak to a specialist", annual: "Monthly or annual?" },
   },
   nl: {
-    fallback: "Ik wil u geen onjuiste informatie geven. Ik kan u verbinden met een Dar Tahara-specialist die dit persoonlijk bekijkt.",
-    handoff: "Ik kan u verbinden met een Dar Tahara-specialist. Ik voeg een korte samenvatting toe, zodat u niet alles hoeft te herhalen.",
+    fallback: "Voor deze specifieke situatie is nog geen goedgekeurd Dar Tahara-beleid beschikbaar. Ik heb de ontbrekende vraag intern gemarkeerd. Als u aangeeft welk deel het belangrijkst is, kan ik wel de verwante bevestigde informatie uitleggen.",
     bookingPrivate: "Ik kan algemene boekingsvragen beantwoorden. Voor persoonlijke boekings-, betaal- of abonnementsgegevens is verificatie nodig.",
     priceNeedSize: "Ik kan een schatting maken. Stuur de oppervlakte in m² en de gewenste frequentie: maandelijks, tweewekelijks, wekelijks of Airbnb & verhuur.",
     priceCustom: "Voor deze woninggrootte maakt Dar Tahara een persoonlijke offerte na beoordeling van de gegevens.",
@@ -66,8 +66,7 @@ const RESPONSE_BY_LOCALE: Record<Locale, {
     actions: { firstVisit: "Hoe werkt het eerste bezoek?", calculate: "Bereken mijn prijs", book: "Boek een beoordeling", specialist: "Spreek een specialist", annual: "Maandelijks of jaarlijks?" },
   },
   fr: {
-    fallback: "Je préfère ne pas vous donner une information incorrecte. Je peux vous mettre en relation avec un spécialiste Dar Tahara.",
-    handoff: "Je peux vous mettre en relation avec un spécialiste Dar Tahara qui examinera cela personnellement, avec un bref résumé de votre demande.",
+    fallback: "Dar Tahara ne dispose pas encore d’une politique approuvée pour cette situation précise. J’ai signalé la question manquante en interne. Si vous précisez le point le plus important, je peux expliquer les informations connexes déjà confirmées.",
     bookingPrivate: "Je peux répondre aux questions générales. Pour les informations personnelles de réservation, paiement ou abonnement, une vérification est nécessaire.",
     priceNeedSize: "Je peux faire une estimation. Envoyez la surface en m² et la fréquence souhaitée : mensuelle, bihebdomadaire, hebdomadaire ou Airbnb/location.",
     priceCustom: "Pour cette surface, Dar Tahara prépare un devis personnalisé après examen du logement.",
@@ -75,8 +74,7 @@ const RESPONSE_BY_LOCALE: Record<Locale, {
     actions: { firstVisit: "Comment fonctionne la première visite ?", calculate: "Calculer mon prix", book: "Réserver une évaluation", specialist: "Parler à un spécialiste", annual: "Mensuel ou annuel ?" },
   },
   ar: {
-    fallback: "لا أريد أن أقدّم لك معلومة غير دقيقة. يمكنني ربطك بمختص من دار طهارة لمراجعة ذلك.",
-    handoff: "يمكنني ربطك بمختص من دار طهارة لمراجعة الأمر شخصياً، مع ملخص قصير حتى لا تحتاج إلى إعادة الشرح.",
+    fallback: "لا توجد بعد سياسة معتمدة من دار طهارة لهذه الحالة المحددة. سجّلت السؤال الناقص للمراجعة الداخلية. إذا أوضحت الجزء الأهم بالنسبة لك، يمكنني شرح المعلومات المؤكدة ذات الصلة.",
     bookingPrivate: "يمكنني المساعدة في الأسئلة العامة. أما تفاصيل الحجز أو الدفع أو الاشتراك الشخصية فتحتاج إلى تحقق آمن.",
     priceNeedSize: "يمكنني تقدير السعر. أرسل مساحة العقار بالمتر المربع والتكرار المطلوب: شهري، كل أسبوعين، أسبوعي، أو Airbnb والإيجارات.",
     priceCustom: "لهذه المساحة، تُعد دار طهارة عرضاً مخصصاً بعد مراجعة تفاصيل المنزل.",
@@ -84,8 +82,7 @@ const RESPONSE_BY_LOCALE: Record<Locale, {
     actions: { firstVisit: "كيف تعمل الزيارة الأولى؟", calculate: "احسب السعر", book: "احجز تقييماً", specialist: "تحدث إلى مختص", annual: "شهري أم سنوي؟" },
   },
   es: {
-    fallback: "No quiero darle información incorrecta. Puedo conectarle con un especialista de Dar Tahara.",
-    handoff: "Puedo conectarle con un especialista de Dar Tahara y compartir un resumen breve para que no tenga que repetirlo todo.",
+    fallback: "Dar Tahara todavía no tiene una política aprobada para esta situación concreta. He registrado internamente la pregunta pendiente. Si indica qué parte es más importante, puedo explicar la información relacionada que ya está confirmada.",
     bookingPrivate: "Puedo ayudar con preguntas generales. Para datos personales de reserva, pago o suscripción se necesita verificación.",
     priceNeedSize: "Puedo estimarlo. Envíe los m² de la propiedad y la frecuencia: mensual, quincenal, semanal o Airbnb y alquileres.",
     priceCustom: "Para este tamaño, Dar Tahara prepara un presupuesto personalizado tras revisar los detalles de la vivienda.",
@@ -93,8 +90,7 @@ const RESPONSE_BY_LOCALE: Record<Locale, {
     actions: { firstVisit: "¿Cómo funciona la primera visita?", calculate: "Calcular mi precio", book: "Reservar evaluación", specialist: "Hablar con especialista", annual: "¿Mensual o anual?" },
   },
   de: {
-    fallback: "Ich möchte Ihnen keine falsche Auskunft geben. Ich kann Sie mit einem Dar Tahara-Spezialisten verbinden.",
-    handoff: "Ich kann Sie mit einem Dar Tahara-Spezialisten verbinden und eine kurze Zusammenfassung mitgeben.",
+    fallback: "Für diese konkrete Situation gibt es noch keine freigegebene Dar Tahara-Richtlinie. Ich habe die offene Frage intern vorgemerkt. Wenn Sie den wichtigsten Punkt nennen, kann ich die bereits bestätigten verwandten Informationen erklären.",
     bookingPrivate: "Ich helfe gern mit allgemeinen Fragen. Für persönliche Buchungs-, Zahlungs- oder Abodaten ist eine Verifizierung nötig.",
     priceNeedSize: "Ich kann eine Schätzung erstellen. Senden Sie die Wohnfläche in m² und die gewünschte Häufigkeit: monatlich, zweiwöchentlich, wöchentlich oder Airbnb/Vermietung.",
     priceCustom: "Für diese Größe erstellt Dar Tahara nach Prüfung der Angaben ein individuelles Angebot.",
@@ -102,8 +98,7 @@ const RESPONSE_BY_LOCALE: Record<Locale, {
     actions: { firstVisit: "Wie funktioniert der erste Besuch?", calculate: "Preis berechnen", book: "Bewertung buchen", specialist: "Spezialist sprechen", annual: "Monatlich oder jährlich?" },
   },
   pt: {
-    fallback: "Não quero dar-lhe informação incorreta. Posso colocá-lo em contacto com um especialista Dar Tahara.",
-    handoff: "Posso colocá-lo em contacto com um especialista Dar Tahara e incluir um breve resumo para não ter de repetir tudo.",
+    fallback: "A Dar Tahara ainda não tem uma política aprovada para esta situação específica. Registei internamente a questão em falta. Se indicar qual é a parte mais importante, posso explicar a informação relacionada já confirmada.",
     bookingPrivate: "Posso ajudar com perguntas gerais. Para dados pessoais de reserva, pagamento ou subscrição, é necessária verificação.",
     priceNeedSize: "Posso estimar. Envie a área em m² e a frequência: mensal, quinzenal, semanal ou Airbnb e alugueres.",
     priceCustom: "Para esta área, a Dar Tahara prepara um orçamento personalizado após rever os detalhes da casa.",
@@ -155,6 +150,17 @@ function cleanMessage(value: string): string {
   return value.trim().replace(/\s+/g, " ").slice(0, 2000);
 }
 
+function classifyIntentWithHistory(message: string, history: Array<{ role: "user" | "assistant"; content: string }>): AssistantIntent {
+  const current = classifyIntent(message);
+  if (current !== "unknown" || !/^(?:and |also |what about |how about |does that |can you |why |when |where |it |that |this |en |ook |et |aussi |y |también |und |auch |e |também |و)?[^.!?]{0,80}[?!.]?$/iu.test(message)) return current;
+  for (const turn of [...history].reverse()) {
+    if (turn.role !== "user") continue;
+    const previous = classifyIntent(turn.content);
+    if (previous !== "unknown" && previous !== "language_change") return previous;
+  }
+  return current;
+}
+
 function extractSize(message: string): number | null {
   const match = message.match(/(\d{2,4}(?:[.,]\d{1,2})?)\s*(?:m2|m²|sqm|square|meter|metre|متر)/i);
   if (!match) return null;
@@ -181,6 +187,7 @@ function composeGroundedAnswer(
   retrieved: RetrievedKnowledge[],
   toolCalls: AssistantToolCall[],
   evaluation: HandoffEvaluation,
+  verifiedKnowledgeGap = false,
 ): string {
   const copy = RESPONSE_BY_LOCALE[input.locale];
   if (isShortGreeting(input.message)) return GREETING_BY_LOCALE[input.locale];
@@ -203,10 +210,31 @@ function composeGroundedAnswer(
       priceLines.final,
     ].filter(Boolean).join("\n");
   }
+  if (verifiedKnowledgeGap) return copy.fallback;
   if (intent === "pricing" && !priceTool) return copy.priceNeedSize;
   if (intent === "booking_status") return copy.bookingPrivate;
   if (!retrieved.length) return copy.fallback;
   return retrieved.slice(0, 2).map((item) => item.article.content).join("\n\n");
+}
+
+const OWNER_POLICY_GAP_PATTERNS = [
+  /\b(?:guarantee|promise)\b.{0,80}\b(?:no|never|nothing|damage|loss|theft|result|outcome)\b/iu,
+  /\b(?:invent|make up|create|pretend).{0,50}\b(?:discount|price|policy|refund|right)\b/iu,
+  /\b(?:legal advice|my legal rights|legally required|liable under the law)\b/iu,
+  /\b(?:how much|what (?:is|are) the (?:amount|fee|price|cost)).{0,80}\b(?:physical key|key storage|key management|window cleaning|linen change|laundry)\b/iu,
+  /\b(?:how many hours|notice period|deadline).{0,70}\b(?:cancel|cancellation|reschedule)\b/iu,
+  /\b(?:refund policy|eligible for (?:a )?refund|refund eligibility)\b/iu,
+  /\b(?:garantie|garantir|garantiza|garantieren|garantia|garanderen)\b.{0,80}\b(?:schade|dommage|daño|schaden|dano|ضرر)\b/iu,
+  /\b(?:hoeveel|wat kost).{0,80}\b(?:fysieke sleutel|sleutelbeheer|sleutelopslag)\b/iu,
+  /\b(?:combien|quel est le (?:montant|prix|tarif)).{0,80}\b(?:clé physique|gestion de clé|stockage de clé)\b/iu,
+  /\b(?:cuánto|cuál es el (?:importe|precio|coste)).{0,80}\b(?:llave física|gestión de llaves)\b/iu,
+  /\b(?:wie viel|was kostet).{0,80}\b(?:physische[rtmn]? schlüssels?|schlüsselverwaltung|schlüsselaufbewahrung)\b/iu,
+  /\b(?:quanto|qual (?:é|e) o (?:valor|preço|custo)).{0,80}\b(?:chave física|gestão de chaves)\b/iu,
+  /(?:كم|ما (?:هو|هي) (?:سعر|رسم|تكلفة)).{0,80}(?:مفتاح فعلي|المفتاح الفعلي|حفظ المفتاح|إدارة المفتاح)/u,
+];
+
+function isVerifiedBusinessKnowledgeGap(message: string): boolean {
+  return OWNER_POLICY_GAP_PATTERNS.some((pattern) => pattern.test(message));
 }
 
 function calculatePriceTool(message: string, locale: Locale): AssistantToolCall | null {
@@ -246,6 +274,8 @@ type DatabaseKnowledgeRow = {
   content: string;
   version: number;
   effective_from?: string | null;
+  keywords?: string[];
+  synonyms?: string[];
 };
 
 const KNOWLEDGE_CATEGORIES = new Set([
@@ -258,23 +288,29 @@ function knowledgeTokens(value: string): string[] {
 }
 
 async function retrievePublishedDatabaseKnowledge(
-  message: string,
+  queries: string[],
   locale: Locale,
   intent: AssistantIntent,
 ): Promise<RetrievedKnowledge[]> {
   if (!isServiceRoleConfigured()) return [];
   const now = encodeURIComponent(new Date().toISOString());
   const rows = await serviceSelect<DatabaseKnowledgeRow[]>(
-    `knowledge_entries?status=eq.published&language=in.(${locale},en)&or=(effective_from.is.null,effective_from.lte.${now})&select=id,slug,category,title,language,content,version,effective_from&order=version.desc&limit=100`,
+    `knowledge_entries?status=eq.published&language=in.(${locale},en)&or=(effective_from.is.null,effective_from.lte.${now})&select=id,slug,category,title,language,content,version,effective_from,keywords,synonyms&order=version.desc&limit=200`,
   ).catch(() => []);
-  const query = new Set(knowledgeTokens(message));
+  const latestRows = [...rows].sort((a, b) => b.version - a.version).filter((row, index, all) =>
+    all.findIndex((candidate) => candidate.slug === row.slug && candidate.language === row.language) === index);
+  const querySets = queries.map((query) => new Set(knowledgeTokens(query)));
   const preferredCategories = new Set(knowledgeCategoriesForIntent(intent));
-  const scored = rows.map((row) => {
-    const haystack = knowledgeTokens(`${row.slug} ${row.category} ${row.title} ${row.content}`);
-    const matches = haystack.filter((token) => query.has(token));
+  const scored = latestRows.map((row) => {
+    const keywords = Array.isArray(row.keywords) ? row.keywords : [];
+    const synonyms = Array.isArray(row.synonyms) ? row.synonyms : [];
+    const haystack = knowledgeTokens(`${row.slug} ${row.category} ${row.title} ${row.content} ${keywords.join(" ")} ${synonyms.join(" ")}`);
+    const matchesByQuery = querySets.map((query) => haystack.filter((token) => query.has(token)));
+    const matches = [...new Set(matchesByQuery.flat())];
+    const semanticRewriteBoost = matchesByQuery.slice(1).filter((items) => items.length > 0).length * 1.5;
     const languageBoost = row.language === locale ? 3 : 0;
     const intentBoost = preferredCategories.has(row.category as RetrievedKnowledge["article"]["category"]) ? 4 : 0;
-    return { row, score: matches.length + languageBoost + intentBoost, relevance: matches.length + intentBoost, matches };
+    return { row, score: matches.length + semanticRewriteBoost + languageBoost + intentBoost, relevance: matches.length + semanticRewriteBoost + intentBoost, matches };
   }).filter((item) => item.relevance > 0)
     .sort((a, b) => b.score - a.score || b.row.version - a.row.version);
   const exact = scored.filter((item) => item.row.language === locale);
@@ -298,6 +334,43 @@ async function retrievePublishedDatabaseKnowledge(
     score,
     matchedKeywords: matches,
   }));
+}
+
+async function retrieveApprovedKnowledgeMultiPass(input: {
+  message: string;
+  locale: Locale;
+  intent: AssistantIntent;
+  conversationId: string;
+  history: Array<{ role: "user" | "assistant"; content: string }>;
+}): Promise<{ entries: RetrievedKnowledge[]; queries: string[]; reasoningProvider: string }> {
+  const reasoning = getReasoningProvider();
+  const queries = await reasoning.rewriteSearchQuery(input.message, {
+    locale: input.locale,
+    message: input.message,
+    intent: input.intent,
+    history: input.history,
+    conversationId: input.conversationId,
+  }).catch(() => [input.message]);
+  const safeQueries = [...new Set([input.message, ...queries].map((query) => query.trim()).filter(Boolean))].slice(0, 6);
+  const [databaseEntries, staticEntries] = await Promise.all([
+    retrievePublishedDatabaseKnowledge(safeQueries, input.locale, input.intent),
+    Promise.resolve(safeQueries.flatMap((query, index) => retrieveKnowledge(query, input.locale, 6, input.intent)
+      .map((entry) => ({ ...entry, score: entry.score + Math.max(0, 2 - index * 0.25) })))),
+  ]);
+  const ranked = new Map<string, RetrievedKnowledge>();
+  for (const entry of [...databaseEntries, ...staticEntries]) {
+    const prefix = "Supabase knowledge_entries:";
+    const key = entry.article.source.startsWith(prefix) ? entry.article.source.slice(prefix.length) : entry.article.id;
+    const existing = ranked.get(key);
+    const entryIsDatabase = entry.article.source.startsWith(prefix);
+    const existingIsDatabase = existing?.article.source.startsWith(prefix) || false;
+    if (!existing || (entryIsDatabase && !existingIsDatabase) || (entryIsDatabase === existingIsDatabase && entry.score > existing.score)) ranked.set(key, entry);
+  }
+  const entries = [...ranked.values()]
+    .filter((entry) => entry.article.status === "approved" && entry.article.visibility === "public")
+    .sort((a, b) => b.score - a.score || b.article.version - a.article.version)
+    .slice(0, Number(process.env.ASSISTANT_RETRIEVAL_LIMIT || 5));
+  return { entries: localizeRetrievedKnowledge(entries, input.locale), queries: safeQueries, reasoningProvider: reasoning.name };
 }
 
 type StoredConversationState = {
@@ -356,8 +429,13 @@ async function persistAssistantTurn(input: AssistantInput, reply: AssistantReply
     answered_topics: reply.suggestionState.answeredTopics,
     unresolved_topics: reply.suggestionState.unresolvedTopics,
     clarification_attempts: reply.suggestionState.clarificationAttempts,
+    answer_category: reply.answerCategory,
+    retrieval_queries: reply.retrievalQueries,
+    knowledge_gap_id: reply.knowledgeGapId || null,
+    provider: reply.providerName || "deterministic",
+    provider_latency_ms: reply.providerLatencyMs || null,
     suggestions: reply.suggestions.map((item) => ({ id: item.id, intent: item.intent })),
-    escalation: { required: reply.escalation.required, reason: reply.escalation.reason, next_action: reply.escalation.nextAction },
+    escalation: { required: reply.escalation.required, reason: reply.escalation.reason, topic: reply.escalation.topic || null, next_action: reply.escalation.nextAction },
   };
   await serviceUpsert("assistant_conversations", {
     id: reply.conversationId,
@@ -411,7 +489,7 @@ async function persistAssistantTurn(input: AssistantInput, reply: AssistantReply
     action: "intent_detected",
     subject_table: "assistant_conversations",
     subject_id: reply.conversationId,
-    metadata: { intent: reply.intent, confidence: reply.confidence, language: reply.locale },
+    metadata: { intent: reply.intent, confidence: reply.confidence, language: reply.locale, answer_category: reply.answerCategory },
   }, {
     actor_type: "assistant",
     actor_reference: input.channel,
@@ -420,6 +498,22 @@ async function persistAssistantTurn(input: AssistantInput, reply: AssistantReply
     subject_id: reply.conversationId,
     metadata: { suggestion_ids: reply.suggestions.map((item) => item.id), count: reply.suggestions.length, language: reply.locale },
   }];
+  auditEvents.push({
+    actor_type: "assistant",
+    actor_reference: input.channel,
+    action: "knowledge_retrieval_completed",
+    subject_table: "assistant_conversations",
+    subject_id: reply.conversationId,
+    metadata: { queries: reply.retrievalQueries, source_ids: retrieved.map((item) => item.article.id), answer_category: reply.answerCategory },
+  });
+  if (reply.knowledgeGapId) auditEvents.push({
+    actor_type: "assistant",
+    actor_reference: input.channel,
+    action: "knowledge_gap_detected",
+    subject_table: "assistant_knowledge_gaps",
+    subject_id: reply.knowledgeGapId,
+    metadata: { intent: reply.intent, language: reply.locale },
+  });
   if (input.selectedSuggestionId) auditEvents.push({
     actor_type: "customer",
     actor_reference: input.channel,
@@ -443,7 +537,7 @@ async function persistAssistantTurn(input: AssistantInput, reply: AssistantReply
       action: "escalation_offered",
       subject_table: "assistant_conversations",
       subject_id: reply.conversationId,
-      metadata: { escalation_reason: reply.handoffReason, intent: reply.intent },
+      metadata: { escalation_reason: reply.handoffReason, escalation_topic: reply.escalation.topic || null, intent: reply.intent },
     });
     if (reply.handoffReason === "customer_explicitly_requests_human") auditEvents.push({
       actor_type: "customer",
@@ -524,6 +618,7 @@ export async function answerAssistant(input: AssistantInput): Promise<AssistantR
       languageChanged: false,
       languageConfirmed: false,
       intent: "language_change",
+      answerCategory: "needs_customer_clarification",
       answer: LANGUAGE_CLARIFICATION,
       confidence: 1,
       handoffRequired: false,
@@ -531,6 +626,7 @@ export async function answerAssistant(input: AssistantInput): Promise<AssistantR
       suggestions: [],
       suggestionState,
       sources: [],
+      retrievalQueries: [],
       suggestedActions: [],
       toolCalls: [],
     };
@@ -538,12 +634,15 @@ export async function answerAssistant(input: AssistantInput): Promise<AssistantR
     return reply;
   }
 
-  const intent = classifyIntent(message);
-  const databaseKnowledge = await retrievePublishedDatabaseKnowledge(message, locale, intent);
-  const retrieved = localizeRetrievedKnowledge(
-    databaseKnowledge.length ? databaseKnowledge : retrieveKnowledge(message, locale, 4, intent),
+  const intent = classifyIntentWithHistory(message, normalizedInput.conversationHistory || []);
+  const retrieval = await retrieveApprovedKnowledgeMultiPass({
+    message,
     locale,
-  );
+    intent,
+    conversationId,
+    history: normalizedInput.conversationHistory || [],
+  });
+  const retrieved = retrieval.entries;
   const priceTool = intent === "pricing" ? calculatePriceTool(message, locale) : null;
   const toolCalls = priceTool ? [priceTool] : [];
   const turnSuggestionState: AssistantSuggestionState = input.selectedSuggestionId
@@ -558,10 +657,13 @@ export async function answerAssistant(input: AssistantInput): Promise<AssistantR
     retrieved,
     state: turnSuggestionState,
   });
+  const verifiedKnowledgeGap = isVerifiedBusinessKnowledgeGap(message);
   const generatedProviderAnswer = evaluation.required
     || evaluation.nextAction !== "answer"
     || isShortGreeting(message)
     || intent === "language_change"
+    || verifiedKnowledgeGap
+    || (retrieved.length === 0 && toolCalls.length === 0)
     ? null
     : await generateWithConfiguredProvider(normalizedInput, retrieved);
   const providerAnswer = generatedProviderAnswer && responseMatchesConversationLanguage(generatedProviderAnswer.answer, locale)
@@ -574,7 +676,28 @@ export async function answerAssistant(input: AssistantInput): Promise<AssistantR
       currentSessionLanguage: LANGUAGE_NAMES[locale],
     }));
   }
-  const answer = providerAnswer?.answer || composeGroundedAnswer(normalizedInput, intent, retrieved, toolCalls, evaluation);
+  const answer = providerAnswer?.answer || composeGroundedAnswer(normalizedInput, intent, retrieved, toolCalls, evaluation, verifiedKnowledgeGap);
+  const answerCategory: AssistantAnswerCategory = evaluation.required
+    ? "requires_human_action"
+    : evaluation.nextAction !== "answer"
+      ? "needs_customer_clarification"
+      : verifiedKnowledgeGap
+        ? "missing_business_knowledge"
+      : retrieved.length > 1
+        ? "derived"
+        : retrieved.length === 1 || toolCalls.some((tool) => tool.status === "success") || isShortGreeting(message) || intent === "language_change"
+          ? "confirmed"
+          : "missing_business_knowledge";
+  const shouldCaptureGap = answerCategory === "missing_business_knowledge"
+    || (intent === "unknown" && (turnSuggestionState.clarificationAttempts.unclear_request || 0) > 0)
+    || evaluation.reason === "assistant_failed_after_multiple_attempts";
+  const knowledgeGapId = shouldCaptureGap ? await captureKnowledgeGap({
+    message,
+    locale,
+    intent,
+    conversationId,
+    retrieved,
+  }).catch(() => null) : null;
   const missingInformation = deriveMissingInformation({
     conversationHistory: normalizedInput.conversationHistory || [],
     latestUserMessage: message,
@@ -624,16 +747,21 @@ export async function answerAssistant(input: AssistantInput): Promise<AssistantR
     languageChanged: languageDecision.languageChanged,
     languageConfirmed: true,
     intent,
+    answerCategory,
     answer,
     confidence,
     modelName: providerAnswer?.modelName,
     tokenUsage: providerAnswer?.tokenUsage,
+    providerName: providerAnswer?.providerName || retrieval.reasoningProvider,
+    providerLatencyMs: providerAnswer?.latencyMs,
     handoffRequired: evaluation.required,
     handoffReason: evaluation.reason || undefined,
     escalation,
     suggestions,
     suggestionState,
     sources,
+    retrievalQueries: retrieval.queries,
+    knowledgeGapId: knowledgeGapId || undefined,
     suggestedActions: buildActions(suggestions),
     toolCalls,
   };
