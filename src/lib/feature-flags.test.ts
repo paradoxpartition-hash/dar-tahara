@@ -1,0 +1,3 @@
+import {test}from"node:test";import assert from"node:assert/strict";import{isActive}from"./feature-flag-state";
+test("feature flags fail closed when disabled",()=>{assert.equal(isActive({enabled:false,starts_at:null,ends_at:null}),false)});
+test("feature flag scheduling honors start and end boundaries",()=>{const now=new Date("2026-07-16T12:00:00Z");assert.equal(isActive({enabled:true,starts_at:"2026-07-16T11:00:00Z",ends_at:"2026-07-16T13:00:00Z"},now),true);assert.equal(isActive({enabled:true,starts_at:"2026-07-16T13:00:00Z",ends_at:null},now),false);assert.equal(isActive({enabled:true,starts_at:null,ends_at:"2026-07-16T12:00:00Z"},now),false)});

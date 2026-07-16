@@ -11,8 +11,8 @@ const STOP_WORDS = new Set([
 const INTENT_KEYWORDS: Record<AssistantIntent, string[]> = {
   general_faq: ["question", "help", "info", "about"],
   service_explanation: ["included", "service", "cleaning", "linen", "laundry", "products", "materials", "pets"],
-  assessment_explanation: ["assessment", "first visit", "initial", "deep clean", "revised quote"],
-  pricing: ["price", "cost", "estimate", "m2", "square", "calculator", "how much", "quote"],
+  assessment_explanation: ["assessment", "first visit", "initial", "deep clean", "updated proposal"],
+  pricing: ["price", "cost", "estimate", "m2", "square", "calculator", "how much", "proposal"],
   billing: ["monthly", "annual", "yearly", "discount", "5%", "subscription"],
   payment: ["payment", "stripe", "checkout", "card", "pay", "failed"],
   booking_guidance: ["book", "booking", "appointment", "date", "schedule"],

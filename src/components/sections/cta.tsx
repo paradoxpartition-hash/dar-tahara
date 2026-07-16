@@ -9,8 +9,9 @@ import { Container } from "@/components/ui/section";
 import { Reveal } from "@/components/motion/reveal";
 import { buttonVariants } from "@/components/ui/button";
 import { DomeMark } from "@/components/brand/logo";
+import type { PublicFeatureState } from "@/lib/feature-flags";
 
-export function Cta({ locale, dict }: { locale: Locale; dict: Dictionary }) {
+export function Cta({ locale, dict, features }: { locale: Locale; dict: Dictionary; features: PublicFeatureState }) {
   const c = dict.cta;
   return (
     <section id={sections.contact} className="py-20 sm:py-28 lg:py-32">
@@ -42,19 +43,19 @@ export function Cta({ locale, dict }: { locale: Locale; dict: Dictionary }) {
 
             <div className="mt-9 flex flex-col items-center justify-center gap-3 sm:flex-row">
               <Link
-                href="#"
+                href={features.assessmentBookingEnabled ? `/${locale}#${sections.calculator}` : features.fallbackUrl}
                 className={cn(buttonVariants({ variant: "primary", size: "lg" }))}
               >
-                {c.ctaPrimary}
+                {features.assessmentBookingEnabled ? c.ctaPrimary : features.fallbackLabel}
                 <ArrowRight className="h-4 w-4" />
               </Link>
               <Link
-                href="#"
+                href="/login"
                 className={cn(buttonVariants({ variant: "outline", size: "lg" }))}
               >
-                {c.ctaSecondary}
+                {dict.nav.login}
               </Link>
-              <Link
+              {features.whatsappEnabled ? <Link
                 href={whatsappLink()}
                 target="_blank"
                 rel="noopener noreferrer"
@@ -62,7 +63,7 @@ export function Cta({ locale, dict }: { locale: Locale; dict: Dictionary }) {
               >
                 <MessageCircle className="h-4 w-4" />
                 {c.whatsapp}
-              </Link>
+              </Link> : null}
             </div>
           </div>
         </Reveal>

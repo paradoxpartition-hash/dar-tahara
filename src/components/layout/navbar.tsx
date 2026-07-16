@@ -24,6 +24,8 @@ export function Navbar({
 }) {
   const [scrolled, setScrolled] = React.useState(false);
   const [open, setOpen] = React.useState(false);
+  const [accountHref, setAccountHref] = React.useState("/login");
+  const [authenticated, setAuthenticated] = React.useState(false);
   const base = `/${locale}`;
 
   React.useEffect(() => {
@@ -31,6 +33,18 @@ export function Navbar({
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  React.useEffect(() => {
+    fetch("/api/auth/me", { cache: "no-store" })
+      .then((response) => response.json())
+      .then((value: { authenticated?: boolean; destination?: string }) => {
+        if (value.authenticated && value.destination) {
+          setAuthenticated(true);
+          setAccountHref(value.destination);
+        }
+      })
+      .catch(() => undefined);
   }, []);
 
   React.useEffect(() => {
@@ -81,10 +95,10 @@ export function Navbar({
           <LanguageSwitcher locale={locale} label={dict.language} />
           <ThemeToggle label={dict.theme} />
           <Link
-            href={`${base}#${sections.contact}`}
+            href={accountHref}
             className={cn(buttonVariants({ variant: "primary", size: "sm" }), "ms-1")}
           >
-            {dict.book}
+            {authenticated ? dict.myAccount : dict.login}
           </Link>
         </div>
 
@@ -127,11 +141,11 @@ export function Navbar({
                 <LanguageSwitcher locale={locale} label={dict.language} />
               </div>
               <Link
-                href={`${base}#${sections.contact}`}
+                href={accountHref}
                 onClick={() => setOpen(false)}
                 className={cn(buttonVariants({ variant: "primary", size: "lg" }), "mt-3 w-full")}
               >
-                {dict.book}
+                {authenticated ? dict.myAccount : dict.login}
               </Link>
               <Link
                 href={whatsappHref}

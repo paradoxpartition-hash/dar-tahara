@@ -64,7 +64,8 @@ After creating the endpoint, reveal the **Signing secret** (`whsec_…`) and set
 *Billing → Customer portal*. Enable: update payment method, view invoices, cancel
 subscription (per business rules). Save, then copy the configuration id (`bpc_…`) into
 `STRIPE_CUSTOMER_PORTAL_CONFIGURATION_ID`. Portal sessions are created server-side in
-`createBillingPortalSession` (admin route `/api/admin/portal-link`).
+`createBillingPortalSession`; access must be granted only after an authenticated
+ownership check. Subscription proposal acceptance uses Stripe-hosted Checkout.
 
 ## 8. Enable payment methods
 *Settings → Payment methods*: turn on **automatic payment methods** so cards, Apple Pay,
@@ -86,7 +87,7 @@ emails*: set the business name **Paradox FZCO**, footer and support address.
 
 ## 12. Statement descriptor
 *Settings → Business → Public details*: set the descriptor (≤22 chars). We also send
-`STRIPE_STATEMENT_DESCRIPTOR` as a payment-intent suffix on the assessment charge.
+`STRIPE_STATEMENT_DESCRIPTOR` is retained for eligible one-time payment intents.
 
 ## 13. Customer emails & receipts
 *Settings → Customer emails*: enable **successful payments** (receipts) and refunds.
@@ -126,9 +127,10 @@ Send a test event from the Dashboard endpoint and confirm a `200` and a row in
 `stripe_webhook_events`. Check *Webhooks → your endpoint → events* for delivery success.
 
 ## 20. Safe low-value live test
-With live keys, complete one real low-value assessment payment with a personal card,
-confirm the booking flips to `paid` via the webhook, then refund it from the admin
-refund flow (`/api/admin/refund`) and confirm `charge.refunded` records the refund.
+With live keys and management approval, use a controlled low-value subscription
+proposal. Confirm that approving the assessment creates no Stripe charge, customer
+acceptance opens hosted Checkout, and only the signed webhook activates service.
+Then refund the test payment and confirm `charge.refunded` is recorded.
 
 ## 21. Confirm with management / advisers
 - Legal merchant entity wording on receipts/invoices/terms (**Paradox FZCO**).
@@ -144,6 +146,7 @@ Apply the billing schema to the Supabase project before going live:
 ```
 supabase/migrations/20260713123305_premium_home_assessment_workflow.sql
 supabase/migrations/20260714090000_stripe_refunds_and_dispute_status.sql
+supabase/migrations/20260715225139_secure_customer_onboarding_portal.sql
 ```
 (`supabase db push`, or paste into the SQL editor of the project behind
 `NEXT_PUBLIC_SUPABASE_URL`.) The service-role/secret key must be set server-side only.

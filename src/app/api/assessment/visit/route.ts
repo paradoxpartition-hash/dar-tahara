@@ -29,5 +29,5 @@ export async function POST(req: NextRequest) {
   if (!result.ok) {
     return NextResponse.redirect(fallbackUrl(req, body, result.error), { status: 303 });
   }
-  return NextResponse.redirect(result.checkoutUrl, { status: 303 });
+  return NextResponse.redirect(new URL(result.applicationUrl, req.nextUrl.origin), { status: 303 });
 }

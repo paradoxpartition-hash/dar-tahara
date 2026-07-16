@@ -14,5 +14,6 @@ next-env.d.ts
 *.tsbuildinfo
 .swarm/
 ruvector.db
+agentdb.rvf*
 
 .vercel

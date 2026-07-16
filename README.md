@@ -15,6 +15,7 @@ concierge service rather than a cleaning company — minimal, elegant, calm.
 - **Framer Motion** for restrained, premium motion
 - **Lucide** icons
 - **next-themes** light/dark mode
+- Supabase Auth with server-side sessions, database roles and RLS
 - Locale routing middleware (7 languages, incl. Arabic RTL)
 
 ## Getting started
@@ -29,9 +30,9 @@ npm run typecheck
 ```
 
 Copy `.env.example` to `.env.local` before enabling the launch mailing list.
-The public Supabase URL and publishable key are required for signup; the
-server-only secret key, Resend and Turnstile settings enable the optional admin
-export, double opt-in email and bot protection respectively.
+The public Supabase URL and publishable key power authenticated sessions; the
+server-only secret key, Resend and Turnstile settings enable controlled account
+invitations, transactional email and bot protection respectively.
 
 The mailing-list API expects these Supabase RPCs to exist in the configured
 project: `subscribe_to_mailing_list`, `confirm_mailing_list` and
@@ -41,16 +42,13 @@ the public role.
 
 ## Assessment and subscription workflow
 
-The main CTA opens a four-step, seven-language Initial Home Assessment flow.
-All amounts are recalculated on the server. Assessment pricing is €79 up to
-75 m², €119 up to 125 m², €169 up to 250 m² and €249 for larger homes. The
-customer prepays only the assessment through hosted Stripe Checkout.
-
-The signed Stripe webhook is the sole authority that changes an unpaid booking
-to `assessment`. Operations completes and reviews the visit, then approves,
-revises or rejects the plan. Approval creates a separate subscription Checkout
-link; annual subscription totals receive a 5% discount. A database trigger
-enforces valid workflow transitions.
+The Initial Home Assessment is a controlled application workflow. Direct booking
+is disabled by default. When enabled, an application creates an applicant record,
+property and submitted assessment; it does not take payment. Staff review and
+schedule the visit, then an administrator approves or rejects the outcome.
+Approval creates a customer-visible subscription proposal, never a charge.
+Only the customer can accept that proposal and continue to Stripe-hosted Checkout.
+The signed Stripe webhook is the authority that activates the subscription.
 
 Apply the schema to the exact project referenced by
 `NEXT_PUBLIC_SUPABASE_URL`:
@@ -60,20 +58,20 @@ npx supabase link --project-ref YOUR_PROJECT_REF
 npx supabase db push
 ```
 
-The migration is
-`supabase/migrations/20260713123305_premium_home_assessment_workflow.sql`. It
-enables RLS, revokes public table access, grants the server role explicitly and
-includes ownership policies for a future authenticated customer dashboard.
+The secure portal migration is
+`supabase/migrations/20260715225139_secure_customer_onboarding_portal.sql`. It
+adds roles, feature flags, proposals, payments, audit history, private attachments
+and ownership-scoped RLS. See [`docs/CUSTOMER_PLATFORM.md`](docs/CUSTOMER_PLATFORM.md)
+for deployment, administration, testing and rollback.
 
 Register `/api/stripe/webhook` with Stripe and `/api/whatsapp/webhook` with
 Meta. Both handlers verify provider signatures. Free-form WhatsApp FAQ replies
 are for the active support window; proactive messages must use approved Meta
 templates configured in `.env.local`.
 
-The private `/admin` operations console uses `ADMIN_API_TOKEN` for login and a
-signed, HttpOnly eight-hour session afterward. It exposes payment state,
-appointment and property details, assessment decisions, revised quotes and
-subscription payment-link creation.
+The private `/admin` operations console uses Supabase Auth and database-backed
+`staff` / `administrator` roles. There is no shared admin token. Customer routes
+use the same session system and RLS enforces ownership at the database boundary.
 
 ## Design system
 
@@ -136,6 +134,5 @@ schema.org JSON-LD (`HomeAndConstructionBusiness`, service catalog, `FAQPage`).
 
 ## Future modules (architected for)
 
-Customer portal · booking system · online payments · subscription management ·
-cleaner tracking · property dashboard · arrival checklist · maintenance reports ·
+Cleaner tracking · arrival checklist · maintenance reports ·
 AI concierge · home-status dashboard · mobile apps.

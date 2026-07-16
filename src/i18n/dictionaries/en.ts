@@ -19,7 +19,8 @@ const en = {
     gallery: "Gallery",
     faq: "FAQ",
     book: "Book Initial Home Assessment",
-    quote: "Request a quote",
+    login: "Login",
+    myAccount: "My Account",
     menu: "Menu",
     close: "Close",
     language: "Language",
@@ -31,7 +32,6 @@ const en = {
     subtitle:
       "For homeowners, expats and holiday-home owners across Morocco. We clean, inspect and maintain your property with quiet precision—so you return to comfort, never to worry.",
     ctaPrimary: "Book Initial Home Assessment",
-    ctaSecondary: "Request a quote",
     ctaTertiary: "Learn more",
     stat1Value: "500+",
     stat1Label: "Homes cared for",
@@ -211,9 +211,8 @@ const en = {
     eyebrow: "Ready when you are",
     title: "Always arrive home to comfort.",
     subtitle:
-      "Let us take care of your home, so you never have to think about it. Book a first visit or request a tailored quote today.",
+      "Let us take care of your home, so you never have to think about it. Apply for an initial assessment or join early access today.",
     ctaPrimary: "Book Initial Home Assessment",
-    ctaSecondary: "Request a quote",
     whatsapp: "Chat on WhatsApp",
     whatsappInfo: "Chat with the Dar Tahara assistant on WhatsApp about services, prices, subscriptions, property access and bookings. Complex cases can be transferred to our email support desk.",
     whatsappPrivacy: "This is an automated assistant. Do not send payment details, passwords or full access codes.",
@@ -260,13 +259,12 @@ const en = {
       effective: "Effective price per visit",
     },
     custom: {
-      title: "A home of distinction deserves a tailored quote.",
-      body: "Properties larger than 250 m² require a personalised quotation.",
-      cta: "Request a custom quote",
+      title: "A home of distinction deserves an individual assessment.",
+      body: "Properties larger than 250 m² are reviewed individually before a service proposal is prepared.",
+      cta: "Apply for an assessment",
     },
     cta: {
       book: "Book Initial Home Assessment",
-      quote: "Request a personal quotation",
     },
     disclaimer:
       "This is an estimated price based on the property size and selected cleaning frequency. The final price may vary depending on the condition of the property, accessibility, additional services and specific cleaning requirements.",
@@ -277,7 +275,6 @@ const en = {
   },
   enquiry: {
     title: "Book your cleaning",
-    quoteTitle: "Request a personal quotation",
     subtitle: "Share a few details and we'll confirm your first visit within 24 hours.",
     summary: "Your selection",
     fields: {
@@ -307,7 +304,7 @@ const en = {
     subtitle:
       "Your first visit lets us professionally assess your home, perform an initial deep clean where required and prepare your personalised cleaning plan.",
     close: "Close",
-    pay: "Pay & book assessment",
+    pay: "Submit assessment application",
     paySecure:
       "Secure payment via Stripe. Your subscription begins only after your Initial Home Assessment is completed and approved.",
     summary: {
@@ -388,8 +385,8 @@ const en = {
       doorlock_internet_required: "Please confirm that the home has an internet connection for the smart door lock.",
       legal_acceptance_required: "Please confirm the details and accept the terms to continue.",
       rate_limited: "Too many attempts. Please try again in a minute.",
-      checkout_not_configured: "Online booking isn't available right now — please contact us.",
-      checkout_failed: "We couldn't start secure checkout. Please try again.",
+      checkout_not_configured: "Assessment applications are not available right now — please join early access.",
+      checkout_failed: "We couldn't submit your application. Please try again.",
       network: "Network error. Please check your connection and try again.",
     },
   },

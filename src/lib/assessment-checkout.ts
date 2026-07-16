@@ -1,9 +1,10 @@
 import "server-only";
 import type { NextRequest } from "next/server";
 import { TERMS_VERSION, validateAssessmentBooking } from "@/lib/assessment";
-import { createAssessmentCheckoutSession } from "@/lib/stripe";
 import { isServiceRoleConfigured, serviceInsert, serviceUpdate, serviceUpsert } from "@/lib/supabase-rpc";
 import { rateLimit, clientIpFromHeaders } from "@/lib/mailing-list";
+import { featureEnabled } from "@/lib/feature-flags";
+import { createAdminClient } from "@/lib/supabase/admin";
 
 /**
  * Shared assessment-checkout logic. Lives in a lib module (not a route file)
@@ -14,15 +15,18 @@ import { rateLimit, clientIpFromHeaders } from "@/lib/mailing-list";
 
 type IdRow = { id: string; reference?: string };
 export type AssessmentCheckoutResult =
-  | { ok: true; checkoutUrl: string; reference?: string }
+  | { ok: true; applicationUrl: string; reference: string }
   | { ok: false; error: string; status: number };
 
 export async function createAssessmentCheckout(
   body: unknown,
   req: NextRequest,
 ): Promise<AssessmentCheckoutResult> {
-  if (!isServiceRoleConfigured() || !process.env.STRIPE_SECRET_KEY) {
-    return { ok: false, error: "checkout_not_configured", status: 503 };
+  if (!await featureEnabled("initial_assessment_booking_enabled")) {
+    return { ok: false, error: "assessment_booking_disabled", status: 403 };
+  }
+  if (!isServiceRoleConfigured()) {
+    return { ok: false, error: "application_not_configured", status: 503 };
   }
   // Rate-limit checkout-session creation per IP (curbs abuse & rapid double-clicks).
   const rl = rateLimit(`assessment-checkout:${clientIpFromHeaders(req.headers)}`);
@@ -49,6 +53,7 @@ export async function createAssessmentCheckout(
       full_name: value.fullName,
       phone: value.phone,
       preferred_language: value.locale,
+      status: "applicant",
     }, "email");
     const [property] = await serviceInsert<IdRow[]>("properties", {
       customer_id: customer.id,
@@ -89,22 +94,36 @@ export async function createAssessmentCheckout(
         ip: req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || null,
         userAgent: req.headers.get("user-agent")?.slice(0, 500) || null,
       },
+      status: "submitted",
+      payment_status: "unpaid",
+      submitted_at: new Date().toISOString(),
+      next_action: "staff_review",
     });
-    const session = await createAssessmentCheckoutSession({
-      assessmentId: assessment.id,
-      reference: assessment.reference || assessment.id,
-      customerEmail: value.email,
-      locale: value.locale,
-      amountCents: quote.assessmentPriceCents,
-      doorlockInstallationPriceCents: quote.doorlockInstallationPriceCents,
-      preferredDate: value.preferredDate,
-      requestOrigin: req.nextUrl.origin,
-    });
-    await serviceUpdate("home_assessments", `id=eq.${assessment.id}`, { stripe_checkout_session_id: session.id });
-    if (!session.url) return { ok: false, error: "checkout_failed", status: 502 };
-    return { ok: true, checkoutUrl: session.url, reference: assessment.reference };
+    let authUserId: string | null = null;
+    if (await featureEnabled("customer_registration_enabled")) {
+      try {
+        const admin = createAdminClient();
+        const { data, error } = await admin.auth.admin.inviteUserByEmail(value.email, {
+          redirectTo: `${req.nextUrl.origin}/auth/callback?next=/account/assessments`,
+          data: { full_name: value.fullName, preferred_language: value.locale },
+        });
+        if (!error && data.user) authUserId = data.user.id;
+      } catch (error) {
+        console.warn("[assessment-invite]", error instanceof Error ? error.message : "invite_failed");
+      }
+    }
+    if (authUserId) {
+      await serviceUpdate("customers", `id=eq.${customer.id}`, { auth_user_id: authUserId });
+      await serviceInsert("user_roles", { user_id: authUserId, role: "applicant" });
+    }
+    await Promise.all([
+      serviceInsert("assessment_events", { assessment_id: assessment.id, event_type: "submitted", to_status: "submitted", actor_type: "customer" }),
+      serviceInsert("notification_outbox", { customer_id: customer.id, template_key: "assessment_submitted", locale: value.locale, channel: "email", recipient: value.email, consent_confirmed: true, payload: { reference: assessment.reference } }),
+    ]);
+    const reference = assessment.reference || assessment.id;
+    return { ok: true, applicationUrl: `/${value.locale}/assessment/confirmation?application=submitted&reference=${encodeURIComponent(reference)}`, reference };
   } catch (error) {
     console.error("[assessment-checkout]", error instanceof Error ? error.message : "unknown");
-    return { ok: false, error: "checkout_failed", status: 500 };
+    return { ok: false, error: "application_failed", status: 500 };
   }
 }

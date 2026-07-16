@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { parseStripeEvent, type StripeCheckoutSession } from "@/lib/stripe";
-import { serviceInsert, serviceSelect, serviceUpdate, serviceUpsert } from "@/lib/supabase-rpc";
+import { serviceDelete, serviceInsert, serviceInsertIgnoreDuplicates, serviceSelect, serviceUpdate, serviceUpsert } from "@/lib/supabase-rpc";
 import { sendTransactionalEmail } from "@/lib/transactional-email";
 import type { Locale } from "@/i18n/config";
 import { formatMoneyFromCents } from "@/lib/assessment";
@@ -39,6 +39,8 @@ async function subscriptionPaid(session: StripeCheckoutSession) {
   await serviceUpdate("subscriptions", `id=eq.${subscriptionId}`, { status: "active", stripe_subscription_id: session.subscription, stripe_checkout_session_id: session.id, activated_at: new Date().toISOString() });
   await serviceUpdate("home_assessments", `id=eq.${assessmentId}`, { status: "subscription_active" });
   await serviceInsert("assessment_events", { assessment_id: assessmentId, event_type: "subscription_activated", from_status: "approved", to_status: "subscription_active", actor_type: "stripe", actor_reference: session.id });
+  const rows=await serviceSelect<{customer_id:string;customers:{auth_user_id:string|null}}[]>(`subscriptions?id=eq.${subscriptionId}&select=customer_id,customers(auth_user_id)&limit=1`);const owner=rows[0];
+  if(owner){await serviceUpdate("customers",`id=eq.${owner.customer_id}`,{status:"customer"});if(owner.customers.auth_user_id)await serviceInsertIgnoreDuplicates("user_roles",{user_id:owner.customers.auth_user_id,role:"customer"},"user_id,role");await serviceInsert("payments",{customer_id:owner.customer_id,subscription_id:subscriptionId,provider_payment_id:session.payment_intent||session.id,amount_cents:session.amount_total||0,currency:session.currency||"eur",status:"succeeded",paid_at:new Date().toISOString()});}
 }
 
 type InvoiceObject={id:string;customer:string|null;subscription:string|null;amount_due:number;amount_paid:number;currency:string;status:string;hosted_invoice_url:string|null;invoice_pdf:string|null;period_start:number;period_end:number};
@@ -84,8 +86,8 @@ export async function POST(req: NextRequest) {
   if (!signature) return NextResponse.json({ error: "missing_signature" }, { status: 400 });
   try {
     const event = parseStripeEvent(raw, signature);
-    const seen = await serviceSelect<{ stripe_event_id: string }[]>(`stripe_webhook_events?stripe_event_id=eq.${encodeURIComponent(event.id)}&select=stripe_event_id&limit=1`);
-    if (seen.length) return NextResponse.json({ received: true, duplicate: true });
+    const claimed=await serviceInsertIgnoreDuplicates<{stripe_event_id:string}[]>("stripe_webhook_events",{stripe_event_id:event.id,event_type:event.type},"stripe_event_id");
+    if(!claimed.length)return NextResponse.json({received:true,duplicate:true});
     if (event.type === "checkout.session.completed" || event.type === "checkout.session.async_payment_succeeded") {
       const session = event.data.object as unknown as StripeCheckoutSession;
       if (session.metadata?.kind === "home_assessment") await assessmentPaid(session);
@@ -122,9 +124,9 @@ export async function POST(req: NextRequest) {
       const dispute = event.data.object as { payment_intent?: string | null };
       if (dispute.payment_intent) await serviceUpdate("home_assessments", `stripe_payment_intent_id=eq.${encodeURIComponent(dispute.payment_intent)}`, { payment_status: "disputed" });
     }
-    await serviceInsert("stripe_webhook_events", { stripe_event_id: event.id, event_type: event.type });
     return NextResponse.json({ received: true });
   } catch (error) {
+    try { const parsed=JSON.parse(raw) as {id?:string};if(parsed.id)await serviceDelete("stripe_webhook_events",`stripe_event_id=eq.${encodeURIComponent(parsed.id)}`); } catch {}
     console.error("[stripe-webhook]", error instanceof Error ? error.message : "unknown");
     return NextResponse.json({ error: "webhook_failed" }, { status: 400 });
   }

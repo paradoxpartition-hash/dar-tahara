@@ -106,7 +106,7 @@ export const servicePages: Record<ServicePageSlug, ServicePage> = {
       {
         title: "Scope confirmed in advance",
         body:
-          "The exact scope depends on property size, condition, linen needs, timing and access. Additional laundry, linen changes or restocking may be quoted separately.",
+          "The exact scope depends on property size, condition, linen needs, timing and access. Additional laundry, linen changes or restocking is priced separately in the approved proposal.",
       },
     ],
     highlights: [
@@ -170,14 +170,14 @@ export const servicePages: Record<ServicePageSlug, ServicePage> = {
       {
         title: "Specialist work remains separate",
         body:
-          "If a technical issue is found, Dar Tahara can report it and help coordinate next steps, but specialist repairs, servicing or replacement parts are quoted separately by the relevant provider.",
+          "If a technical issue is found, Dar Tahara can report it and help coordinate next steps, but the relevant provider prices specialist repairs, servicing or replacement parts separately.",
       },
     ],
     highlights: [
       "Suggested every three months",
       "Includes practical checks such as air conditioning observations",
       "Helps identify maintenance needs early",
-      "Specialist repairs quoted separately",
+      "Specialist repairs priced separately",
     ],
   },
   "key-holding": {

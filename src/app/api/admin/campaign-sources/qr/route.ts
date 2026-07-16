@@ -10,7 +10,7 @@ export const runtime = "nodejs";
  * be an https dartahara.com link — we don't render QR for arbitrary input.
  */
 export async function GET(req: NextRequest) {
-  if (!adminConfigured() || !isAdminAuthorized(req)) {
+  if (!adminConfigured() || !(await isAdminAuthorized())) {
     return new NextResponse("unauthorized", { status: 401 });
   }
   const url = req.nextUrl.searchParams.get("url") ?? "";

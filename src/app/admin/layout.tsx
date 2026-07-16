@@ -1,0 +1,2 @@
+import type{ReactNode}from"react";import{AdminShell}from"@/components/admin/admin-shell";import{requireRole}from"@/lib/portal-auth";
+export const metadata={title:"Operations · Dar Tahara",robots:{index:false,follow:false}};export default async function AdminLayout({children}:{children:ReactNode}){const context=await requireRole(['staff','administrator']);return <AdminShell canManageSettings={context.roles.includes('administrator')}>{children}</AdminShell>}

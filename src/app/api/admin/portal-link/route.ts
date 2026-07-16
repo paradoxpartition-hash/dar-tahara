@@ -17,7 +17,7 @@ type CustomerRow = { id: string; stripe_customer_id: string | null; preferred_la
  * a customer login area exists.
  */
 export async function POST(req: NextRequest) {
-  if (!isAdminAuthorized(req)) return NextResponse.json({ error: "unauthorized" }, { status: 401 });
+  if (!(await isAdminAuthorized())) return NextResponse.json({ error: "unauthorized" }, { status: 401 });
   if (!isServiceRoleConfigured() || !process.env.STRIPE_SECRET_KEY) {
     return NextResponse.json({ error: "not_configured" }, { status: 503 });
   }

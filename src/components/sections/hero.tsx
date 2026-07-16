@@ -10,13 +10,16 @@ import type { Dictionary } from "@/i18n/dictionaries/en";
 import { sections } from "@/lib/site";
 import { cn } from "@/lib/utils";
 import { buttonVariants } from "@/components/ui/button";
+import type { PublicFeatureState } from "@/lib/feature-flags";
 
 export function Hero({
   locale,
   dict,
+  features,
 }: {
   locale: Locale;
   dict: Dictionary;
+  features: PublicFeatureState;
 }) {
   const reduce = useReducedMotion();
   const h = dict.hero;
@@ -81,17 +84,17 @@ export function Hero({
             className="mt-9 flex flex-col gap-3 sm:flex-row sm:items-center"
           >
             <Link
-              href={`${base}#${sections.contact}`}
+              href={features.assessmentBookingEnabled ? `${base}#${sections.calculator}` : features.fallbackUrl}
               className={cn(buttonVariants({ variant: "primary", size: "lg" }))}
             >
-              {h.ctaPrimary}
+              {features.assessmentBookingEnabled ? h.ctaPrimary : features.fallbackLabel}
               <ArrowRight className="h-4 w-4" />
             </Link>
             <Link
-              href={`${base}#${sections.plans}`}
+              href="/login"
               className={cn(buttonVariants({ variant: "outline", size: "lg" }))}
             >
-              {h.ctaSecondary}
+              {dict.nav.login}
             </Link>
             <Link
               href={`${base}#${sections.why}`}

@@ -39,7 +39,7 @@ function withUrl(row: SourceRow) {
 
 /** List campaign sources (admin only). */
 export async function GET(req: NextRequest) {
-  if (!adminConfigured() || !isAdminAuthorized(req)) {
+  if (!adminConfigured() || !(await isAdminAuthorized())) {
     return NextResponse.json({ error: "unauthorized" }, { status: 401 });
   }
   if (!isServiceRoleConfigured()) return NextResponse.json({ error: "not_configured" }, { status: 503 });
@@ -55,7 +55,7 @@ export async function GET(req: NextRequest) {
 
 /** Create a campaign source (admin only). Returns the row + its tracked URL. */
 export async function POST(req: NextRequest) {
-  if (!adminConfigured() || !isAdminAuthorized(req)) {
+  if (!adminConfigured() || !(await isAdminAuthorized())) {
     return NextResponse.json({ error: "unauthorized" }, { status: 401 });
   }
   if (!isServiceRoleConfigured()) return NextResponse.json({ error: "not_configured" }, { status: 503 });

@@ -8,7 +8,7 @@ export default function PrivacyPage() {
   return <LegalPage title="Privacy Policy" updated="Effective 13 July 2026">
     <p>Dar Tahara is responsible for the personal data described in this policy. This notice applies to our website, mailing list, Initial Home Assessments, subscriptions, operational email and WhatsApp communications.</p>
     <h2>1. Data we collect</h2>
-    <p>We collect identity and contact details; billing identifiers and payment status (card details remain with Stripe); service addresses; declared and verified property size, rooms, condition, pets, smoking, access and care notes; appointment choices; assessment observations; quotes, subscriptions and invoices; communications; legal acceptances; and security data such as IP address, user agent and webhook records.</p>
+    <p>We collect identity and contact details; billing identifiers and payment status (card details remain with Stripe); service addresses; declared and verified property size, rooms, condition, pets, smoking, access and care notes; appointment choices; assessment observations; subscription proposals, subscriptions and invoices; communications; legal acceptances; and security data such as IP address, user agent and webhook records.</p>
     <h2>2. Why we use data</h2>
     <p>We process data to take steps requested before a contract, perform assessments and subscriptions, collect payment, schedule staff, maintain safety and service quality, answer enquiries, prevent fraud, keep financial and consent records, comply with law and defend legal claims. Marketing is sent only where consent or another lawful basis applies, and you may unsubscribe at any time.</p>
     <h2>3. WhatsApp assistant and automated responses</h2>

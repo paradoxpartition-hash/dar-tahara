@@ -35,6 +35,8 @@ export function AssessmentBookingModal({
   sizeM2: initialSize,
   frequency,
   overMax,
+  monthlyEnabled,
+  annualEnabled,
 }: {
   open: boolean;
   onClose: () => void;
@@ -43,6 +45,8 @@ export function AssessmentBookingModal({
   sizeM2: number;
   frequency: FrequencyKey;
   overMax: boolean;
+  monthlyEnabled: boolean;
+  annualEnabled: boolean;
 }) {
   const b = dict.booking;
   const dialogRef = React.useRef<HTMLDivElement>(null);
@@ -68,6 +72,11 @@ export function AssessmentBookingModal({
   React.useEffect(() => {
     if (open) setSizeM2(initialSize);
   }, [open, initialSize]);
+
+  React.useEffect(() => {
+    if (!monthlyEnabled && annualEnabled) setBillingInterval("annual");
+    if (monthlyEnabled && !annualEnabled) setBillingInterval("monthly");
+  }, [monthlyEnabled, annualEnabled]);
 
   React.useEffect(() => {
     if (!open) return;
@@ -136,7 +145,7 @@ export function AssessmentBookingModal({
     if (!validate()) return;
     setStatus("submitting");
     try {
-      const res = await fetch("/api/assessment/checkout", {
+      const res = await fetch("/api/assessment/apply", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -169,17 +178,20 @@ export function AssessmentBookingModal({
           termsAccepted: form.terms,
         }),
       });
-      const data = (await res.json().catch(() => ({}))) as { checkoutUrl?: string; error?: string };
-      if (res.ok && data.checkoutUrl) {
-        window.location.assign(data.checkoutUrl);
+      const data = (await res.json().catch(() => ({}))) as { applicationUrl?: string; error?: string };
+      if (res.ok && data.applicationUrl) {
+        window.location.assign(data.applicationUrl);
         return;
       }
       setStatus("idle");
+      const serverError = data.error === "application_failed" ? "checkout_failed"
+        : data.error === "application_not_configured" || data.error === "assessment_booking_disabled" ? "checkout_not_configured"
+        : data.error;
       const known: ErrorKey[] = [
         "invalid_customer", "invalid_property", "invalid_booking", "pet_details_required",
         "doorlock_internet_required", "legal_acceptance_required", "rate_limited", "checkout_not_configured", "checkout_failed",
       ];
-      setErrorKey(known.includes(data.error as ErrorKey) ? (data.error as ErrorKey) : "checkout_failed");
+      setErrorKey(known.includes(serverError as ErrorKey) ? (serverError as ErrorKey) : "checkout_failed");
     } catch {
       setStatus("idle");
       setErrorKey("network");
@@ -247,10 +259,6 @@ export function AssessmentBookingModal({
                       value={formatMoneyFromCents(quote.doorlockInstallationPriceCents, locale)}
                     />
                   ) : null}
-                  <div className="flex items-center justify-between gap-4 border-t border-border pt-2">
-                    <dt className="font-medium text-foreground">{b.summary.dueToday}</dt>
-                    <dd className="font-serif text-lg text-foreground">{formatMoneyFromCents(quote.dueTodayCents, locale)}</dd>
-                  </div>
                 </dl>
                 <p className="mt-2 text-xs text-muted-foreground">{b.summary.fromAfterAssessment}</p>
               </div>
@@ -258,7 +266,9 @@ export function AssessmentBookingModal({
               {/* Billing interval */}
               <Fieldset legend={b.billing.label}>
                 <div className="grid grid-cols-2 gap-3">
-                  {(["monthly", "annual"] as BillingInterval[]).map((interval) => {
+                  {(["monthly", "annual"] as BillingInterval[]).filter((interval) =>
+                    interval === "monthly" ? monthlyEnabled : annualEnabled,
+                  ).map((interval) => {
                     const selected = billingInterval === interval;
                     return (
                       <button
@@ -463,9 +473,8 @@ export function AssessmentBookingModal({
                 className={cn(buttonVariants({ variant: "primary", size: "lg" }), "w-full")}
               >
                 {status === "submitting" ? <Loader2 className="h-4 w-4 animate-spin" /> : <Lock className="h-4 w-4" />}
-                {b.pay} · {formatMoneyFromCents(quote.dueTodayCents, locale)}
+                {b.pay}
               </button>
-              <p className="mt-2 text-center text-xs leading-relaxed text-muted-foreground">{b.paySecure}</p>
             </div>
           </motion.div>
         </motion.div>

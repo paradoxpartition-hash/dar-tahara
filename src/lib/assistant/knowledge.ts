@@ -19,11 +19,11 @@ const canonicalArticles = [
     id: "initial-home-assessment",
     title: "Initial Home Assessment",
     category: "assessment",
-    keywords: ["assessment", "first visit", "initial", "deep clean", "personalised plan", "revised quote"],
+    keywords: ["assessment", "first visit", "initial", "deep clean", "personalised plan", "updated proposal"],
     relatedQuestions: ["How does the first visit work?", "Is the first visit prepaid?"],
     summary: "The first visit is prepaid and verifies the home before an ongoing subscription starts.",
     content:
-      "The Initial Home Assessment is a prepaid onboarding visit. Dar Tahara verifies the property details supplied by the customer, assesses the home's condition, performs an initial deep clean where required and within the agreed scope, and prepares a personalised cleaning plan. The ongoing subscription begins only after the assessment is completed and approved. If the home materially differs from the supplied details, Dar Tahara may issue a revised quote. Dar Tahara may decline an ongoing subscription if the property is unsafe, unsuitable or outside the service scope.",
+      "The Initial Home Assessment is a controlled onboarding visit. Dar Tahara reviews the property details, assesses the home's condition and prepares a personalised cleaning plan. No subscription is activated until staff approval, explicit customer acceptance and successful payment. If the home materially differs from the supplied details, Dar Tahara may issue an updated service proposal. Dar Tahara may decline an ongoing subscription if the property is unsafe, unsuitable or outside the service scope.",
     source: "Home assessment booking flow and terms copy",
   },
   {
@@ -65,7 +65,7 @@ const canonicalArticles = [
     category: "services",
     keywords: ["included", "service", "cleaning", "window", "laundry", "linen", "products", "materials", "pets", "smoking"],
     relatedQuestions: ["What is included?", "Do you bring cleaning products?"],
-    summary: "Plans include core home care; optional or specialist services can be quoted separately.",
+    summary: "Plans include core home care; optional or specialist services are priced separately in the approved proposal.",
     content:
       "Dar Tahara provides premium cleaning, recurring cleaning, deep cleaning where agreed, home inspections, property preparation, key holding, linen and laundry support, and holiday-home or short-stay preparation. Basic professional cleaning materials, supplies and toilet paper may be included where the plan states this. Specialist surface products, extra deep cleaning, post-construction work, window cleaning, terrace cleaning, laundry, linen changes and concierge services may require separate confirmation or pricing.",
     source: "Website services and calculator notes",
@@ -100,7 +100,7 @@ const canonicalArticles = [
     relatedQuestions: ["Can I speak to someone?", "I have a complaint"],
     summary: "Sensitive, uncertain or disputed issues must be escalated to a Dar Tahara specialist.",
     content:
-      "The assistant must escalate when a customer asks for a human, when the answer is not in approved knowledge, when confidence is low, when a charge is disputed, when a refund decision is required, for complaints involving damage, safety or misconduct, for revised quote disputes, hazards, legal threats, abusive conversations, repeated failures or manual booking intervention. The assistant should offer a specialist and provide expected response-time wording without claiming immediate availability unless verified.",
+      "The assistant must escalate when a customer asks for a human, when the answer is not in approved knowledge, when confidence is low, when a charge is disputed, when a refund decision is required, for complaints involving damage, safety or misconduct, for proposal disputes, hazards, legal threats, abusive conversations, repeated failures or manual booking intervention. The assistant should offer a specialist and provide expected response-time wording without claiming immediate availability unless verified.",
     source: "Assistant escalation policy",
   },
   {

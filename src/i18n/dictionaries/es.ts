@@ -23,7 +23,8 @@ const es: DeepPartial<Dictionary> = {
     gallery: "Galería",
     faq: "Preguntas frecuentes",
     book: "Reservar Evaluación Inicial",
-    quote: "Solicitar presupuesto",
+    login: "Iniciar sesión",
+    myAccount: "Mi cuenta",
     menu: "Menú",
     close: "Cerrar",
     language: "Idioma",
@@ -35,7 +36,6 @@ const es: DeepPartial<Dictionary> = {
     subtitle:
       "Para propietarios, expatriados y dueños de casas vacacionales en todo Marruecos. Limpiamos, inspeccionamos y mantenemos tu propiedad con precisión discreta, para que regreses al confort y nunca a la preocupación.",
     ctaPrimary: "Reservar Evaluación Inicial",
-    ctaSecondary: "Solicitar presupuesto",
     ctaTertiary: "Saber más",
     stat1Value: "500+",
     stat1Label: "Hogares cuidados",
@@ -216,7 +216,6 @@ const es: DeepPartial<Dictionary> = {
     subtitle:
       "Deja que cuidemos tu hogar, para que nunca tengas que pensar en él. Reserva una primera visita o solicita hoy un presupuesto a medida.",
     ctaPrimary: "Reservar Evaluación Inicial",
-    ctaSecondary: "Solicitar presupuesto",
     whatsapp: "Chatear por WhatsApp",
     whatsappInfo: "Habla con el asistente de Dar Tahara por WhatsApp sobre servicios, precios, suscripciones, acceso a la propiedad y reservas. Los casos complejos pueden transferirse a soporte por correo electrónico.",
     whatsappPrivacy: "Es un asistente automatizado. No envíes datos de pago, contraseñas ni códigos de acceso completos.",
@@ -263,13 +262,12 @@ const es: DeepPartial<Dictionary> = {
       effective: "Precio efectivo por visita",
     },
     custom: {
-      title: "Un hogar distinguido merece un presupuesto a medida.",
-      body: "Las propiedades de más de 250 m² requieren un presupuesto personalizado.",
-      cta: "Solicitar un presupuesto a medida",
+      title: "Un hogar distinguido merece una evaluación individual.",
+      body: "Las propiedades de más de 250 m² se revisan individualmente antes de preparar una propuesta.",
+      cta: "Solicitar una evaluación",
     },
     cta: {
       book: "Reserva la Evaluación Inicial",
-      quote: "Solicitar un presupuesto personalizado",
     },
     disclaimer:
       "Este es un precio estimado basado en el tamaño de la propiedad y la frecuencia de limpieza seleccionada. El precio final puede variar según el estado de la propiedad, la accesibilidad, los servicios adicionales y los requisitos de limpieza específicos.",
@@ -280,7 +278,6 @@ const es: DeepPartial<Dictionary> = {
   },
   enquiry: {
     title: "Reserva tu limpieza",
-    quoteTitle: "Solicitar un presupuesto personalizado",
     subtitle: "Comparte algunos datos y confirmaremos tu primera visita en un plazo de 24 horas.",
     summary: "Tu selección",
     fields: {
@@ -310,7 +307,7 @@ const es: DeepPartial<Dictionary> = {
     subtitle:
       "Tu primera visita nos permite evaluar profesionalmente tu hogar, realizar una primera limpieza a fondo si es necesario y preparar tu plan de limpieza personalizado.",
     close: "Cerrar",
-    pay: "Pagar y reservar evaluación",
+    pay: "Enviar solicitud de evaluación",
     paySecure:
       "Pago seguro con Stripe. Tu suscripción comienza solo después de completar y aprobar tu Evaluación inicial del hogar.",
     summary: {
@@ -391,8 +388,8 @@ const es: DeepPartial<Dictionary> = {
       doorlock_internet_required: "Confirme que la vivienda tiene conexión a internet para la cerradura inteligente.",
       legal_acceptance_required: "Confirma los datos y acepta los términos para continuar.",
       rate_limited: "Demasiados intentos. Inténtalo de nuevo en un minuto.",
-      checkout_not_configured: "La reserva en línea no está disponible ahora mismo — contáctanos.",
-      checkout_failed: "No pudimos iniciar el pago seguro. Inténtalo de nuevo.",
+      checkout_not_configured: "Las solicitudes no están disponibles — únase al acceso anticipado.",
+      checkout_failed: "No pudimos enviar su solicitud. Inténtelo de nuevo.",
       network: "Error de red. Comprueba tu conexión e inténtalo de nuevo.",
     },
   },
