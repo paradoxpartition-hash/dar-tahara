@@ -442,7 +442,7 @@ const nl: DeepPartial<Dictionary> = {
       send: "Bericht verzenden",
       automated: "Automatische assistent",
       human: "Dar Tahara-specialist",
-      error: "Sorry, ik kon dit niet veilig verwerken. Ik kan u verbinden met een Dar Tahara-specialist.",
+      error: "Sorry, dat verzoek kon niet worden voltooid. Probeer het opnieuw; uw gesprek is bewaard.",
       quickActions: [
         "Hoe werkt het eerste bezoek?",
         "Bereken mijn prijs",

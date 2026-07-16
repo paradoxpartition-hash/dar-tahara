@@ -259,6 +259,37 @@ const LOCALIZED_ARTICLES: Partial<Record<Locale, LocalizedArticles>> = {
   },
 };
 
+const CURRENT_HANDOFF_POLICY: Record<Locale, LocalizedArticle> = {
+  en: {
+    title: "Human handoff rules",
+    content: "Human handoff is reserved for an explicit request or an issue that genuinely requires staff action or protected records, such as changing a confirmed booking, investigating a payment or refund, theft, damage, injury, unsafe conditions, an active access failure, a lost physical key, an active digital-lock failure, a staff no-show, contract termination, authenticated account information, or repeated unresolved technical failures. Missing knowledge, low confidence, spelling mistakes, another language, and general policy questions do not by themselves require handoff.",
+  },
+  nl: {
+    title: "Regels voor menselijke ondersteuning",
+    content: "Menselijke ondersteuning is voor een uitdrukkelijk verzoek of een probleem waarvoor echt personeelsactie of beveiligde gegevens nodig zijn, zoals een bevestigde boeking wijzigen, een betaling of terugbetaling onderzoeken, diefstal, schade, letsel, een onveilige situatie, een actief toegangsprobleem, een verloren fysieke sleutel, een defect digitaal slot tijdens de dienst, een niet-verschenen medewerker, contractbeëindiging, geverifieerde accountgegevens of herhaalde onopgeloste technische fouten. Ontbrekende kennis, lage zekerheid, spelfouten, een andere taal en algemene beleidsvragen zijn op zichzelf geen reden voor overdracht.",
+  },
+  fr: {
+    title: "Règles de transfert à une personne",
+    content: "Le transfert à une personne est réservé à une demande explicite ou à un problème nécessitant réellement une action du personnel ou l'accès à des données protégées : modification d'une réservation confirmée, examen d'un paiement ou remboursement, vol, dommage, blessure, situation dangereuse, échec d'accès en cours, clé physique perdue, serrure numérique défaillante pendant le service, absence d'un intervenant, résiliation de contrat, données de compte authentifiées ou pannes techniques répétées. Une connaissance manquante, une faible confiance, des fautes, une autre langue ou une question générale ne suffisent pas à déclencher un transfert.",
+  },
+  es: {
+    title: "Reglas de atención humana",
+    content: "La atención humana se reserva para una solicitud explícita o un problema que realmente requiera una acción del personal o acceso a datos protegidos: cambiar una reserva confirmada, revisar un pago o reembolso, robo, daños, lesiones, condiciones inseguras, un fallo de acceso activo, una llave física perdida, una cerradura digital averiada durante el servicio, una ausencia del personal, terminar un contrato, consultar datos autenticados o resolver fallos técnicos repetidos. La falta de conocimiento, una confianza baja, errores ortográficos, otro idioma o una pregunta general no justifican por sí solos la derivación.",
+  },
+  de: {
+    title: "Regeln für menschliche Unterstützung",
+    content: "Menschliche Unterstützung ist einer ausdrücklichen Bitte oder einem Problem vorbehalten, das tatsächlich Mitarbeitereingriff oder geschützte Daten erfordert: Änderung einer bestätigten Buchung, Prüfung einer Zahlung oder Erstattung, Diebstahl, Schaden, Verletzung, unsichere Bedingungen, ein akutes Zugangsproblem, ein verlorener physischer Schlüssel, ein defektes digitales Schloss während des Dienstes, Nichterscheinen, Vertragsbeendigung, authentifizierte Kontodaten oder wiederholt ungelöste technische Fehler. Fehlendes Wissen, geringe Sicherheit, Schreibfehler, eine andere Sprache oder allgemeine Richtlinienfragen führen allein nicht zur Übergabe.",
+  },
+  pt: {
+    title: "Regras de apoio humano",
+    content: "O apoio humano fica reservado para um pedido explícito ou um problema que realmente exija ação da equipa ou acesso a dados protegidos: alterar uma reserva confirmada, analisar um pagamento ou reembolso, roubo, danos, ferimentos, condições inseguras, falha de acesso ativa, perda de uma chave física, avaria da fechadura digital durante o serviço, falta da equipa, cessação do contrato, dados de conta autenticados ou falhas técnicas repetidas. Conhecimento em falta, baixa confiança, erros ortográficos, outro idioma ou perguntas gerais não justificam por si só a transferência.",
+  },
+  ar: {
+    title: "قواعد التحويل إلى الدعم البشري",
+    content: "يقتصر التحويل إلى الدعم البشري على طلب العميل الصريح أو على مشكلة تتطلب فعلاً إجراءً من الموظفين أو الوصول إلى سجلات محمية، مثل تغيير حجز مؤكد، أو مراجعة دفعة أو استرداد، أو السرقة أو الضرر أو الإصابة أو الظروف غير الآمنة، أو تعذر الدخول أثناء خدمة جارية، أو فقدان مفتاح فعلي، أو تعطل قفل رقمي أثناء الخدمة، أو عدم حضور الموظف، أو إنهاء عقد، أو معلومات حساب تتطلب التحقق، أو أعطال تقنية متكررة. نقص المعرفة أو انخفاض الثقة أو الأخطاء الإملائية أو استخدام لغة أخرى أو طرح سؤال عام لا يبرر التحويل وحده.",
+  },
+};
+
 function articleSlug(item: RetrievedKnowledge): string {
   const sourcePrefix = "Supabase knowledge_entries:";
   return item.article.source.startsWith(sourcePrefix)
@@ -273,7 +304,8 @@ export function localizeRetrievedKnowledge(
   if (locale === "en") return retrieved;
   return retrieved.map((item) => {
     if (item.article.language === locale) return item;
-    const localized = LOCALIZED_ARTICLES[locale]?.[articleSlug(item)];
+    const slug = articleSlug(item);
+    const localized = slug === "human-handoff" ? CURRENT_HANDOFF_POLICY[locale] : LOCALIZED_ARTICLES[locale]?.[slug];
     if (!localized) return item;
     return {
       ...item,

@@ -98,9 +98,9 @@ const canonicalArticles = [
     category: "support",
     keywords: ["human", "specialist", "agent", "complaint", "damage", "refund", "dispute", "legal", "unsafe"],
     relatedQuestions: ["Can I speak to someone?", "I have a complaint"],
-    summary: "Sensitive, uncertain or disputed issues must be escalated to a Dar Tahara specialist.",
+    summary: "Human handoff is reserved for explicit requests and issues that genuinely require staff action or protected records.",
     content:
-      "The assistant must escalate when a customer asks for a human, when the answer is not in approved knowledge, when confidence is low, when a charge is disputed, when a refund decision is required, for complaints involving damage, safety or misconduct, for proposal disputes, hazards, legal threats, abusive conversations, repeated failures or manual booking intervention. The assistant should offer a specialist and provide expected response-time wording without claiming immediate availability unless verified.",
+      "The assistant must escalate when a customer explicitly asks for a human or when the request genuinely requires staff action or protected records: changing or cancelling a confirmed booking, a possibly charged failed payment, a refund or invoice dispute, theft, damage, injury, unsafe conditions, an active property-access failure, a lost physical key, a malfunctioning digital lock during service, a staff no-show, contract termination, authenticated account information, repeated unresolved technical failures, or another manual operational action. Missing knowledge, low retrieval confidence, informal wording, spelling errors, another language, or a general policy question do not by themselves require escalation. The assistant should clarify, answer confirmed parts, and create an internal knowledge gap instead.",
     source: "Assistant escalation policy",
   },
   {

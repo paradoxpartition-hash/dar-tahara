@@ -15,11 +15,25 @@ const SECURITY = /\b(unsafe|danger|threat|harassment|security|onveilig|gevaar|be
 const DAMAGE = /\b(damage|damaged|broken|d[ée]g[âa]t|cass[ée]|schade|beschadigd|da[ñn]o|roto|schaden|besch[äa]digt|dano|danificado)\b|ضرر|تلف/iu;
 const MISSING_ITEM = /\b(missing|stolen|theft|lost item|missing item|vermist|gestolen|kwijt|manquant|vol[ée]?|perdu|falta|robado|perdido|gestohlen|verloren|roubado|perdido)\b|مفقود|مسروق|سرقة/iu;
 const PAYMENT_INVESTIGATION = /\b(charged twice|double charg|duplicate charg|payment dispute|chargeback|refund|twice charged|dubbel afgeschreven|dubbele betaling|terugbetaling|factur[ée] deux fois|double pr[ée]l[èe]vement|remboursement|cobrado dos veces|cargo duplicado|reembolso|doppelt belastet|doppelte abbuchung|r[üu]ckerstattung|cobrado duas vezes|cobran[çc]a duplicada|reembolso)\b|خصم مرتين|دفع مكرر|استرداد/iu;
+const PAYMENT_OR_INVOICE_RECORDS = /\b(invoice dispute|dispute (?:an? )?invoice|payment failed.{0,30}charged|charged.{0,30}payment failed|factuur betwist|betaling mislukt.{0,30}afgeschreven|conteste? la facture|paiement refus[ée].{0,30}d[ée]bit[ée]|disputo la factura|pago fall[óo].{0,30}cobrado|rechnung bestreiten|zahlung fehlgeschlagen.{0,30}belastet|contestar fatura|pagamento falhou.{0,30}cobrado)\b|اعتراض على الفاتورة|فشل الدفع.{0,30}خصم/iu;
 const TECHNICAL_BUG = /\b(crash|crashes|crashed|bug|error|blank page|not load|not working|broken page|vastlop|foutmelding|laadt niet|plantage|erreur|page blanche|ne charge pas|bloquea|error|no carga|absturz|fehler|l[äa]dt nicht|falha|erro|n[ãa]o carrega)\b|عطل|خطأ|لا تعمل|لا تفتح/iu;
+const OPERATIONAL_BOOKING_CHANGE = /\b(?:change|cancel|reschedule|move|update|wijzig|annuleer|verzet|changer|annuler|reporter|cambiar|cancelar|reprogramar|ändern|stornieren|verschieben|alterar|cancelar|remarcar)(?:\s+\S+){0,6}\s+(?:my|mijn|ma|mon|mi|meine|mein|minha|meu)?\s*(?:confirmed )?(?:booking|reservation|appointment|boeking|reservering|afspraak|réservation|rendez-vous|reserva|cita|buchung|termin|marcação)\b|(?:تغيير|إلغاء).{0,30}(?:حجزي|الحجز|الموعد)/iu;
+const CONTRACT_TERMINATION = /\b(?:terminate|cancel|end|stop|opzeggen|beëindigen|annuler|résilier|terminar|dar de baja|kündigen|beenden|cancelar|terminar)(?:\s+\S+){0,5}\s+(?:my|mijn|mon|ma|mi|meine|mein|minha|meu)?\s*(?:contract|subscription|agreement|abonnement|contrat|suscripción|contrato|vertrag|abo|subscrição)\b|(?:إنهاء|إلغاء).{0,30}(?:العقد|اشتراكي|الاشتراك)/iu;
+const ACTIVE_ACCESS_FAILURE = /\b(?:lost|missing|cannot find|can't find|kwijt|verloren|perdu|perdida|perdido)(?:\s+\S+){0,3}\s+(?:physical )?(?:key|sleutel|clé|llave|schlüssel|chave)\b|\b(?:cannot|can't|unable to|locked out|geen toegang|kan niet binnen|accès impossible|no puedo entrar|kein zugang|não consigo entrar)(?:\s+\S+){0,5}\s+(?:access|enter|open|unlock|property|home|house|door|binnen|toegang|entrer|ouvrir|acceder|entrar|zugang|öffnen|acesso|abrir)\b|\b(?:digital|smart|ttlock).{0,20}(?:lock|slot|serrure|cerradura|schloss|fechadura).{0,30}(?:failed|broken|malfunction|not working|werkt niet|ne fonctionne|no funciona|funktioniert nicht|não funciona)\b|فقدت.{0,20}مفتاح|تعذر.{0,20}دخول|القفل.{0,20}لا يعمل/iu;
+const INJURY = /\b(injury|injured|hurt|accident|gewond|letsel|ongeval|bless[ée]|accident|lesi[óo]n|herido|unfall|verletzt|ferimento|acidente)\b|إصابة|حادث|جرح/iu;
 const SERVICE_FAILURE = /\b(did not arrive|didn'?t arrive|no show|team never came|niet gekomen|kwam niet|pas venu|n'est pas venu|no lleg[óo]|no se present[óo]|nicht gekommen|kam nicht|n[ãa]o apareceu|n[ãa]o chegou)\b|لم يصل|لم يأت/iu;
 const CUSTOM_APPROVAL = /\b(exception|special approval|custom approval|approve this|uitzondering|goedkeuring|exception|approbation|excepci[óo]n|aprobaci[óo]n|ausnahme|genehmigung|exce[çc][ãa]o|aprova[çc][ãa]o)\b|استثناء|موافقة خاصة/iu;
 const VAGUE_SERVICE_ISSUE = /\b(cleaning (?:was|is) not (?:good|correct|right)|not cleaned well|poor cleaning|schoonmaak (?:was|is) niet goed|niet goed schoongemaakt|nettoyage (?:n'est|est) pas (?:bon|correct)|mal nettoy[ée]|limpieza (?:no estuvo|no est[áa]) bien|mal limpiado|reinigung war nicht gut|nicht gut gereinigt|limpeza n[ãa]o (?:foi|est[áa]) boa|mal limpo)\b|التنظيف غير جيد|لم يتم التنظيف جيداً/iu;
 const BOOKING_REFERENCE = /\bDTH-[A-Z0-9-]{4,}\b/i;
+
+// Policy and hypothetical questions may contain the same words as real incidents.
+// They must remain self-service unless the customer describes an event that
+// happened to them or asks staff to act on an existing account/service.
+const INFORMATIONAL_INCIDENT_QUESTION = /\b(?:what|how).{0,70}\b(?:if|policy|procedure|process|handle|covered|coverage)|\b(?:do|does|can|could|would)\s+(?:dar tahara|you|your team|the service).{0,50}\b(?:guarantee|cover|handle|insure)|\bwhat happens if\b|\b(?:wat|hoe).{0,70}\b(?:als|beleid|procedure)|\b(?:que|qu[eé]|comment|was|wie|como|o que).{0,70}\b(?:si|wenn|se|politique|pol[ií]tica|richtlinie|beleid|procedimento)|ماذا.{0,50}(?:إذا|سياسة)|كيف.{0,50}(?:تتعامل|يتم)/iu;
+
+function isInformationalIncidentQuestion(message: string): boolean {
+  return INFORMATIONAL_INCIDENT_QUESTION.test(message);
+}
 
 function decision(
   required: boolean,
@@ -38,15 +52,20 @@ export function evaluateHumanHandoff(input: {
   state: AssistantSuggestionState;
 }): HandoffEvaluation {
   const { message, intent, retrieved, state } = input;
-  if (SECURITY.test(message)) return decision(true, "security_issue", 0.99, "offer_handoff", "security_issue");
-  if (DAMAGE.test(message)) return decision(true, "damage_claim", 0.98, "offer_handoff", "damage_claim");
-  if (MISSING_ITEM.test(message)) return decision(true, "missing_item_claim", 0.98, "offer_handoff", "missing_item_claim");
-  if (PAYMENT_INVESTIGATION.test(message)) return decision(true, "payment_investigation", 0.98, "offer_handoff", "payment_investigation");
+  const informationalIncidentQuestion = isInformationalIncidentQuestion(message);
+  if (SECURITY.test(message) && !informationalIncidentQuestion) return decision(true, "security_issue", 0.99, "offer_handoff", "security_issue");
+  if (INJURY.test(message) && !informationalIncidentQuestion) return decision(true, "security_issue", 0.99, "offer_handoff", "injury_report");
+  if (DAMAGE.test(message) && !informationalIncidentQuestion) return decision(true, "damage_claim", 0.98, "offer_handoff", "damage_claim");
+  if (MISSING_ITEM.test(message) && !informationalIncidentQuestion) return decision(true, "missing_item_claim", 0.98, "offer_handoff", "missing_item_claim");
+  if ((PAYMENT_INVESTIGATION.test(message) || PAYMENT_OR_INVOICE_RECORDS.test(message)) && !informationalIncidentQuestion) return decision(true, "payment_investigation", 0.98, "offer_handoff", "payment_investigation");
+  if (ACTIVE_ACCESS_FAILURE.test(message) && !informationalIncidentQuestion) return decision(true, "service_failure", 0.98, "offer_handoff", "property_access_failure");
+  if (OPERATIONAL_BOOKING_CHANGE.test(message) || CONTRACT_TERMINATION.test(message)) return decision(true, "account_access_required", 0.97, "offer_handoff", "account_operation");
   if (SERVICE_FAILURE.test(message)) return decision(true, "service_failure", 0.96, "offer_handoff", "service_failure");
   if (CUSTOM_APPROVAL.test(message)) return decision(true, "manual_approval_required", 0.94, "offer_handoff", "manual_approval_required");
   if (EXPLICIT_HUMAN.test(message) || state.selectedSuggestionIds.some((id) => id.startsWith("human-"))) {
     return decision(true, "customer_explicitly_requests_human", 0.99, "offer_handoff", "human_topic");
   }
+  if (informationalIncidentQuestion) return decision(false, null, 0.94, "answer", null);
 
   const technicalAttempts = state.clarificationAttempts.technical_bug || 0;
   const continuingTechnicalIssue = state.unresolvedTopics.includes("technical_bug");

@@ -439,8 +439,7 @@ const en = {
       send: "Send message",
       automated: "Automated assistant",
       human: "Dar Tahara specialist",
-      error:
-        "I’m sorry, I couldn’t process that safely. I can connect you with a Dar Tahara specialist if the issue continues.",
+      error: "I’m sorry, that request could not be completed. Please try again; your conversation has been preserved.",
       quickActions: [
         "How does the first visit work?",
         "Calculate my price",
