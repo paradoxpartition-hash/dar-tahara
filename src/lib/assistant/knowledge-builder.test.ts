@@ -2,7 +2,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
-import { knowledgeGapFingerprint } from "./knowledge-builder";
+import { canonicalQuestionKey, knowledgeGapFingerprint } from "./knowledge-builder";
 
 const root = process.cwd();
 
@@ -10,6 +10,51 @@ test("similar unanswered questions share a deterministic knowledge-gap cluster",
   const first = knowledgeGapFingerprint("How much is the physical key management fee?", "pricing");
   const second = knowledgeGapFingerprint("What do you charge to hold a physical key?", "pricing");
   assert.equal(first, second);
+});
+
+test("one business policy keeps one canonical owner question across every supported language", () => {
+  for (const message of [
+    "How much is the physical key management fee?",
+    "Hoeveel kost het beheer van een fysieke sleutel?",
+    "Quel est le prix de la garde d'une clé physique ?",
+    "¿Cuánto cuesta la custodia de una llave física?",
+    "Welche Gebühr gilt für die Aufbewahrung eines physischen Schlüssels?",
+    "Quanto custa a guarda de uma chave física?",
+    "كم رسوم تخزين المفتاح؟",
+  ]) assert.equal(canonicalQuestionKey(message), "physical-key-fee", message);
+});
+
+test("captured gaps route to the seeded canonical owner question per business policy", () => {
+  for (const [message, expected] of [
+    ["How much is the physical key management fee?", "physical-key-fee"],
+    ["Which digital lock models do you support?", "digital-lock-policy"],
+    ["How much does the smart lock cost?", "digital-lock-policy"],
+    ["Are windows included in my plan?", "included-windows"],
+    ["Can I pause my subscription while travelling?", "subscription-pause"],
+    ["How long before a cleaning can I cancel?", "cancellation-notice"],
+    ["Is my payment refundable?", "refund-policy"],
+    ["If I cancel, do I get a refund?", "refund-policy"],
+  ] as const) assert.equal(canonicalQuestionKey(message), expected, message);
+});
+
+test("unrelated questions do not get routed onto a canonical owner question", () => {
+  for (const message of [
+    "Do you clean apartments in Rabat?",
+    "What time does the cleaner arrive?",
+    "How do I update my invoice address?",
+  ]) assert.equal(canonicalQuestionKey(message), null, message);
+});
+
+test("duplicate owner questions are merged onto the canonical without deleting history", () => {
+  const sql = readFileSync(join(root, "supabase/migrations/20260716182221_merge_duplicate_knowledge_questions.sql"), "utf8");
+  for (const expected of [
+    "create or replace function public.merge_knowledge_builder_question",
+    "merge_cannot_supersede_approved_question",
+    "status = 'superseded'",
+    "'knowledge_question_merged'",
+    "grant execute on function public.merge_knowledge_builder_question(uuid, uuid, uuid) to service_role",
+  ]) assert.ok(sql.includes(expected), expected);
+  assert.doesNotMatch(sql, /delete\s+from/i);
 });
 
 test("knowledge gaps are linked only after the conversation has been persisted", () => {

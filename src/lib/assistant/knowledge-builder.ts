@@ -42,20 +42,145 @@ function normalize(value: string): string {
     .replace(/[^\p{L}\p{N}]+/gu, " ").replace(/\s+/g, " ").trim();
 }
 
-const CLUSTER_CONCEPTS: Array<[RegExp, string]> = [
-  [/\b(?:fee|fees|cost|costs|charge|charges|price|pricing|amount)\b/giu, "price"],
-  [/\b(?:store|stores|stored|storage|hold|holds|holding|keep|keeps|keeping|management)\b/giu, "storage"],
-  [/\b(?:key|keys)\b/giu, "key"],
-  [/\b(?:cancel|cancels|cancellation|terminate|termination|stop)\b/giu, "cancel"],
-  [/\b(?:refund|refunds|refundable|reimbursement)\b/giu, "refund"],
-  [/\b(?:window|windows|glass)\b/giu, "window"],
+/**
+ * Concept vocabulary across every supported locale. Customers ask the same business question in
+ * different languages, so tokens are folded to a shared concept before fingerprinting. Without the
+ * non-English terms a Dutch "kosten … sleutel" question clusters separately from the English
+ * "physical key fee" question and produces a duplicate owner question for one business policy.
+ */
+const CONCEPT_VOCABULARY: Record<string, string[]> = {
+  price: [
+    "fee", "fees", "cost", "costs", "charge", "charges", "price", "pricing", "amount", "rate", "rates", "tariff",
+    "kost", "kosten", "prijs", "prijzen", "tarief", "tarieven", "vergoeding", "bedrag",
+    "frais", "cout", "couts", "coute", "prix", "tarif", "tarifs", "montant",
+    "precio", "precios", "coste", "costes", "costo", "cuesta", "cuestan", "tarifa", "tarifas", "importe", "cuota",
+    "gebuhr", "gebuhren", "kostet", "preis", "preise", "betrag",
+    "taxa", "taxas", "custo", "custos", "custa", "custam", "preco", "precos", "valor",
+    "رسوم", "رسم", "الرسوم", "تكلفة", "التكلفة", "سعر", "السعر", "ثمن", "مبلغ",
+  ],
+  storage: [
+    "store", "stores", "stored", "storage", "hold", "holds", "holding", "keep", "keeps", "keeping",
+    "management", "manage", "managing", "custody",
+    "beheer", "beheren", "bewaren", "bewaart", "bewaring", "opslag", "houden",
+    "garde", "garder", "conservation", "conserver", "stockage", "gestion",
+    "guardar", "guarda", "almacenar", "almacenamiento", "custodia",
+    "aufbewahrung", "aufbewahren", "lagerung", "verwaltung", "verwahrung",
+    "guardas", "armazenamento", "armazenar", "gestao",
+    "تخزين", "حفظ", "ادارة", "الاحتفاظ", "احتفاظ",
+  ],
+  key: [
+    "key", "keys",
+    "sleutel", "sleutels",
+    "cle", "cles", "clef", "clefs",
+    "llave", "llaves",
+    "schlussel", "schlussels", "schlusseln",
+    "chave", "chaves",
+    "مفتاح", "المفتاح", "مفاتيح", "المفاتيح",
+  ],
+  lock: [
+    "lock", "locks", "smartlock", "smartlocks",
+    "slot", "sloten",
+    "serrure", "serrures",
+    "cerradura", "cerraduras",
+    "schloss", "schlosser",
+    "fechadura", "fechaduras",
+    "قفل", "اقفال", "الاقفال",
+  ],
+  cancel: [
+    "cancel", "cancels", "cancelled", "canceled", "cancelling", "cancellation", "terminate", "termination",
+    "annuleren", "annulering", "opzeggen", "opzegging", "afzeggen",
+    "annuler", "annulation", "resilier", "resiliation",
+    "cancelar", "cancelacion", "anular",
+    "stornieren", "stornierung", "kundigen", "kundigung", "absagen",
+    "cancelamento",
+    "الغاء", "إلغاء", "الغى",
+  ],
+  refund: [
+    "refund", "refunds", "refundable", "reimbursement", "reimburse",
+    "terugbetaling", "terugbetalen", "restitutie",
+    "remboursement", "rembourser",
+    "reembolso", "reembolsar", "devolucion",
+    "ruckerstattung", "erstattung",
+    "devolucao",
+    "استرداد", "استرجاع", "تعويض",
+  ],
+  window: [
+    "window", "windows", "glass",
+    "raam", "ramen", "glas", "ruiten",
+    "fenetre", "fenetres", "vitre", "vitres",
+    "ventana", "ventanas", "cristal", "cristales",
+    "fenster", "scheiben",
+    "janela", "janelas", "vidro", "vidros",
+    "نافذة", "نوافذ", "زجاج", "شبابيك",
+  ],
+  pause: [
+    "pause", "paused", "pausing", "suspend", "suspension", "freeze",
+    "pauzeren", "pauze", "onderbreken", "opschorten",
+    "suspendre", "interrompre",
+    "pausar", "pausa", "suspender",
+    "pausieren", "aussetzen", "unterbrechen",
+    "suspensao",
+    "ايقاف", "تعليق", "توقف",
+  ],
+  subscription: [
+    "subscription", "subscriptions", "membership",
+    "abonnement", "abonnementen", "abonnements", "abo",
+    "suscripcion", "membresia",
+    "assinatura",
+    "اشتراك", "الاشتراك",
+  ],
+};
+
+const CONCEPT_BY_TOKEN = new Map<string, string>(
+  Object.entries(CONCEPT_VOCABULARY).flatMap(([concept, tokens]) => tokens.map((token) => [token, concept] as const)),
+);
+const CONCEPT_NAMES = new Set(Object.keys(CONCEPT_VOCABULARY));
+
+const STOP_WORDS = new Set([
+  "the", "and", "that", "this", "with", "from", "your", "have", "does", "what", "how", "can", "you", "much",
+  "is", "do", "to", "a", "physical", "dar", "tahara",
+  "hoeveel", "het", "een", "van", "voor", "fysieke", "fysiek", "wat", "kan", "mijn",
+  "combien", "pour", "une", "des", "les", "physique", "quel", "quelle", "mon",
+  "cuanto", "cuanta", "para", "una", "los", "las", "fisica", "fisico", "mi",
+  "wie", "viel", "fur", "eine", "physische", "physisch", "mein", "meine",
+  "quanto", "uma", "para", "fisica", "meu", "minha",
+  "كم", "هل", "ما", "من", "على", "في", "الى",
+]);
+
+/** Folds a customer message into its sorted, language-independent concept/keyword tokens. */
+function conceptualTokens(message: string): string[] {
+  const tokens = normalize(redactForReasoning(message))
+    .split(" ")
+    .map((token) => CONCEPT_BY_TOKEN.get(token) || token)
+    .filter((token) => token.length > 2 && !STOP_WORDS.has(token));
+  return [...new Set(tokens)].sort();
+}
+
+/**
+ * Canonical owner questions seeded per business policy. A captured gap is attached to the matching
+ * seeded question instead of creating a second owner question for the same policy. Rules stay
+ * conservative: every required concept must be present and no excluded concept may appear.
+ */
+const CANONICAL_TOPICS: Array<{ questionKey: string; required: string[]; excluded: string[] }> = [
+  { questionKey: "refund-policy", required: ["refund"], excluded: [] },
+  { questionKey: "included-windows", required: ["window"], excluded: ["refund", "cancel"] },
+  { questionKey: "subscription-pause", required: ["pause", "subscription"], excluded: ["refund"] },
+  { questionKey: "digital-lock-policy", required: ["lock"], excluded: ["refund", "cancel"] },
+  { questionKey: "physical-key-fee", required: ["price", "key"], excluded: ["lock", "refund", "cancel"] },
+  { questionKey: "cancellation-notice", required: ["cancel"], excluded: ["refund"] },
 ];
 
+/** Returns the seeded owner question that already covers this message, or null when none applies. */
+export function canonicalQuestionKey(message: string): string | null {
+  const concepts = new Set(conceptualTokens(message).filter((token) => CONCEPT_NAMES.has(token)));
+  const match = CANONICAL_TOPICS.find((topic) =>
+    topic.required.every((concept) => concepts.has(concept))
+    && !topic.excluded.some((concept) => concepts.has(concept)));
+  return match?.questionKey || null;
+}
+
 export function knowledgeGapFingerprint(message: string, intent: AssistantIntent): string {
-  const stop = new Set(["the", "and", "that", "this", "with", "from", "your", "have", "does", "what", "how", "can", "you", "much", "is", "do", "to", "a", "physical", "dar", "tahara"]);
-  const conceptual = CLUSTER_CONCEPTS.reduce((value, [pattern, replacement]) => value.replace(pattern, replacement), normalize(redactForReasoning(message)));
-  const tokens = conceptual.split(" ").filter((token) => token.length > 2 && !stop.has(token));
-  const signature = `${intent}:${[...new Set(tokens)].sort().slice(0, 14).join(" ")}`;
+  const signature = `${intent}:${conceptualTokens(message).slice(0, 14).join(" ")}`;
   return createHash("sha256").update(signature).digest("hex");
 }
 
@@ -103,10 +228,15 @@ export async function captureKnowledgeGap(input: {
     if (!gapId) throw new Error("knowledge_gap_insert_returned_no_id");
   }
 
-  const questionKey = `gap-${fingerprint.slice(0, 20)}`;
-  const questions = await serviceSelect<Array<{ id: string; source_gap_ids: unknown }>>(
-    `knowledge_builder_questions?question_key=eq.${questionKey}&select=id,source_gap_ids&limit=1`,
+  const lookupQuestion = (key: string) => serviceSelect<Array<{ id: string; source_gap_ids: unknown }>>(
+    `knowledge_builder_questions?question_key=eq.${key}&select=id,source_gap_ids&limit=1`,
   ).catch(() => []);
+  const gapQuestionKey = `gap-${fingerprint.slice(0, 20)}`;
+  const canonicalKey = canonicalQuestionKey(input.message);
+  let questions = await lookupQuestion(canonicalKey || gapQuestionKey);
+  // Fall back to a gap-scoped question so a missing seed never mis-creates a canonical policy key.
+  if (!questions[0] && canonicalKey) questions = await lookupQuestion(gapQuestionKey);
+  const questionKey = gapQuestionKey;
   let questionId = questions[0]?.id || null;
   if (!questionId) {
     const known = input.retrieved.map((item) => item.article.summary).filter(Boolean).join(" ").slice(0, 1200);
