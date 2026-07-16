@@ -19,6 +19,13 @@ test("knowledge gaps are linked only after the conversation has been persisted",
   assert.match(service, /await persistAssistantTurn\([\s\S]*last_conversation_id:\s*conversationId/);
 });
 
+test("existing owner questions recover and link newly captured gaps", () => {
+  const builder = readFileSync(join(root, "src/lib/assistant/knowledge-builder.ts"), "utf8");
+  assert.match(builder, /select=id,source_gap_ids/);
+  assert.match(builder, /source_gap_ids:\s*\[\.\.\.sourceGapIds, gapId\]/);
+  assert.match(builder, /status:\s*"linked",\s*linked_question_id:\s*questionId/);
+});
+
 test("Knowledge Builder migration protects drafts and publishes approved versions atomically", () => {
   const sql = readFileSync(join(root, "supabase/migrations/20260716151742_assistant_knowledge_builder.sql"), "utf8");
   for (const status of [

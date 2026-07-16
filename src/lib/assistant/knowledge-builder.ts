@@ -104,10 +104,11 @@ export async function captureKnowledgeGap(input: {
   }
 
   const questionKey = `gap-${fingerprint.slice(0, 20)}`;
-  const questions = await serviceSelect<Array<{ id: string }>>(
-    `knowledge_builder_questions?question_key=eq.${questionKey}&select=id&limit=1`,
+  const questions = await serviceSelect<Array<{ id: string; source_gap_ids: unknown }>>(
+    `knowledge_builder_questions?question_key=eq.${questionKey}&select=id,source_gap_ids&limit=1`,
   ).catch(() => []);
-  if (!questions.length) {
+  let questionId = questions[0]?.id || null;
+  if (!questionId) {
     const known = input.retrieved.map((item) => item.article.summary).filter(Boolean).join(" ").slice(0, 1200);
     const created = await serviceInsert<Array<{ id: string }>>("knowledge_builder_questions", {
       question_key: questionKey,
@@ -122,9 +123,22 @@ export async function captureKnowledgeGap(input: {
       blocks_customer_support: false,
       source_gap_ids: gapId ? [gapId] : [],
     }).catch(() => []);
-    if (gapId && created[0]?.id) {
-      await serviceUpdate("assistant_knowledge_gaps", `id=eq.${gapId}`, { status: "linked", linked_question_id: created[0].id }).catch(() => undefined);
+    questionId = created[0]?.id || null;
+  } else if (gapId) {
+    const sourceGapIds = Array.isArray(questions[0]?.source_gap_ids)
+      ? questions[0].source_gap_ids.filter((id): id is string => typeof id === "string")
+      : [];
+    if (!sourceGapIds.includes(gapId)) {
+      await serviceUpdate("knowledge_builder_questions", `id=eq.${questionId}`, {
+        source_gap_ids: [...sourceGapIds, gapId],
+      }).catch(() => undefined);
     }
+  }
+  if (gapId && questionId) {
+    await serviceUpdate("assistant_knowledge_gaps", `id=eq.${gapId}`, {
+      status: "linked",
+      linked_question_id: questionId,
+    }).catch(() => undefined);
   }
   return gapId;
 }
