@@ -14,7 +14,7 @@ import {
   earlyAccessLanguageAlternates,
   earlyAccessOpenGraphLocales,
 } from "@/lib/early-access/social-metadata";
-import { recordEarlyAccessPageView } from "@/lib/early-access/page-view-recorder";
+import { prepareEarlyAccessPageView } from "@/lib/early-access/page-view-recorder";
 
 export const dynamic = "force-dynamic";
 
@@ -74,10 +74,11 @@ export default async function EarlyAccessPage({
   if (!isLocale(locale)) notFound();
   const typedLocale = locale as Locale;
 
-  // Cookieless view counter. Runs in `after()` so the visitor waits on nothing,
-  // and only once the locale is known to be valid (a 404 is not a view).
+  // Cookieless view counter. The request is inspected during render (`headers()`
+  // is not callable inside `after`), then the write is deferred so the visitor
+  // waits on nothing. Only reached once the locale is valid — a 404 is not a view.
   const query = await searchParams;
-  after(() => recordEarlyAccessPageView(typedLocale, query));
+  after(await prepareEarlyAccessPageView(typedLocale, query));
   const copy = getEarlyAccessCopy(typedLocale);
   const dir = getDir(typedLocale);
 
