@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { after } from "next/server";
 import { notFound } from "next/navigation";
 import { Sparkles, ShieldCheck, Clock } from "lucide-react";
 import { isLocale, getDir, type Locale } from "@/i18n/config";
@@ -13,6 +14,7 @@ import {
   earlyAccessLanguageAlternates,
   earlyAccessOpenGraphLocales,
 } from "@/lib/early-access/social-metadata";
+import { recordEarlyAccessPageView } from "@/lib/early-access/page-view-recorder";
 
 export const dynamic = "force-dynamic";
 
@@ -63,12 +65,19 @@ export async function generateMetadata({
 
 export default async function EarlyAccessPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ locale: string }>;
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
 }) {
   const { locale } = await params;
   if (!isLocale(locale)) notFound();
   const typedLocale = locale as Locale;
+
+  // Cookieless view counter. Runs in `after()` so the visitor waits on nothing,
+  // and only once the locale is known to be valid (a 404 is not a view).
+  const query = await searchParams;
+  after(() => recordEarlyAccessPageView(typedLocale, query));
   const copy = getEarlyAccessCopy(typedLocale);
   const dir = getDir(typedLocale);
 

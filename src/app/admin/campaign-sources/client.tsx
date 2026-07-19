@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { ShieldCheck, LogOut, Copy, Check, QrCode, Plus, Link2 } from "lucide-react";
+import { ShieldCheck, LogOut, Copy, Check, QrCode, Plus, Link2, Eye } from "lucide-react";
 import { buttonVariants } from "@/components/ui/button";
 import { SOURCE_CHANNELS } from "@/lib/campaign-sources";
 import { cn } from "@/lib/utils";
@@ -20,7 +20,14 @@ type Source = {
   status: string;
   created_at: string;
   tracked_url: string;
+  /** Cookieless server-side page-view counts for this source's tracked link. */
+  views: number;
+  unique_visitors: number;
+  last_view_at: string | null;
 };
+
+/** Site-wide view totals, including traffic that arrived with no src= code. */
+type ViewTotals = { total: number; untagged: number };
 
 const EMPTY = {
   internalName: "", sourceCode: "", sourceChannel: "whatsapp", sourceType: "",
@@ -32,6 +39,7 @@ export function CampaignSourcesClient() {
   const [token, setToken] = React.useState("");
   const [ready, setReady] = React.useState(false);
   const [sources, setSources] = React.useState<Source[]>([]);
+  const [totals, setTotals] = React.useState<ViewTotals>({ total: 0, untagged: 0 });
   const [form, setForm] = React.useState<Record<string, string>>({ ...EMPTY });
   const [error, setError] = React.useState("");
   const [fieldErrors, setFieldErrors] = React.useState<Record<string, string>>({});
@@ -45,6 +53,7 @@ export function CampaignSourcesClient() {
     if (!r.ok) { setError("Not configured."); return; }
     const d = await r.json();
     setSources(d.sources ?? []);
+    setTotals(d.views ?? { total: 0, untagged: 0 });
     setReady(true);
   }, []);
 
@@ -106,6 +115,11 @@ export function CampaignSourcesClient() {
             <p className="text-xs font-semibold uppercase tracking-[.2em] text-accent">Private operations</p>
             <h1 className="mt-2 text-4xl">Campaign Links</h1>
             <p className="mt-1 text-sm text-muted-foreground">{sources.length} sources · generate trackable early-access links + QR</p>
+            <p className="mt-1 flex items-center gap-1.5 text-sm text-muted-foreground">
+              <Eye className="h-3.5 w-3.5 text-accent" />
+              {totals.total.toLocaleString()} early-access page views
+              {totals.untagged > 0 && <span>· {totals.untagged.toLocaleString()} untagged</span>}
+            </p>
           </div>
           <button onClick={async () => { await fetch("/api/admin/auth", { method: "DELETE" }); setReady(false); }}
             className={buttonVariants({ variant: "ghost", size: "md" })}><LogOut className="h-4 w-4" />Sign out</button>
@@ -148,11 +162,11 @@ export function CampaignSourcesClient() {
         <div className="mt-6 overflow-x-auto rounded-2xl border border-border bg-card shadow-soft">
           <table className="w-full min-w-[720px] text-sm">
             <thead className="border-b border-border bg-secondary/40 text-left text-xs uppercase tracking-wide text-muted-foreground">
-              <tr><th className="px-4 py-3">Name</th><th className="px-4 py-3">Code</th><th className="px-4 py-3">Channel</th><th className="px-4 py-3">Tracked link</th><th className="px-4 py-3">Actions</th></tr>
+              <tr><th className="px-4 py-3">Name</th><th className="px-4 py-3">Code</th><th className="px-4 py-3">Channel</th><th className="px-4 py-3">Tracked link</th><th className="px-4 py-3" title="Cookieless server-side page views. Unique is an estimate from hashed IPs.">Views</th><th className="px-4 py-3">Actions</th></tr>
             </thead>
             <tbody>
               {sources.length === 0 ? (
-                <tr><td colSpan={5} className="px-4 py-8 text-center text-muted-foreground">No sources yet — create one above.</td></tr>
+                <tr><td colSpan={6} className="px-4 py-8 text-center text-muted-foreground">No sources yet — create one above.</td></tr>
               ) : sources.map((s) => (
                 <tr key={s.id} className="border-b border-border/60">
                   <td className="px-4 py-3 font-medium">{s.internal_name}</td>
@@ -160,6 +174,16 @@ export function CampaignSourcesClient() {
                   <td className="px-4 py-3">{s.source_channel ?? "—"}</td>
                   <td className="max-w-[280px] truncate px-4 py-3 text-xs text-muted-foreground" title={s.tracked_url}>
                     <Link2 className="mr-1 inline h-3 w-3" />{s.tracked_url.replace(/^https:\/\//, "")}
+                  </td>
+                  <td className="whitespace-nowrap px-4 py-3">
+                    {s.views > 0 ? (
+                      <span title={s.last_view_at ? `Last view ${new Date(s.last_view_at).toLocaleString()}` : undefined}>
+                        <span className="font-medium">{s.views.toLocaleString()}</span>
+                        <span className="text-xs text-muted-foreground"> · ~{s.unique_visitors.toLocaleString()} unique</span>
+                      </span>
+                    ) : (
+                      <span className="text-muted-foreground">—</span>
+                    )}
                   </td>
                   <td className="px-4 py-3">
                     <div className="flex gap-1.5">

@@ -6,6 +6,8 @@ import {
   buildTrackedUrl,
 } from "@/lib/campaign-sources";
 import { serviceInsert, serviceSelect, isServiceRoleConfigured } from "@/lib/supabase-rpc";
+import { fetchPageViewStats } from "@/lib/early-access/page-view-recorder";
+import { indexStatsBySource, type PageViewStat } from "@/lib/early-access/page-views";
 
 export const runtime = "nodejs";
 
@@ -23,9 +25,12 @@ type SourceRow = {
   created_at: string;
 };
 
-function withUrl(row: SourceRow) {
+function withUrl(row: SourceRow, stat?: PageViewStat) {
   return {
     ...row,
+    views: Number(stat?.views ?? 0),
+    unique_visitors: Number(stat?.unique_visitors ?? 0),
+    last_view_at: stat?.last_view_at ?? null,
     tracked_url: buildTrackedUrl({
       sourceCode: row.source_code,
       utmSource: row.utm_source ?? undefined,
@@ -44,10 +49,21 @@ export async function GET(req: NextRequest) {
   }
   if (!isServiceRoleConfigured()) return NextResponse.json({ error: "not_configured" }, { status: 503 });
   try {
-    const rows = await serviceSelect<SourceRow[]>(
-      "campaign_sources?select=*&order=created_at.desc&limit=500",
-    );
-    return NextResponse.json({ ok: true, sources: rows.map(withUrl) });
+    // View counts are a nice-to-have: fetchPageViewStats never throws, so a
+    // missing stats view degrades the list to zeroes instead of a 500.
+    const [rows, stats] = await Promise.all([
+      serviceSelect<SourceRow[]>("campaign_sources?select=*&order=created_at.desc&limit=500"),
+      fetchPageViewStats(),
+    ]);
+    const { bySource, untagged, totalViews } = indexStatsBySource(stats);
+    return NextResponse.json({
+      ok: true,
+      sources: rows.map((r) => withUrl(r, bySource.get(r.source_code))),
+      views: {
+        total: totalViews,
+        untagged: Number(untagged?.views ?? 0),
+      },
+    });
   } catch {
     return NextResponse.json({ error: "server_error" }, { status: 500 });
   }
