@@ -11,6 +11,8 @@ const en = {
     tagline: "Always arrive home to comfort.",
   },
   nav: {
+    about: "About",
+    missionVision: "Mission & Vision",
     why: "Why Dar Tahara",
     services: "Services",
     plans: "Plans",
@@ -49,7 +51,7 @@ const en = {
     pillars: [
       {
         title: "Absolute trust",
-        body: "Vetted, trained and insured professionals. Discreet key holding and full accountability on every visit.",
+        body: "A service model built around role-appropriate screening, structured training, discreet key holding and clear accountability.",
       },
       {
         title: "Uncompromising quality",
@@ -76,7 +78,7 @@ const en = {
       { title: "Move In / Move Out", body: "A pristine handover, whether you are arriving, leaving or between tenants." },
       { title: "Property Inspections", body: "Scheduled walk-throughs with photo reports on the condition of your home." },
       { title: "Maintenance Checks", body: "Proactive checks on plumbing, appliances and safety before issues arise." },
-      { title: "Key Holding", body: "Secure, insured custody of your keys with logged, on-demand access." },
+      { title: "Key Holding", body: "Secure key-custody procedures with logged, approved access." },
       { title: "Holiday Home Preparation", body: "Arrival-ready homes: fresh linens, stocked essentials, perfect climate." },
       { title: "Laundry & Linen", body: "Hotel-grade laundry, pressing and crisp linen dressed to order." },
       { title: "Deep Cleaning", body: "An intensive restorative clean for seasonal resets and special occasions." },
@@ -123,7 +125,7 @@ const en = {
     steps: [
       { title: "Book", body: "Tell us about your home and your rhythm in a two-minute request." },
       { title: "We visit", body: "A coordinator visits to understand your space and preferences." },
-      { title: "We clean", body: "Our trained team delivers our signature standard, every time." },
+      { title: "We clean", body: "Structured team training is designed to support our signature standard on every visit." },
       { title: "We inspect", body: "Every visit ends with a documented, photographed inspection." },
       { title: "You arrive", body: "Return to fresh linens, calm air and everything in its place." },
       { title: "Enjoy", body: "Relax, reconnect and simply enjoy the comfort of home." },
@@ -182,8 +184,8 @@ const en = {
     title: "Frequently asked questions",
     items: [
       {
-        q: "Are your staff vetted and insured?",
-        a: "Every member of our team is background-checked, trained to our standard and fully insured. For key-holding clients we maintain a logged chain of custody for complete accountability.",
+        q: "How will you screen staff and safeguard keys?",
+        a: "Our operating model includes role-appropriate screening and structured training as services launch and expand. For key-holding clients, we plan to maintain a logged chain of custody for clear accountability.",
       },
       {
         q: "How does key holding work?",
@@ -447,6 +449,243 @@ const en = {
         "Book an assessment",
         "Monthly or annual?",
         "Speak to a specialist",
+      ],
+    },
+  },
+  missionVision: {
+    meta: {
+      title: "Mission & Vision",
+      description:
+        "Dar Tahara combines professional people, innovative technology and transparent service to redefine residential cleaning in Morocco. Discover our mission, vision, values and promises.",
+      ogAlt: "Dar Tahara — Mission & Vision",
+    },
+    breadcrumb: {
+      home: "Home",
+      current: "Mission & Vision",
+      label: "Breadcrumb",
+    },
+    hero: {
+      eyebrow: "Mission & Vision",
+      title: "Creating Cleaner Homes. Building Greater Trust.",
+      subtitle:
+        "Dar Tahara combines professional people, innovative technology, and transparent service to redefine residential cleaning in Morocco.",
+      ctaPrimary: "Book Initial Home Assessment",
+      ctaSecondary: "Learn About Our Services",
+      imageAlt: "A modern Moroccan home cared for by Dar Tahara's professional team",
+    },
+    mission: {
+      eyebrow: "Our Mission",
+      title: "A clean home creates peace of mind.",
+      lead: "Our mission is to provide reliable, transparent, and technology-driven cleaning services that improve the quality of life of every customer.",
+      body: [
+        "We believe a clean home creates peace of mind.",
+        "By combining structured team training with smart technology, quality control, and exceptional customer service, we aim to become Morocco's most trusted premium cleaning company.",
+      ],
+    },
+    vision: {
+      eyebrow: "Our Vision",
+      title: "Setting a new standard for home services in Morocco.",
+      lead: "To become Morocco's leading technology-enabled home service company while setting new standards for trust, professionalism, safety, and customer experience.",
+      body: [
+        "Our long-term vision is to expand throughout Morocco while continually investing in innovation, employee development, and sustainable operations.",
+      ],
+    },
+    values: {
+      eyebrow: "Our Core Values",
+      title: "The principles behind every visit.",
+      subtitle:
+        "Six commitments that shape how we hire, how we train and how we care for your home.",
+      items: [
+        { title: "Trust", body: "We earn trust through honesty, transparency, and consistency." },
+        { title: "Quality", body: "Every visit should meet the same high standard." },
+        { title: "Respect", body: "We respect our customers, their homes, and our employees." },
+        {
+          title: "Innovation",
+          body: "Technology should improve both customer experience and employee efficiency.",
+        },
+        {
+          title: "Professionalism",
+          body: "We are committed to structured, continuous team training in support of exceptional service.",
+        },
+        {
+          title: "Sustainability",
+          body: "We continuously reduce waste and choose environmentally responsible practices wherever possible.",
+        },
+      ],
+    },
+    promises: {
+      eyebrow: "Our Promises",
+      title: "What every customer can count on.",
+      subtitle:
+        "Clear commitments, held to the same standard on every visit and in every home.",
+      items: [
+        {
+          title: "We Promise Professionalism",
+          body: "Our goal is for every cleaner to complete structured training before entering a customer's home.",
+        },
+        {
+          title: "We Promise Transparency",
+          body: "No hidden costs, clear pricing, digital invoices and transparent communication.",
+        },
+        {
+          title: "We Promise Security",
+          body: "Customer privacy and property are treated with the highest level of care.",
+        },
+        {
+          title: "We Promise Reliability",
+          body: "We arrive prepared, follow structured procedures, and continuously monitor service quality.",
+        },
+        {
+          title: "We Promise Innovation",
+          body: "We invest in technology that improves scheduling, communication, quality assurance, and customer satisfaction.",
+        },
+        {
+          title: "We Promise Continuous Improvement",
+          body: "Customer feedback will help shape our processes and our approach to employee development.",
+        },
+      ],
+    },
+    inclusion: {
+      eyebrow: "Equality, Diversity & Inclusion",
+      title: "Talent, dedication and professionalism are what matter most.",
+      body: [
+        "At Dar Tahara, we believe that talent, dedication, and professionalism are what matter most.",
+        "We are committed to equal opportunities regardless of gender, age, ethnicity, religion, disability, or background.",
+        "We are building an inclusive workplace based on dignity, fairness, and mutual respect.",
+        "Our goal is for hiring, training, and career development decisions to be based on merit, performance, and potential.",
+        "By embracing diversity and inclusion, we build stronger teams, stronger communities, and better customer experiences.",
+      ],
+    },
+    people: {
+      eyebrow: "Our People",
+      title: "Our commitment to responsible employment.",
+      subtitle:
+        "We are committed to building a workplace based on dignity, fairness, transparency, and professional development.",
+      items: [
+        {
+          title: "Formal employment arrangements",
+          body: "We are working toward formal and properly documented employment arrangements for eligible team members.",
+        },
+        {
+          title: "CNSS registration",
+          body: "As our operations grow, we are working toward ensuring eligible employees are registered through Morocco’s National Social Security Fund (Caisse Nationale de Sécurité Sociale — CNSS), in accordance with legal and employment requirements.",
+        },
+        {
+          title: "Applicable AMO health coverage",
+          body: "Our implementation objective includes applicable Mandatory Health Insurance (Assurance Maladie Obligatoire — AMO) coverage for eligible employees through the CNSS system.",
+        },
+        {
+          title: "Clear working conditions",
+          body: "We are working toward clear responsibilities and working conditions based on dignity, fairness, and transparency.",
+        },
+        {
+          title: "Structured development",
+          body: "Our employment model is being built around structured training and professional development.",
+        },
+        {
+          title: "Safe working methods",
+          body: "We aim to provide safe working methods and appropriate equipment for each role.",
+        },
+        {
+          title: "Equal opportunities",
+          body: "We are committed to equal opportunities based on merit, performance, and potential.",
+        },
+        {
+          title: "Respectful treatment",
+          body: "Every team member should be treated with dignity and mutual respect.",
+        },
+      ],
+      clarification:
+        "Our employment practices and benefits will be implemented according to role, employment status, eligibility, operational stage, and applicable Moroccan law.",
+    },
+    impact: {
+      eyebrow: "Social Impact",
+      title: "Building responsible employment.",
+      subtitle:
+        "Dar Tahara aims to create meaningful and professionally managed employment within the communities we serve. We invest in structured training, safe working practices, professional development, and respectful working relationships.",
+      items: [
+        "As our operations grow, we are building toward a formal employment model in which eligible team members are registered through Morocco’s CNSS social-security system, including applicable AMO health coverage, in accordance with legal and employment requirements.",
+        "Our goal is to help raise standards in a sector where informal and undeclared work remains common, while creating safer, more stable, and more rewarding opportunities for our teams.",
+      ],
+    },
+    comparison: {
+      eyebrow: "Why Dar Tahara?",
+      title: "A different standard of service.",
+      subtitle:
+        "The difference between a traditional cleaning arrangement and a modern, technology-driven home service.",
+      traditionalTitle: "Traditional cleaning company",
+      brandTitle: "Dar Tahara",
+      traditional: [
+        "Irregular service quality",
+        "Cash payments",
+        "Limited communication",
+        "Manual administration",
+        "No customer portal",
+        "No AI support",
+        "Little quality control",
+        "Minimal transparency",
+      ],
+      brand: [
+        "Subscription-based services",
+        "Digital customer portal",
+        "AI-powered customer support",
+        "Digital quality control",
+        "Online invoices",
+        "Professional scheduling",
+        "Technology-driven operations",
+        "Transparent communication",
+        "Commitment to structured team training",
+        "Responsible employment model in development",
+        "Modern customer experience",
+      ],
+    },
+    sustainability: {
+      eyebrow: "Sustainability",
+      title: "Progress that respects the planet.",
+      subtitle:
+        "Environmental responsibility is designed into how we plan, clean and administrate.",
+      items: [
+        {
+          title: "Smarter routes",
+          body: "Optimized route planning to reduce unnecessary travel.",
+        },
+        {
+          title: "Responsible products",
+          body: "Environmentally responsible cleaning products whenever possible.",
+        },
+        {
+          title: "Paperless by design",
+          body: "Paperless administration through digital systems.",
+        },
+        {
+          title: "Less waste",
+          body: "Efficient processes that minimize waste.",
+        },
+        {
+          title: "Long-term investment",
+          body: "Continuous investment in sustainable business practices.",
+        },
+      ],
+    },
+    closing: {
+      eyebrow: "More Than Cleaning",
+      title: "More Than Cleaning",
+      body: [
+        "Dar Tahara is building a new standard for home cleaning in Morocco.",
+        "By combining skilled professionals, innovative technology, and genuine care for our customers, we deliver more than a clean home—we deliver peace of mind.",
+      ],
+      ctaPrimary: "Book Your Initial Home Assessment",
+      ctaSecondary: "Discover Our Services",
+    },
+    teaser: {
+      eyebrow: "Why Dar Tahara?",
+      title: "More than cleaning.",
+      body: "Professional people, innovative technology and transparent service—combined to redefine residential cleaning in Morocco.",
+      cta: "Read our mission & vision",
+      points: [
+        "Technology-driven operations",
+        "Transparent, subscription-based pricing",
+        "Commitment to structured team training",
       ],
     },
   },

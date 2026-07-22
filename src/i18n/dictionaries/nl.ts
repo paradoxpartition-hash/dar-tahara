@@ -15,6 +15,8 @@ const nl: DeepPartial<Dictionary> = {
     tagline: "Kom altijd thuis in comfort.",
   },
   nav: {
+    about: "Over ons",
+    missionVision: "Missie & Visie",
     why: "Waarom Dar Tahara",
     services: "Diensten",
     plans: "Abonnementen",
@@ -53,7 +55,7 @@ const nl: DeepPartial<Dictionary> = {
     pillars: [
       {
         title: "Absoluut vertrouwen",
-        body: "Gescreende, opgeleide en verzekerde professionals. Discreet sleutelbeheer en volledige verantwoording bij elk bezoek.",
+        body: "Een servicemodel rond passende screening per functie, gestructureerde opleiding, discreet sleutelbeheer en duidelijke verantwoording.",
       },
       {
         title: "Compromisloze kwaliteit",
@@ -80,7 +82,7 @@ const nl: DeepPartial<Dictionary> = {
       { title: "In- / uitverhuizing", body: "Een vlekkeloze overdracht, of u nu aankomt, vertrekt of tussen huurders zit." },
       { title: "Woninginspecties", body: "Geplande rondgangen met fotorapporten over de staat van uw huis." },
       { title: "Onderhoudscontroles", body: "Proactieve controles van leidingwerk, apparatuur en veiligheid voordat er problemen ontstaan." },
-      { title: "Sleutelbeheer", body: "Veilige, verzekerde bewaring van uw sleutels met geregistreerde toegang op aanvraag." },
+      { title: "Sleutelbeheer", body: "Procedures voor veilige sleutelbewaring met geregistreerde, goedgekeurde toegang." },
       { title: "Voorbereiding vakantiewoning", body: "Woningen klaar bij aankomst: fris linnengoed, gevulde voorraden, perfecte temperatuur." },
       { title: "Was & linnengoed", body: "Was op hotelniveau, strijken en knisperend linnengoed op bestelling opgemaakt." },
       { title: "Dieptereiniging", body: "Een intensieve, herstellende reiniging voor seizoensreset en bijzondere gelegenheden." },
@@ -126,7 +128,7 @@ const nl: DeepPartial<Dictionary> = {
     steps: [
       { title: "Boeken", body: "Vertel ons over uw huis en uw ritme in een aanvraag van twee minuten." },
       { title: "Wij komen langs", body: "Een coördinator komt langs om uw ruimte en voorkeuren te begrijpen." },
-      { title: "Wij reinigen", body: "Ons opgeleide team levert elke keer onze kenmerkende standaard." },
+      { title: "Wij reinigen", body: "Gestructureerde teamtraining is bedoeld om bij elk bezoek onze kenmerkende standaard te ondersteunen." },
       { title: "Wij inspecteren", body: "Elk bezoek eindigt met een gedocumenteerde, gefotografeerde inspectie." },
       { title: "U komt aan", body: "Kom thuis in fris linnengoed, rustige lucht en alles op zijn plek." },
       { title: "Genieten", body: "Ontspan, kom tot rust en geniet gewoon van het comfort van thuis." },
@@ -185,8 +187,8 @@ const nl: DeepPartial<Dictionary> = {
     title: "Veelgestelde vragen",
     items: [
       {
-        q: "Zijn uw medewerkers gescreend en verzekerd?",
-        a: "Elk lid van ons team is gescreend, opgeleid volgens onze standaard en volledig verzekerd. Voor klanten met sleutelbeheer houden wij een geregistreerde keten van bewaring bij voor volledige verantwoording.",
+        q: "Hoe screent u medewerkers en beschermt u sleutels?",
+        a: "Ons operationele model omvat passende screening per functie en gestructureerde opleiding naarmate onze diensten worden gelanceerd en uitgebreid. Voor klanten met sleutelbeheer willen wij een geregistreerde bewaarketen bijhouden voor duidelijke verantwoording.",
       },
       {
         q: "Hoe werkt sleutelbeheer?",
@@ -450,6 +452,225 @@ const nl: DeepPartial<Dictionary> = {
         "Boek een beoordeling",
         "Maandelijks of jaarlijks?",
         "Spreek een specialist",
+      ],
+    },
+  },
+  missionVision: {
+    meta: {
+      title: "Missie & Visie",
+      description:
+        "Dar Tahara combineert professionele mensen, innovatieve technologie en transparante service om woningreiniging in Marokko opnieuw te definiëren. Ontdek onze missie, visie, waarden en beloften.",
+      ogAlt: "Dar Tahara — Missie & Visie",
+    },
+    breadcrumb: { home: "Home", current: "Missie & Visie", label: "Kruimelpad" },
+    hero: {
+      eyebrow: "Missie & Visie",
+      title: "Schonere huizen creëren. Meer vertrouwen opbouwen.",
+      subtitle:
+        "Dar Tahara combineert professionele mensen, innovatieve technologie en transparante service om woningreiniging in Marokko opnieuw te definiëren.",
+      ctaPrimary: "Eerste woningbeoordeling boeken",
+      ctaSecondary: "Ontdek onze diensten",
+      imageAlt: "Een moderne Marokkaanse woning verzorgd door het professionele team van Dar Tahara",
+    },
+    mission: {
+      eyebrow: "Onze missie",
+      title: "Een schoon huis geeft gemoedsrust.",
+      lead: "Onze missie is het leveren van betrouwbare, transparante en technologiegedreven schoonmaakdiensten die de levenskwaliteit van elke klant verbeteren.",
+      body: [
+        "Wij geloven dat een schoon huis gemoedsrust geeft.",
+        "Door gestructureerde teamtraining te combineren met slimme technologie, kwaliteitscontrole en uitzonderlijke klantenservice willen wij het meest vertrouwde premium schoonmaakbedrijf van Marokko worden.",
+      ],
+    },
+    vision: {
+      eyebrow: "Onze visie",
+      title: "Een nieuwe standaard voor woondiensten in Marokko.",
+      lead: "Uitgroeien tot het toonaangevende technologiegedreven woondienstenbedrijf van Marokko en nieuwe normen stellen voor vertrouwen, professionaliteit, veiligheid en klantbeleving.",
+      body: [
+        "Onze langetermijnvisie is om door heel Marokko uit te breiden en tegelijk voortdurend te investeren in innovatie, de ontwikkeling van medewerkers en duurzame bedrijfsvoering.",
+      ],
+    },
+    values: {
+      eyebrow: "Onze kernwaarden",
+      title: "De principes achter elk bezoek.",
+      subtitle: "Zes toezeggingen die bepalen hoe wij aannemen, opleiden en voor uw huis zorgen.",
+      items: [
+        { title: "Vertrouwen", body: "Wij verdienen vertrouwen door eerlijkheid, transparantie en consistentie." },
+        { title: "Kwaliteit", body: "Elk bezoek moet aan dezelfde hoge standaard voldoen." },
+        { title: "Respect", body: "Wij respecteren onze klanten, hun huizen en onze medewerkers." },
+        {
+          title: "Innovatie",
+          body: "Technologie moet zowel de klantbeleving als de efficiëntie van medewerkers verbeteren.",
+        },
+        {
+          title: "Professionaliteit",
+          body: "Wij zetten ons in voor gestructureerde, doorlopende teamtraining ter ondersteuning van uitzonderlijke service.",
+        },
+        {
+          title: "Duurzaamheid",
+          body: "Wij verminderen voortdurend afval en kiezen waar mogelijk voor milieuverantwoorde werkwijzen.",
+        },
+      ],
+    },
+    promises: {
+      eyebrow: "Onze beloften",
+      title: "Waar elke klant op kan rekenen.",
+      subtitle: "Heldere toezeggingen, in elk huis en bij elk bezoek op dezelfde manier nagekomen.",
+      items: [
+        {
+          title: "Wij beloven professionaliteit",
+          body: "Ons doel is dat elke medewerker een gestructureerde opleiding afrondt voordat die het huis van een klant betreedt.",
+        },
+        {
+          title: "Wij beloven transparantie",
+          body: "Geen verborgen kosten, heldere tarieven, digitale facturen en transparante communicatie.",
+        },
+        {
+          title: "Wij beloven veiligheid",
+          body: "De privacy en eigendommen van klanten worden met de grootst mogelijke zorg behandeld.",
+        },
+        {
+          title: "Wij beloven betrouwbaarheid",
+          body: "Wij komen voorbereid, volgen gestructureerde procedures en bewaken de servicekwaliteit doorlopend.",
+        },
+        {
+          title: "Wij beloven innovatie",
+          body: "Wij investeren in technologie die planning, communicatie, kwaliteitsborging en klanttevredenheid verbetert.",
+        },
+        {
+          title: "Wij beloven continue verbetering",
+          body: "Feedback van klanten helpt onze processen en onze aanpak van medewerkersontwikkeling vorm te geven.",
+        },
+      ],
+    },
+    inclusion: {
+      eyebrow: "Gelijkheid, diversiteit & inclusie",
+      title: "Talent, toewijding en professionaliteit tellen het zwaarst.",
+      body: [
+        "Bij Dar Tahara geloven wij dat talent, toewijding en professionaliteit het zwaarst tellen.",
+        "Wij zetten ons in voor gelijke kansen, ongeacht geslacht, leeftijd, etniciteit, religie, handicap of achtergrond.",
+        "Wij bouwen aan een inclusieve werkplek op basis van waardigheid, eerlijkheid en wederzijds respect.",
+        "Ons doel is dat beslissingen over werving, opleiding en loopbaanontwikkeling worden gebaseerd op verdienste, prestaties en potentieel.",
+        "Door diversiteit en inclusie te omarmen bouwen wij sterkere teams, sterkere gemeenschappen en betere klantervaringen.",
+      ],
+    },
+    people: {
+      eyebrow: "Onze mensen",
+      title: "Onze inzet voor verantwoord werkgeverschap.",
+      subtitle:
+        "Wij zetten ons in voor een werkplek gebaseerd op waardigheid, eerlijkheid, transparantie en professionele ontwikkeling.",
+      items: [
+        {
+          title: "Formele arbeidsafspraken",
+          body: "Wij werken toe naar formele en correct gedocumenteerde arbeidsafspraken voor daarvoor in aanmerking komende teamleden.",
+        },
+        {
+          title: "Registratie bij de CNSS",
+          body: "Naarmate onze activiteiten groeien, werken wij eraan om daarvoor in aanmerking komende medewerkers te registreren bij het Marokkaanse Nationaal Socialezekerheidsfonds (Caisse Nationale de Sécurité Sociale — CNSS), overeenkomstig de wettelijke en arbeidsrechtelijke vereisten.",
+        },
+        {
+          title: "Toepasselijke AMO-zorgdekking",
+          body: "Onze uitvoeringsdoelstelling omvat de toepasselijke verplichte zorgverzekering (Assurance Maladie Obligatoire — AMO) voor daarvoor in aanmerking komende medewerkers via het CNSS-stelsel.",
+        },
+        {
+          title: "Duidelijke arbeidsvoorwaarden",
+          body: "Wij werken toe naar duidelijke verantwoordelijkheden en arbeidsvoorwaarden op basis van waardigheid, eerlijkheid en transparantie.",
+        },
+        {
+          title: "Gestructureerde ontwikkeling",
+          body: "Wij bouwen ons werkgelegenheidsmodel rond gestructureerde opleiding en professionele ontwikkeling.",
+        },
+        {
+          title: "Veilige werkmethoden",
+          body: "Wij streven naar veilige werkmethoden en passende uitrusting voor elke functie.",
+        },
+        {
+          title: "Gelijke kansen",
+          body: "Wij zetten ons in voor gelijke kansen op basis van verdienste, prestaties en potentieel.",
+        },
+        {
+          title: "Respectvolle behandeling",
+          body: "Elk teamlid hoort met waardigheid en wederzijds respect te worden behandeld.",
+        },
+      ],
+      clarification:
+        "Onze arbeidspraktijken en voordelen worden toegepast op basis van functie, arbeidsstatus, geschiktheid, operationele fase en het toepasselijke Marokkaanse recht.",
+    },
+    impact: {
+      eyebrow: "Maatschappelijke impact",
+      title: "Verantwoord werkgeverschap opbouwen.",
+      subtitle:
+        "Dar Tahara wil betekenisvolle en professioneel georganiseerde werkgelegenheid creëren in de gemeenschappen waar wij actief zijn. Wij investeren in gestructureerde opleiding, veilige werkpraktijken, professionele ontwikkeling en respectvolle werkrelaties.",
+      items: [
+        "Naarmate onze activiteiten groeien, bouwen wij aan een formeel werkgelegenheidsmodel waarin daarvoor in aanmerking komende teamleden worden geregistreerd via het Marokkaanse CNSS-socialezekerheidsstelsel, inclusief toepasselijke AMO-zorgdekking, overeenkomstig de wettelijke en arbeidsrechtelijke vereisten.",
+        "Ons doel is de normen te helpen verhogen in een sector waar informeel en niet-aangegeven werk nog veel voorkomt, en tegelijk veiligere, stabielere en waardevollere kansen voor onze teams te creëren.",
+      ],
+    },
+    comparison: {
+      eyebrow: "Waarom Dar Tahara?",
+      title: "Een andere servicestandaard.",
+      subtitle:
+        "Het verschil tussen een traditionele schoonmaakafspraak en een moderne, technologiegedreven woondienst.",
+      traditionalTitle: "Traditioneel schoonmaakbedrijf",
+      brandTitle: "Dar Tahara",
+      traditional: [
+        "Wisselende servicekwaliteit",
+        "Contante betalingen",
+        "Beperkte communicatie",
+        "Handmatige administratie",
+        "Geen klantenportaal",
+        "Geen AI-ondersteuning",
+        "Weinig kwaliteitscontrole",
+        "Minimale transparantie",
+      ],
+      brand: [
+        "Diensten op abonnementsbasis",
+        "Digitaal klantenportaal",
+        "AI-gestuurde klantenservice",
+        "Digitale kwaliteitscontrole",
+        "Online facturen",
+        "Professionele planning",
+        "Technologiegedreven bedrijfsvoering",
+        "Transparante communicatie",
+        "Inzet voor gestructureerde teamtraining",
+        "Verantwoord werkgelegenheidsmodel in ontwikkeling",
+        "Moderne klantbeleving",
+      ],
+    },
+    sustainability: {
+      eyebrow: "Duurzaamheid",
+      title: "Vooruitgang met respect voor de planeet.",
+      subtitle:
+        "Milieuverantwoordelijkheid zit verweven in hoe wij plannen, schoonmaken en administreren.",
+      items: [
+        { title: "Slimmere routes", body: "Geoptimaliseerde routeplanning om onnodige ritten te verminderen." },
+        { title: "Verantwoorde middelen", body: "Waar mogelijk milieuverantwoorde schoonmaakmiddelen." },
+        { title: "Papierloos ontworpen", body: "Papierloze administratie via digitale systemen." },
+        { title: "Minder afval", body: "Efficiënte processen die afval tot een minimum beperken." },
+        {
+          title: "Investering op lange termijn",
+          body: "Doorlopende investering in duurzame bedrijfspraktijken.",
+        },
+      ],
+    },
+    closing: {
+      eyebrow: "Meer dan schoonmaken",
+      title: "Meer dan schoonmaken",
+      body: [
+        "Dar Tahara bouwt aan een nieuwe standaard voor woningreiniging in Marokko.",
+        "Door vakkundige professionals, innovatieve technologie en oprechte zorg voor onze klanten te combineren, leveren wij meer dan een schoon huis—wij leveren gemoedsrust.",
+      ],
+      ctaPrimary: "Boek uw eerste woningbeoordeling",
+      ctaSecondary: "Ontdek onze diensten",
+    },
+    teaser: {
+      eyebrow: "Waarom Dar Tahara?",
+      title: "Meer dan schoonmaken.",
+      body: "Professionele mensen, innovatieve technologie en transparante service—samen herdefiniëren zij woningreiniging in Marokko.",
+      cta: "Lees onze missie & visie",
+      points: [
+        "Technologiegedreven bedrijfsvoering",
+        "Transparante prijzen op abonnementsbasis",
+        "Inzet voor gestructureerde teamtraining",
       ],
     },
   },

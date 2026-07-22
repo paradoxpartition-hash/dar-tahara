@@ -2,11 +2,11 @@
 
 import * as React from "react";
 import Link from "next/link";
-import { Menu, X } from "lucide-react";
+import { Menu, X, ChevronDown } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import type { Locale } from "@/i18n/config";
 import type { Dictionary } from "@/i18n/dictionaries/en";
-import { sections } from "@/lib/site";
+import { sections, pages } from "@/lib/site";
 import { cn } from "@/lib/utils";
 import { Logo } from "@/components/brand/logo";
 import { buttonVariants } from "@/components/ui/button";
@@ -26,7 +26,20 @@ export function Navbar({
   const [open, setOpen] = React.useState(false);
   const [accountHref, setAccountHref] = React.useState("/login");
   const [authenticated, setAuthenticated] = React.useState(false);
+  const [aboutOpen, setAboutOpen] = React.useState(false);
+  const aboutRef = React.useRef<HTMLLIElement>(null);
+  const aboutButtonRef = React.useRef<HTMLButtonElement>(null);
   const base = `/${locale}`;
+
+  // Close the About menu on outside pointer input.
+  React.useEffect(() => {
+    if (!aboutOpen) return;
+    const onPointerDown = (event: PointerEvent) => {
+      if (!aboutRef.current?.contains(event.target as Node)) setAboutOpen(false);
+    };
+    document.addEventListener("pointerdown", onPointerDown);
+    return () => document.removeEventListener("pointerdown", onPointerDown);
+  }, [aboutOpen]);
 
   React.useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 12);
@@ -54,8 +67,14 @@ export function Navbar({
     };
   }, [open]);
 
-  const links = [
+  // "Why Dar Tahara" now lives inside the About menu, so the top-level row
+  // keeps the same width in long-label locales (nl/de) instead of overflowing.
+  const aboutLinks = [
+    { href: `${base}${pages.missionVision}`, label: dict.missionVision },
     { href: `${base}#${sections.why}`, label: dict.why },
+  ];
+
+  const links = [
     { href: `${base}#${sections.services}`, label: dict.services },
     { href: `${base}#${sections.plans}`, label: dict.plans },
     { href: `${base}#${sections.calculator}`, label: dict.pricing },
@@ -79,6 +98,64 @@ export function Navbar({
         </Link>
 
         <ul className="hidden items-center gap-0.5 xl:flex">
+          <li
+            ref={aboutRef}
+            className="relative"
+            onMouseEnter={() => setAboutOpen(true)}
+            onMouseLeave={() => setAboutOpen(false)}
+            onKeyDown={(event) => {
+              if (event.key === "Escape" && aboutOpen) {
+                setAboutOpen(false);
+                aboutButtonRef.current?.focus();
+              }
+            }}
+          >
+            <button
+              ref={aboutButtonRef}
+              type="button"
+              aria-expanded={aboutOpen}
+              aria-haspopup="true"
+              aria-controls="nav-about-menu"
+              onClick={() => setAboutOpen((v) => !v)}
+              className="inline-flex items-center gap-1 whitespace-nowrap rounded-full px-3 py-2 text-sm text-muted-foreground transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            >
+              {dict.about}
+              <ChevronDown
+                className={cn(
+                  "h-3.5 w-3.5 transition-transform duration-300 ease-luxe",
+                  aboutOpen && "rotate-180",
+                )}
+                aria-hidden
+              />
+            </button>
+
+            <AnimatePresence>
+              {aboutOpen ? (
+                <motion.div
+                  id="nav-about-menu"
+                  initial={{ opacity: 0, y: -6 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -6 }}
+                  transition={{ duration: 0.18, ease: [0.22, 1, 0.36, 1] }}
+                  className="absolute start-0 top-full z-50 min-w-56 pt-2"
+                >
+                  <div className="overflow-hidden rounded-2xl border border-border bg-background/95 p-1.5 shadow-lift backdrop-blur-xl">
+                    {aboutLinks.map((l) => (
+                      <Link
+                        key={l.href}
+                        href={l.href}
+                        onClick={() => setAboutOpen(false)}
+                        className="block whitespace-nowrap rounded-xl px-3.5 py-2.5 text-sm text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"
+                      >
+                        {l.label}
+                      </Link>
+                    ))}
+                  </div>
+                </motion.div>
+              ) : null}
+            </AnimatePresence>
+          </li>
+
           {links.map((l) => (
             <li key={l.href}>
               <Link
@@ -127,6 +204,20 @@ export function Navbar({
             className="xl:hidden"
           >
             <div className="container flex flex-col gap-1 border-t border-border bg-background/95 pb-8 pt-4 backdrop-blur-xl">
+              <p className="px-4 pb-1 pt-2 text-xs font-semibold uppercase tracking-widest text-muted-foreground/70">
+                {dict.about}
+              </p>
+              {aboutLinks.map((l) => (
+                <Link
+                  key={l.href}
+                  href={l.href}
+                  onClick={() => setOpen(false)}
+                  className="rounded-xl px-4 py-3 text-base text-foreground transition-colors hover:bg-secondary"
+                >
+                  {l.label}
+                </Link>
+              ))}
+              <div className="my-2 h-px bg-border" aria-hidden />
               {links.map((l) => (
                 <Link
                   key={l.href}

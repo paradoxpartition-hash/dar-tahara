@@ -15,6 +15,8 @@ const de: DeepPartial<Dictionary> = {
     tagline: "Kommen Sie immer nach Hause zum Komfort.",
   },
   nav: {
+    about: "Über uns",
+    missionVision: "Mission & Vision",
     why: "Warum Dar Tahara",
     services: "Leistungen",
     plans: "Abos",
@@ -53,7 +55,7 @@ const de: DeepPartial<Dictionary> = {
     pillars: [
       {
         title: "Absolutes Vertrauen",
-        body: "Geprüfte, geschulte und versicherte Fachkräfte. Diskrete Schlüsselverwahrung und volle Verantwortung bei jedem Besuch.",
+        body: "Ein Servicemodell mit rollenbezogener Prüfung, strukturierter Schulung, diskreter Schlüsselverwahrung und klarer Verantwortlichkeit.",
       },
       {
         title: "Kompromisslose Qualität",
@@ -80,7 +82,7 @@ const de: DeepPartial<Dictionary> = {
       { title: "Ein- / Auszug", body: "Eine makellose Übergabe, ob Sie ankommen, ausziehen oder zwischen Mietern wechseln." },
       { title: "Immobilien-Inspektionen", body: "Geplante Rundgänge mit Fotoberichten zum Zustand Ihres Zuhauses." },
       { title: "Wartungskontrollen", body: "Proaktive Prüfungen von Sanitär, Geräten und Sicherheit, bevor Probleme entstehen." },
-      { title: "Schlüsselverwahrung", body: "Sichere, versicherte Verwahrung Ihrer Schlüssel mit protokolliertem Zugang auf Abruf." },
+      { title: "Schlüsselverwahrung", body: "Sichere Verfahren zur Schlüsselverwahrung mit protokolliertem, genehmigtem Zugang." },
       { title: "Ferienhaus-Vorbereitung", body: "Ankunftsbereite Häuser: frische Wäsche, aufgefüllte Essentials, perfekte Temperatur." },
       { title: "Wäsche & Textilien", body: "Wäsche auf Hotelniveau, Bügeln und knackig frische Bettwäsche nach Wunsch." },
       { title: "Grundreinigung", body: "Eine intensive, auffrischende Reinigung für saisonale Neuanfänge und besondere Anlässe." },
@@ -126,7 +128,7 @@ const de: DeepPartial<Dictionary> = {
     steps: [
       { title: "Buchen", body: "Erzählen Sie uns in einer zweiminütigen Anfrage von Ihrem Zuhause und Ihrem Rhythmus." },
       { title: "Wir kommen", body: "Ein Koordinator besucht Sie, um Ihren Raum und Ihre Vorlieben zu verstehen." },
-      { title: "Wir reinigen", body: "Unser geschultes Team liefert jedes Mal unseren charakteristischen Standard." },
+      { title: "Wir reinigen", body: "Strukturierte Teamschulung soll unseren charakteristischen Standard bei jedem Einsatz unterstützen." },
       { title: "Wir prüfen", body: "Jeder Besuch endet mit einer dokumentierten, fotografierten Inspektion." },
       { title: "Sie kommen an", body: "Kommen Sie zurück zu frischer Wäsche, ruhiger Luft und allem an seinem Platz." },
       { title: "Genießen", body: "Entspannen Sie, kommen Sie zur Ruhe und genießen Sie einfach den Komfort Ihres Zuhauses." },
@@ -185,8 +187,8 @@ const de: DeepPartial<Dictionary> = {
     title: "Häufig gestellte Fragen",
     items: [
       {
-        q: "Sind Ihre Mitarbeiter geprüft und versichert?",
-        a: "Jedes Mitglied unseres Teams wird auf Vorstrafen überprüft, nach unserem Standard geschult und ist vollständig versichert. Für Kunden mit Schlüsselverwahrung führen wir eine protokollierte Verwahrkette für volle Nachvollziehbarkeit.",
+        q: "Wie werden Mitarbeitende geprüft und Schlüssel geschützt?",
+        a: "Unser Betriebsmodell sieht rollenbezogene Prüfungen und strukturierte Schulungen vor, während unsere Dienstleistungen starten und wachsen. Für Kunden mit Schlüsselverwahrung planen wir eine protokollierte Verwahrkette für klare Verantwortlichkeit.",
       },
       {
         q: "Wie funktioniert die Schlüsselverwahrung?",
@@ -450,6 +452,229 @@ const de: DeepPartial<Dictionary> = {
         "Bewertung buchen",
         "Monatlich oder jährlich?",
         "Spezialist sprechen",
+      ],
+    },
+  },
+  missionVision: {
+    meta: {
+      title: "Mission & Vision",
+      description:
+        "Dar Tahara verbindet qualifizierte Fachkräfte, innovative Technologie und transparenten Service, um die Wohnungsreinigung in Marokko neu zu definieren. Entdecken Sie unsere Mission, Vision, Werte und Versprechen.",
+      ogAlt: "Dar Tahara — Mission & Vision",
+    },
+    breadcrumb: { home: "Startseite", current: "Mission & Vision", label: "Navigationspfad" },
+    hero: {
+      eyebrow: "Mission & Vision",
+      title: "Sauberere Zuhause. Stärkeres Vertrauen.",
+      subtitle:
+        "Dar Tahara verbindet qualifizierte Fachkräfte, innovative Technologie und transparenten Service, um die Wohnungsreinigung in Marokko neu zu definieren.",
+      ctaPrimary: "Ersteinschätzung buchen",
+      ctaSecondary: "Unsere Leistungen entdecken",
+      imageAlt: "Ein modernes marokkanisches Zuhause, gepflegt vom professionellen Team von Dar Tahara",
+    },
+    mission: {
+      eyebrow: "Unsere Mission",
+      title: "Ein sauberes Zuhause schafft Ruhe.",
+      lead: "Unsere Mission ist es, zuverlässige, transparente und technologiegestützte Reinigungsdienste anzubieten, die die Lebensqualität jedes Kunden verbessern.",
+      body: [
+        "Wir glauben, dass ein sauberes Zuhause innere Ruhe schafft.",
+        "Indem wir strukturierte Teamschulung mit intelligenter Technologie, Qualitätskontrolle und außergewöhnlichem Kundenservice verbinden, wollen wir das vertrauenswürdigste Premium-Reinigungsunternehmen Marokkos werden.",
+      ],
+    },
+    vision: {
+      eyebrow: "Unsere Vision",
+      title: "Ein neuer Maßstab für Haushaltsdienste in Marokko.",
+      lead: "Das führende technologiegestützte Haushaltsdienstleistungsunternehmen Marokkos werden und dabei neue Maßstäbe für Vertrauen, Professionalität, Sicherheit und Kundenerlebnis setzen.",
+      body: [
+        "Unsere langfristige Vision ist es, in ganz Marokko zu wachsen und zugleich kontinuierlich in Innovation, die Entwicklung unserer Mitarbeitenden und nachhaltige Abläufe zu investieren.",
+      ],
+    },
+    values: {
+      eyebrow: "Unsere Grundwerte",
+      title: "Die Prinzipien hinter jedem Einsatz.",
+      subtitle:
+        "Sechs Verpflichtungen, die prägen, wie wir einstellen, schulen und Ihr Zuhause pflegen.",
+      items: [
+        { title: "Vertrauen", body: "Wir gewinnen Vertrauen durch Ehrlichkeit, Transparenz und Verlässlichkeit." },
+        { title: "Qualität", body: "Jeder Einsatz soll denselben hohen Standard erfüllen." },
+        { title: "Respekt", body: "Wir respektieren unsere Kunden, ihr Zuhause und unsere Mitarbeitenden." },
+        {
+          title: "Innovation",
+          body: "Technologie soll sowohl das Kundenerlebnis als auch die Effizienz der Mitarbeitenden verbessern.",
+        },
+        {
+          title: "Professionalität",
+          body: "Wir bekennen uns zu strukturierter, kontinuierlicher Teamschulung als Grundlage für außergewöhnlichen Service.",
+        },
+        {
+          title: "Nachhaltigkeit",
+          body: "Wir reduzieren fortlaufend Abfall und wählen, wo immer möglich, umweltverantwortliche Verfahren.",
+        },
+      ],
+    },
+    promises: {
+      eyebrow: "Unsere Versprechen",
+      title: "Worauf sich jeder Kunde verlassen kann.",
+      subtitle: "Klare Zusagen, in jedem Zuhause und bei jedem Besuch gleichermaßen eingehalten.",
+      items: [
+        {
+          title: "Wir versprechen Professionalität",
+          body: "Unser Ziel ist, dass jede Reinigungskraft eine strukturierte Schulung abschließt, bevor sie das Zuhause eines Kunden betritt.",
+        },
+        {
+          title: "Wir versprechen Transparenz",
+          body: "Keine versteckten Kosten, klare Preise, digitale Rechnungen und transparente Kommunikation.",
+        },
+        {
+          title: "Wir versprechen Sicherheit",
+          body: "Privatsphäre und Eigentum unserer Kunden werden mit größter Sorgfalt behandelt.",
+        },
+        {
+          title: "Wir versprechen Verlässlichkeit",
+          body: "Wir kommen vorbereitet, folgen strukturierten Abläufen und überwachen die Servicequalität fortlaufend.",
+        },
+        {
+          title: "Wir versprechen Innovation",
+          body: "Wir investieren in Technologie, die Planung, Kommunikation, Qualitätssicherung und Kundenzufriedenheit verbessert.",
+        },
+        {
+          title: "Wir versprechen kontinuierliche Verbesserung",
+          body: "Kundenfeedback wird unsere Prozesse und unseren Ansatz zur Entwicklung der Mitarbeitenden mitgestalten.",
+        },
+      ],
+    },
+    inclusion: {
+      eyebrow: "Gleichstellung, Vielfalt & Inklusion",
+      title: "Talent, Engagement und Professionalität zählen am meisten.",
+      body: [
+        "Bei Dar Tahara sind wir überzeugt, dass Talent, Engagement und Professionalität am meisten zählen.",
+        "Wir setzen uns für Chancengleichheit unabhängig von Geschlecht, Alter, Herkunft, Religion, Behinderung oder Lebensweg ein.",
+        "Wir bauen einen inklusiven Arbeitsplatz auf, der auf Würde, Fairness und gegenseitigem Respekt beruht.",
+        "Unser Ziel ist, dass Entscheidungen zu Einstellung, Schulung und Karriereentwicklung auf Eignung, Leistung und Potenzial beruhen.",
+        "Indem wir Vielfalt und Inklusion leben, bauen wir stärkere Teams, stärkere Gemeinschaften und bessere Kundenerlebnisse auf.",
+      ],
+    },
+    people: {
+      eyebrow: "Unser Team",
+      title: "Unser Bekenntnis zu verantwortungsvoller Beschäftigung.",
+      subtitle:
+        "Wir setzen uns für einen Arbeitsplatz ein, der auf Würde, Fairness, Transparenz und beruflicher Entwicklung beruht.",
+      items: [
+        {
+          title: "Formelle Arbeitsverhältnisse",
+          body: "Wir arbeiten auf formelle und ordnungsgemäß dokumentierte Arbeitsverhältnisse für berechtigte Teammitglieder hin.",
+        },
+        {
+          title: "Registrierung bei der CNSS",
+          body: "Mit dem Wachstum unseres Betriebs arbeiten wir darauf hin, berechtigte Beschäftigte beim marokkanischen Nationalen Sozialversicherungsfonds (Caisse Nationale de Sécurité Sociale — CNSS) anzumelden, im Einklang mit den gesetzlichen und arbeitsrechtlichen Anforderungen.",
+        },
+        {
+          title: "Anwendbarer AMO-Krankenversicherungsschutz",
+          body: "Unser Umsetzungsziel umfasst den anwendbaren Schutz der obligatorischen Krankenversicherung (Assurance Maladie Obligatoire — AMO) für berechtigte Beschäftigte über das CNSS-System.",
+        },
+        {
+          title: "Klare Arbeitsbedingungen",
+          body: "Wir arbeiten auf klare Verantwortlichkeiten und Arbeitsbedingungen hin, die auf Würde, Fairness und Transparenz beruhen.",
+        },
+        {
+          title: "Strukturierte Entwicklung",
+          body: "Unser Beschäftigungsmodell entsteht rund um strukturierte Schulung und berufliche Entwicklung.",
+        },
+        {
+          title: "Sichere Arbeitsmethoden",
+          body: "Wir streben sichere Arbeitsmethoden und eine für jede Rolle geeignete Ausrüstung an.",
+        },
+        {
+          title: "Chancengleichheit",
+          body: "Wir setzen uns für Chancengleichheit auf der Grundlage von Eignung, Leistung und Potenzial ein.",
+        },
+        {
+          title: "Respektvoller Umgang",
+          body: "Jedes Teammitglied soll mit Würde und gegenseitigem Respekt behandelt werden.",
+        },
+      ],
+      clarification:
+        "Unsere Beschäftigungspraktiken und Leistungen werden je nach Rolle, Beschäftigungsstatus, Anspruchsberechtigung, Betriebsphase und anwendbarem marokkanischem Recht umgesetzt.",
+    },
+    impact: {
+      eyebrow: "Gesellschaftlicher Beitrag",
+      title: "Verantwortungsvolle Beschäftigung aufbauen.",
+      subtitle:
+        "Dar Tahara möchte in den Gemeinschaften, in denen wir tätig sind, sinnvolle und professionell organisierte Beschäftigung schaffen. Wir investieren in strukturierte Schulungen, sichere Arbeitspraktiken, berufliche Entwicklung und respektvolle Arbeitsbeziehungen.",
+      items: [
+        "Mit dem Wachstum unseres Betriebs bauen wir auf ein formelles Beschäftigungsmodell hin, in dem berechtigte Teammitglieder über das marokkanische CNSS-Sozialversicherungssystem angemeldet werden und den anwendbaren AMO-Krankenversicherungsschutz erhalten, im Einklang mit den gesetzlichen und arbeitsrechtlichen Anforderungen.",
+        "Unser Ziel ist es, die Standards in einer Branche anzuheben, in der informelle und nicht gemeldete Arbeit weiterhin verbreitet ist, und zugleich sicherere, stabilere und lohnendere Chancen für unsere Teams zu schaffen.",
+      ],
+    },
+    comparison: {
+      eyebrow: "Warum Dar Tahara?",
+      title: "Ein anderer Servicestandard.",
+      subtitle:
+        "Der Unterschied zwischen einer klassischen Reinigungsabsprache und einem modernen, technologiegestützten Haushaltsdienst.",
+      traditionalTitle: "Klassisches Reinigungsunternehmen",
+      brandTitle: "Dar Tahara",
+      traditional: [
+        "Schwankende Servicequalität",
+        "Barzahlungen",
+        "Eingeschränkte Kommunikation",
+        "Manuelle Verwaltung",
+        "Kein Kundenportal",
+        "Keine KI-Unterstützung",
+        "Kaum Qualitätskontrolle",
+        "Minimale Transparenz",
+      ],
+      brand: [
+        "Leistungen im Abonnement",
+        "Digitales Kundenportal",
+        "KI-gestützter Kundenservice",
+        "Digitale Qualitätskontrolle",
+        "Online-Rechnungen",
+        "Professionelle Terminplanung",
+        "Technologiegestützte Abläufe",
+        "Transparente Kommunikation",
+        "Bekenntnis zu strukturierter Teamschulung",
+        "Verantwortungsvolles Beschäftigungsmodell im Aufbau",
+        "Modernes Kundenerlebnis",
+      ],
+    },
+    sustainability: {
+      eyebrow: "Nachhaltigkeit",
+      title: "Fortschritt, der den Planeten respektiert.",
+      subtitle:
+        "Umweltverantwortung ist fest darin verankert, wie wir planen, reinigen und verwalten.",
+      items: [
+        { title: "Klügere Routen", body: "Optimierte Routenplanung, um unnötige Fahrten zu reduzieren." },
+        {
+          title: "Verantwortungsvolle Mittel",
+          body: "Wo immer möglich umweltverantwortliche Reinigungsmittel.",
+        },
+        { title: "Papierlos gedacht", body: "Papierlose Verwaltung über digitale Systeme." },
+        { title: "Weniger Abfall", body: "Effiziente Abläufe, die Abfall auf ein Minimum reduzieren." },
+        {
+          title: "Langfristige Investition",
+          body: "Kontinuierliche Investition in nachhaltige Geschäftspraktiken.",
+        },
+      ],
+    },
+    closing: {
+      eyebrow: "Mehr als Reinigung",
+      title: "Mehr als Reinigung",
+      body: [
+        "Dar Tahara schafft einen neuen Maßstab für die Wohnungsreinigung in Marokko.",
+        "Indem wir qualifizierte Fachkräfte, innovative Technologie und echte Fürsorge für unsere Kunden verbinden, liefern wir mehr als ein sauberes Zuhause — wir liefern Ruhe.",
+      ],
+      ctaPrimary: "Buchen Sie Ihre Ersteinschätzung",
+      ctaSecondary: "Unsere Leistungen entdecken",
+    },
+    teaser: {
+      eyebrow: "Warum Dar Tahara?",
+      title: "Mehr als Reinigung.",
+      body: "Qualifizierte Fachkräfte, innovative Technologie und transparenter Service — vereint, um die Wohnungsreinigung in Marokko neu zu definieren.",
+      cta: "Unsere Mission & Vision lesen",
+      points: [
+        "Technologiegestützte Abläufe",
+        "Transparente Preise im Abonnement",
+        "Bekenntnis zu strukturierter Teamschulung",
       ],
     },
   },
