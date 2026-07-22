@@ -15,6 +15,8 @@ const fr: DeepPartial<Dictionary> = {
     tagline: "Rentrez toujours dans le confort.",
   },
   nav: {
+    about: "À propos",
+    missionVision: "Mission & Vision",
     why: "Pourquoi Dar Tahara",
     services: "Services",
     plans: "Formules",
@@ -53,7 +55,7 @@ const fr: DeepPartial<Dictionary> = {
     pillars: [
       {
         title: "Confiance absolue",
-        body: "Des professionnels vérifiés, formés et assurés. Gestion discrète des clés et responsabilité totale à chaque visite.",
+        body: "Un modèle de service fondé sur des vérifications adaptées à chaque fonction, une formation structurée, une gestion discrète des clés et une responsabilité claire.",
       },
       {
         title: "Qualité sans compromis",
@@ -80,7 +82,7 @@ const fr: DeepPartial<Dictionary> = {
       { title: "Entrée / sortie des lieux", body: "Une remise impeccable, que vous arriviez, partiez ou changiez de locataire." },
       { title: "Inspections du bien", body: "Des visites programmées avec rapports photo sur l’état de votre maison." },
       { title: "Contrôles d’entretien", body: "Des vérifications proactives de la plomberie, des appareils et de la sécurité avant tout problème." },
-      { title: "Gestion des clés", body: "Garde sécurisée et assurée de vos clés, avec accès enregistré à la demande." },
+      { title: "Gestion des clés", body: "Procédures de garde sécurisée des clés, avec accès enregistré et approuvé." },
       { title: "Préparation de résidence secondaire", body: "Une maison prête à l’arrivée : linge frais, essentiels réapprovisionnés, température parfaite." },
       { title: "Blanchisserie & linge", body: "Blanchisserie de niveau hôtelier, repassage et linge net dressé sur demande." },
       { title: "Nettoyage en profondeur", body: "Un nettoyage intensif et réparateur pour les remises à neuf saisonnières et grandes occasions." },
@@ -126,7 +128,7 @@ const fr: DeepPartial<Dictionary> = {
     steps: [
       { title: "Réserver", body: "Parlez-nous de votre maison et de votre rythme en une demande de deux minutes." },
       { title: "Nous venons", body: "Un coordinateur se déplace pour comprendre votre espace et vos préférences." },
-      { title: "Nous nettoyons", body: "Notre équipe formée livre notre standard signature, à chaque fois." },
+      { title: "Nous nettoyons", body: "Une formation structurée des équipes est conçue pour soutenir notre niveau d’exigence à chaque intervention." },
       { title: "Nous inspectons", body: "Chaque visite se termine par une inspection documentée et photographiée." },
       { title: "Vous arrivez", body: "Retrouvez du linge frais, un air apaisé et chaque chose à sa place." },
       { title: "Profitez", body: "Détendez-vous, ressourcez-vous et savourez simplement le confort de la maison." },
@@ -185,8 +187,8 @@ const fr: DeepPartial<Dictionary> = {
     title: "Questions fréquentes",
     items: [
       {
-        q: "Votre personnel est-il vérifié et assuré ?",
-        a: "Chaque membre de notre équipe fait l’objet d’une vérification d’antécédents, est formé à notre standard et entièrement assuré. Pour les clients confiant leurs clés, nous tenons une chaîne de responsabilité enregistrée pour une transparence totale.",
+        q: "Comment vérifierez-vous le personnel et protégerez-vous les clés ?",
+        a: "Notre modèle opérationnel prévoit des vérifications adaptées à chaque fonction et une formation structurée à mesure que nos services sont lancés et se développent. Pour les clients nous confiant leurs clés, nous prévoyons une chaîne de garde enregistrée assurant une responsabilité claire.",
       },
       {
         q: "Comment fonctionne la gestion des clés ?",
@@ -450,6 +452,229 @@ const fr: DeepPartial<Dictionary> = {
         "Réserver une évaluation",
         "Mensuel ou annuel ?",
         "Parler à un spécialiste",
+      ],
+    },
+  },
+  missionVision: {
+    meta: {
+      title: "Mission & Vision",
+      description:
+        "Dar Tahara associe des professionnels qualifiés, une technologie innovante et un service transparent pour redéfinir le ménage résidentiel au Maroc. Découvrez notre mission, notre vision, nos valeurs et nos engagements.",
+      ogAlt: "Dar Tahara — Mission & Vision",
+    },
+    breadcrumb: { home: "Accueil", current: "Mission & Vision", label: "Fil d’Ariane" },
+    hero: {
+      eyebrow: "Mission & Vision",
+      title: "Des maisons plus propres. Une confiance renforcée.",
+      subtitle:
+        "Dar Tahara associe des professionnels qualifiés, une technologie innovante et un service transparent pour redéfinir le ménage résidentiel au Maroc.",
+      ctaPrimary: "Réserver l’Évaluation Initiale",
+      ctaSecondary: "Découvrir nos services",
+      imageAlt: "Une maison marocaine moderne entretenue par l’équipe professionnelle de Dar Tahara",
+    },
+    mission: {
+      eyebrow: "Notre mission",
+      title: "Une maison propre apporte la sérénité.",
+      lead: "Notre mission est de fournir des services de ménage fiables, transparents et guidés par la technologie, qui améliorent la qualité de vie de chaque client.",
+      body: [
+        "Nous croyons qu’une maison propre apporte la sérénité.",
+        "En associant une formation structurée des équipes à une technologie intelligente, au contrôle qualité et à un service client exceptionnel, nous voulons devenir l’entreprise de ménage premium la plus fiable du Maroc.",
+      ],
+    },
+    vision: {
+      eyebrow: "Notre vision",
+      title: "Une nouvelle référence pour les services à domicile au Maroc.",
+      lead: "Devenir la première entreprise marocaine de services à domicile pilotée par la technologie, en établissant de nouvelles normes de confiance, de professionnalisme, de sécurité et d’expérience client.",
+      body: [
+        "Notre vision à long terme est de nous développer dans tout le Maroc tout en investissant continuellement dans l’innovation, le développement de nos employés et des opérations durables.",
+      ],
+    },
+    values: {
+      eyebrow: "Nos valeurs fondamentales",
+      title: "Les principes derrière chaque intervention.",
+      subtitle:
+        "Six engagements qui façonnent nos recrutements, nos formations et le soin apporté à votre maison.",
+      items: [
+        { title: "Confiance", body: "Nous gagnons la confiance par l’honnêteté, la transparence et la constance." },
+        { title: "Qualité", body: "Chaque intervention doit répondre au même niveau d’exigence." },
+        { title: "Respect", body: "Nous respectons nos clients, leur maison et nos employés." },
+        {
+          title: "Innovation",
+          body: "La technologie doit améliorer à la fois l’expérience client et l’efficacité des équipes.",
+        },
+        {
+          title: "Professionnalisme",
+          body: "Nous nous engageons en faveur d’une formation structurée et continue des équipes au service d’une prestation d’exception.",
+        },
+        {
+          title: "Durabilité",
+          body: "Nous réduisons continuellement les déchets et privilégions les pratiques respectueuses de l’environnement.",
+        },
+      ],
+    },
+    promises: {
+      eyebrow: "Nos engagements",
+      title: "Ce sur quoi chaque client peut compter.",
+      subtitle: "Des engagements clairs, tenus de la même manière dans chaque maison et à chaque visite.",
+      items: [
+        {
+          title: "Nous garantissons le professionnalisme",
+          body: "Notre objectif est que chaque intervenant suive une formation structurée avant d’entrer chez un client.",
+        },
+        {
+          title: "Nous garantissons la transparence",
+          body: "Aucun frais caché, des tarifs clairs, des factures numériques et une communication transparente.",
+        },
+        {
+          title: "Nous garantissons la sécurité",
+          body: "La vie privée et les biens de nos clients sont traités avec le plus grand soin.",
+        },
+        {
+          title: "Nous garantissons la fiabilité",
+          body: "Nous arrivons préparés, suivons des procédures structurées et surveillons en continu la qualité du service.",
+        },
+        {
+          title: "Nous garantissons l’innovation",
+          body: "Nous investissons dans des technologies qui améliorent la planification, la communication, l’assurance qualité et la satisfaction client.",
+        },
+        {
+          title: "Nous garantissons l’amélioration continue",
+          body: "Les retours des clients contribueront à façonner nos processus et notre approche du développement des équipes.",
+        },
+      ],
+    },
+    inclusion: {
+      eyebrow: "Égalité, diversité & inclusion",
+      title: "Le talent, l’engagement et le professionnalisme priment.",
+      body: [
+        "Chez Dar Tahara, nous croyons que le talent, l’engagement et le professionnalisme sont ce qui compte le plus.",
+        "Nous nous engageons en faveur de l’égalité des chances, sans distinction de genre, d’âge, d’origine, de religion, de handicap ou de parcours.",
+        "Nous construisons un lieu de travail inclusif fondé sur la dignité, l’équité et le respect mutuel.",
+        "Notre objectif est que les décisions de recrutement, de formation et d’évolution de carrière reposent sur le mérite, la performance et le potentiel.",
+        "En valorisant la diversité et l’inclusion, nous bâtissons des équipes plus fortes, des communautés plus solides et de meilleures expériences client.",
+      ],
+    },
+    people: {
+      eyebrow: "Nos équipes",
+      title: "Notre engagement pour un emploi responsable.",
+      subtitle:
+        "Nous nous engageons à construire un environnement de travail fondé sur la dignité, l’équité, la transparence et le développement professionnel.",
+      items: [
+        {
+          title: "Des relations de travail formelles",
+          body: "Nous travaillons à mettre en place des relations de travail formelles et correctement documentées pour les membres de l’équipe qui y sont éligibles.",
+        },
+        {
+          title: "Immatriculation à la CNSS",
+          body: "À mesure que nos activités se développent, nous travaillons à faire immatriculer les salariés éligibles auprès de la Caisse Nationale de Sécurité Sociale (CNSS) du Maroc, conformément aux exigences légales et aux conditions d’emploi applicables.",
+        },
+        {
+          title: "Couverture AMO applicable",
+          body: "Notre objectif de mise en œuvre comprend la couverture applicable au titre de l’Assurance Maladie Obligatoire (AMO) pour les salariés éligibles par l’intermédiaire du régime de la CNSS.",
+        },
+        {
+          title: "Des conditions de travail claires",
+          body: "Nous travaillons à définir des responsabilités et des conditions de travail claires, fondées sur la dignité, l’équité et la transparence.",
+        },
+        {
+          title: "Un développement structuré",
+          body: "Notre modèle d’emploi se construit autour d’une formation structurée et du développement professionnel.",
+        },
+        {
+          title: "Des méthodes de travail sûres",
+          body: "Nous visons des méthodes de travail sûres et un équipement adapté à chaque fonction.",
+        },
+        {
+          title: "L’égalité des chances",
+          body: "Nous nous engageons en faveur de l’égalité des chances fondée sur le mérite, les résultats et le potentiel.",
+        },
+        {
+          title: "Un traitement respectueux",
+          body: "Chaque membre de l’équipe doit être traité avec dignité et respect mutuel.",
+        },
+      ],
+      clarification:
+        "Nos pratiques et avantages liés à l’emploi seront mis en œuvre selon la fonction, le statut d’emploi, l’éligibilité, le stade opérationnel et le droit marocain applicable.",
+    },
+    impact: {
+      eyebrow: "Impact social",
+      title: "Construire un modèle d’emploi responsable.",
+      subtitle:
+        "Dar Tahara vise à créer des emplois utiles et gérés de manière professionnelle au sein des communautés que nous servons. Nous investissons dans une formation structurée, des pratiques de travail sûres, le développement professionnel et des relations de travail respectueuses.",
+      items: [
+        "À mesure que nos activités se développent, nous construisons un modèle d’emploi formel dans lequel les membres de l’équipe éligibles seront immatriculés au régime marocain de sécurité sociale de la CNSS, avec la couverture AMO applicable, conformément aux exigences légales et aux conditions d’emploi applicables.",
+        "Notre objectif est de contribuer à relever les standards dans un secteur où le travail informel et non déclaré reste répandu, tout en créant pour nos équipes des possibilités plus sûres, plus stables et plus valorisantes.",
+      ],
+    },
+    comparison: {
+      eyebrow: "Pourquoi Dar Tahara ?",
+      title: "Un autre standard de service.",
+      subtitle:
+        "La différence entre un arrangement de ménage traditionnel et un service à domicile moderne, piloté par la technologie.",
+      traditionalTitle: "Entreprise de ménage traditionnelle",
+      brandTitle: "Dar Tahara",
+      traditional: [
+        "Qualité de service irrégulière",
+        "Paiements en espèces",
+        "Communication limitée",
+        "Administration manuelle",
+        "Pas d’espace client",
+        "Pas d’assistance IA",
+        "Peu de contrôle qualité",
+        "Transparence minimale",
+      ],
+      brand: [
+        "Services par abonnement",
+        "Espace client numérique",
+        "Assistance client propulsée par l’IA",
+        "Contrôle qualité numérique",
+        "Factures en ligne",
+        "Planification professionnelle",
+        "Opérations pilotées par la technologie",
+        "Communication transparente",
+        "Engagement en faveur d’une formation structurée",
+        "Modèle d’emploi responsable en cours de construction",
+        "Expérience client moderne",
+      ],
+    },
+    sustainability: {
+      eyebrow: "Durabilité",
+      title: "Un progrès respectueux de la planète.",
+      subtitle:
+        "La responsabilité environnementale est intégrée à notre façon de planifier, de nettoyer et de gérer.",
+      items: [
+        { title: "Trajets optimisés", body: "Une planification des itinéraires qui réduit les déplacements inutiles." },
+        {
+          title: "Produits responsables",
+          body: "Des produits d’entretien respectueux de l’environnement dès que possible.",
+        },
+        { title: "Zéro papier", body: "Une administration sans papier grâce aux systèmes numériques." },
+        { title: "Moins de déchets", body: "Des processus efficaces qui réduisent les déchets au minimum." },
+        {
+          title: "Investissement durable",
+          body: "Un investissement continu dans des pratiques d’entreprise durables.",
+        },
+      ],
+    },
+    closing: {
+      eyebrow: "Plus qu’un ménage",
+      title: "Plus qu’un ménage",
+      body: [
+        "Dar Tahara construit une nouvelle référence pour le ménage à domicile au Maroc.",
+        "En associant des professionnels qualifiés, une technologie innovante et une attention sincère à nos clients, nous offrons plus qu’une maison propre — nous offrons la sérénité.",
+      ],
+      ctaPrimary: "Réservez votre Évaluation Initiale",
+      ctaSecondary: "Découvrir nos services",
+    },
+    teaser: {
+      eyebrow: "Pourquoi Dar Tahara ?",
+      title: "Plus qu’un ménage.",
+      body: "Des professionnels qualifiés, une technologie innovante et un service transparent — réunis pour redéfinir le ménage résidentiel au Maroc.",
+      cta: "Lire notre mission & vision",
+      points: [
+        "Opérations pilotées par la technologie",
+        "Tarifs transparents par abonnement",
+        "Engagement en faveur d’une formation structurée",
       ],
     },
   },

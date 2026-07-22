@@ -24,6 +24,15 @@ export function whatsappLink(message: string = site.whatsappMessage) {
   return `https://wa.me/${site.whatsappE164}?text=${encodeURIComponent(message)}`;
 }
 
+/**
+ * Standalone content pages, appended after the locale segment
+ * (e.g. `/en/missionandvision`). Single source of truth for nav, footer,
+ * sitemap and canonical URLs.
+ */
+export const pages = {
+  missionVision: "/missionandvision",
+} as const;
+
 /** In-page section anchors — shared by nav and section ids. */
 export const sections = {
   why: "why",
