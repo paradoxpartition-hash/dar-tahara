@@ -17,6 +17,9 @@ export type EarlyAccessCopy = {
     body: string;
     ctaPrimary: string;
     ctaSecondary: string;
+    benefitsTitle: string;
+    benefits: readonly string[];
+    missionLink: string;
     notBooking: string;
     reassure: string;
   };
@@ -91,6 +94,13 @@ const en: EarlyAccessCopy = {
     body: "Join Dar Tahara early access for premium home cleaning and property care in Morocco. Register your property, receive launch updates, and invite friends and family.",
     ctaPrimary: "Request early access",
     ctaSecondary: "How it works",
+    benefitsTitle: "What Dar Tahara is building",
+    benefits: [
+      "Reliable, transparent home care designed around your peace of mind.",
+      "Consistent service standards supported by structured training and smart technology.",
+      "Responsible growth that aims to create safer, more professional opportunities for our teams.",
+    ],
+    missionLink: "Read our mission & vision",
     notBooking: "Registering is an early-access request, not a confirmed booking. We'll contact you when service becomes available in your area.",
     reassure: "Takes about 3 minutes · Your details are kept private",
   },
@@ -216,6 +226,13 @@ const fr: EarlyAccessCopy = {
     body: "Rejoignez l'accès anticipé Dar Tahara pour le ménage premium et l'entretien de propriété au Maroc. Enregistrez votre bien, recevez les actualités du lancement et invitez vos proches.",
     ctaPrimary: "Demander un accès anticipé",
     ctaSecondary: "Comment ça marche",
+    benefitsTitle: "Ce que Dar Tahara construit",
+    benefits: [
+      "Un entretien fiable et transparent, pensé pour votre tranquillité d’esprit.",
+      "Des standards de service cohérents, soutenus par une formation structurée et une technologie intelligente.",
+      "Une croissance responsable visant à créer des perspectives plus sûres et plus professionnelles pour nos équipes.",
+    ],
+    missionLink: "Découvrir notre mission et notre vision",
     notBooking: "L'inscription est une demande d'accès anticipé, pas une réservation confirmée. Nous vous contacterons dès que le service sera disponible dans votre région.",
     reassure: "Environ 3 minutes · Vos informations restent confidentielles",
   },
@@ -341,6 +358,13 @@ const ar: EarlyAccessCopy = {
     body: "انضم إلى الوصول المبكر من دار طهارة للحصول على تنظيف منزلي راقٍ والعناية بالعقار في المغرب. سجّل عقارك، واستقبل مستجدات الإطلاق، وادعُ العائلة والأصدقاء.",
     ctaPrimary: "اطلب الوصول المبكر",
     ctaSecondary: "كيف يعمل",
+    benefitsTitle: "ما الذي تبنيه دار طهارة",
+    benefits: [
+      "عناية منزلية موثوقة وشفافة، صُممت لراحة بالك.",
+      "معايير خدمة متسقة تدعمها تدريبات منظمة وتقنية ذكية.",
+      "نمو مسؤول يهدف إلى توفير فرص أكثر أمانًا واحترافية لفرقنا.",
+    ],
+    missionLink: "اقرأ رسالتنا ورؤيتنا",
     notBooking: "التسجيل هو طلب وصول مبكر وليس حجزًا مؤكدًا. سنتواصل معك عند توفّر الخدمة في منطقتك.",
     reassure: "نحو 3 دقائق · تبقى بياناتك خاصة",
   },
@@ -466,6 +490,13 @@ const nl: EarlyAccessCopy = {
     body: "Doe mee aan Dar Tahara early access voor premium schoonmaak en woningverzorging in Marokko. Registreer uw woning, ontvang lanceringsupdates en nodig familie en vrienden uit.",
     ctaPrimary: "Early access aanvragen",
     ctaSecondary: "Hoe het werkt",
+    benefitsTitle: "Waar Dar Tahara aan bouwt",
+    benefits: [
+      "Betrouwbare, transparante woningzorg met uw gemoedsrust als uitgangspunt.",
+      "Consistente servicenormen, ondersteund door gestructureerde training en slimme technologie.",
+      "Verantwoorde groei die veiligere en professionelere kansen voor onze teams wil creëren.",
+    ],
+    missionLink: "Lees onze missie en visie",
     notBooking: "Registreren is een early-access-aanvraag, geen bevestigde boeking. We nemen contact op zodra de dienst in uw regio beschikbaar is.",
     reassure: "Duurt ongeveer 3 minuten · Uw gegevens blijven privé",
   },
@@ -591,6 +622,13 @@ const es: EarlyAccessCopy = {
     body: "Únete al acceso anticipado de Dar Tahara para limpieza premium y cuidado de propiedades en Marruecos. Registra tu propiedad, recibe novedades del lanzamiento e invita a familiares y amigos.",
     ctaPrimary: "Solicitar acceso anticipado",
     ctaSecondary: "Cómo funciona",
+    benefitsTitle: "Lo que está construyendo Dar Tahara",
+    benefits: [
+      "Un cuidado del hogar fiable y transparente, pensado para tu tranquilidad.",
+      "Estándares de servicio coherentes, respaldados por formación estructurada y tecnología inteligente.",
+      "Un crecimiento responsable que aspira a crear oportunidades más seguras y profesionales para nuestros equipos.",
+    ],
+    missionLink: "Lee nuestra misión y visión",
     notBooking: "Registrarse es una solicitud de acceso anticipado, no una reserva confirmada. Te contactaremos cuando el servicio esté disponible en tu zona.",
     reassure: "Unos 3 minutos · Tus datos se mantienen privados",
   },
@@ -716,6 +754,13 @@ const de: EarlyAccessCopy = {
     body: "Sichern Sie sich den Dar Tahara Frühzugang für Premium-Reinigung und Immobilienbetreuung in Marokko. Registrieren Sie Ihre Immobilie, erhalten Sie Launch-Updates und laden Sie Familie und Freunde ein.",
     ctaPrimary: "Frühzugang anfragen",
     ctaSecondary: "So funktioniert's",
+    benefitsTitle: "Woran Dar Tahara arbeitet",
+    benefits: [
+      "Zuverlässige, transparente Betreuung Ihres Zuhauses – für mehr Sicherheit und Gelassenheit.",
+      "Einheitliche Servicestandards, unterstützt durch strukturierte Schulung und intelligente Technologie.",
+      "Verantwortungsvolles Wachstum mit dem Ziel, sicherere und professionellere Chancen für unsere Teams zu schaffen.",
+    ],
+    missionLink: "Unsere Mission und Vision entdecken",
     notBooking: "Die Registrierung ist eine Frühzugangs-Anfrage, keine bestätigte Buchung. Wir melden uns, sobald der Service in Ihrer Region verfügbar ist.",
     reassure: "Dauert etwa 3 Minuten · Ihre Daten bleiben privat",
   },
@@ -841,6 +886,13 @@ const pt: EarlyAccessCopy = {
     body: "Junte-se ao acesso antecipado da Dar Tahara para limpeza premium e cuidado de imóveis em Marrocos. Registe o seu imóvel, receba novidades do lançamento e convide familiares e amigos.",
     ctaPrimary: "Solicitar acesso antecipado",
     ctaSecondary: "Como funciona",
+    benefitsTitle: "O que a Dar Tahara está a construir",
+    benefits: [
+      "Um cuidado do lar fiável e transparente, pensado para a sua tranquilidade.",
+      "Padrões de serviço consistentes, apoiados por formação estruturada e tecnologia inteligente.",
+      "Um crescimento responsável que procura criar oportunidades mais seguras e profissionais para as nossas equipas.",
+    ],
+    missionLink: "Conhecer a nossa missão e visão",
     notBooking: "O registo é um pedido de acesso antecipado, não uma reserva confirmada. Entraremos em contacto quando o serviço estiver disponível na sua região.",
     reassure: "Demora cerca de 3 minutos · Os seus dados permanecem privados",
   },
