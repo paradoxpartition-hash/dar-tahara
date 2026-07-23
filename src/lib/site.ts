@@ -14,8 +14,8 @@ export const site = {
   addressLocality: "Tangier",
   addressCountry: "MA",
   socials: {
-    instagram: "https://instagram.com/dartahara",
-    facebook: "https://facebook.com/dartahara",
+    instagram: "https://www.instagram.com/dartaharaservices",
+    facebook: "https://www.facebook.com/dartaharaservices/",
     linkedin: "https://linkedin.com/company/dartahara",
   },
 } as const;
