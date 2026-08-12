@@ -5,6 +5,7 @@ import { getDir, localeMeta } from "@/i18n/config";
 import { getRequestLocale } from "@/lib/request-locale";
 import { cn } from "@/lib/utils";
 import { ThemeProvider } from "@/components/providers/theme-provider";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 
 export default async function RootLayout({ children }: { children: ReactNode }) {
   const locale = await getRequestLocale();
@@ -20,6 +21,7 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
         <ThemeProvider attribute="class" defaultTheme="light" enableSystem disableTransitionOnChange>
           {children}
         </ThemeProvider>
+        <SpeedInsights />
       </body>
     </html>
   );
