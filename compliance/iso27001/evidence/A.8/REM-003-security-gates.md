@@ -2,7 +2,7 @@
 
 Date: 2026-08-21
 
-Status: **Implemented in the worktree; repository activation and enforcement pending**
+Status: **Active on GitHub; continuing operational review required**
 
 Controls: A.5.17, A.5.21, A.8.8, A.8.12, A.8.25, A.8.29, A.8.32
 
@@ -32,8 +32,31 @@ Risks: R-001, R-002, R-013
 
 ## Residual work and boundary
 
-The workflow has not run on a repository host and is not yet a required merge check. Gitleaks full-history execution, CodeQL result ingestion, dependency-review behavior, Dependabot operation, alert routing, and test-secret rejection therefore remain operationally unverified. GitHub secret scanning, push protection and Dependabot security updates remain settings-level actions. Activate these only after REM-002 identifies the authoritative repository and management approves branch/release governance. No production or repository setting was changed by this work.
+GitHub is the authoritative review/release repository and Forgejo is its
+downstream mirror. The hosted workflow and native repository controls are
+operational. Alert-routing exercises, independent review, and sustained
+operating evidence remain outstanding; source and CI evidence alone do not
+establish certification readiness.
 
 ## Hosted verification update
 
-GitHub pull request 65 executed the workflow on 2026-08-21. The quality/dependency job and both CodeQL checks passed. Gitleaks detected a documented false positive in continuity-planning prose; its exact historical fingerprint is recorded in `.gitleaksignore`, and the prose was clarified to avoid future matches. GitHub dependency alerts were enabled through the repository API after Dependency Review reported that the dependency graph prerequisite was disabled. A green rerun remains required before merge.
+GitHub pull request 65 executed the workflow on 2026-08-21. After the documented
+Gitleaks false-positive correction, the pull request merged and post-merge run
+`32466510778` completed successfully at commit
+`5927201863e03c128f921656efd0fa7b0b161728`. GitHub dependency graph/security
+updates, secret scanning, push protection and private vulnerability reporting
+are active. Ruleset `21137818` makes the named security jobs strict required
+checks for `main`, requires pull requests and signed commits, blocks force-push
+and deletion, and has no bypass actors.
+
+The repository has one collaborator, so a one-review requirement would make
+every change unmergeable. Independent approval remains a governance residual
+until a second qualified reviewer is appointed. GitHub did not enable
+non-provider secret patterns or validity checks, so Gitleaks/full-history and
+push protection remain the compensating controls.
+
+Pull request 76 delivered the signed Critical/P1 source remediation at commit
+`d61d83ad2e89eb42f4fcfd7b70c14d77d11a8717`. PR run `32473518119` and
+post-merge run `32473769988` passed all applicable gates, including the new
+source/IaC/secret and production-container Trivy job. Forgejo `main` was then
+fast-forwarded to the same commit without a force-push.
